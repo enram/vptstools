@@ -1,5 +1,10 @@
 # vptstools
+
+[![.github/workflows/run_tests.yaml](https://github.com/enram/vptstools/actions/workflows/run_tests.yaml/badge.svg)](https://github.com/enram/vptstools/actions/workflows/run_tests.yaml)
+
 Python tools to work with vertical profile time series.
+
+Status: WIP, not functional yet
 
 ## Installation
 
