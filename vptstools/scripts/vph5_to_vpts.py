@@ -10,9 +10,10 @@ from typing import List, Any
 import click
 from odimh5.reader import ODIMReader
 
-# Return code (0 = success)
+# Return codes (0 = success)
 EXIT_INVALID_SOURCE_FILE = 1
 EXIT_NO_SOURCE_DATA = 2
+EXIT_INCONSISTENT_METADATA = 3
 
 DESCRIPTOR_FILENAME = "datapackage.json"
 CSV_FILENAME = "vpts.csv"
@@ -38,6 +39,7 @@ class Level:
 # This object aims to stay as close as possible to the HDF5 file (no data simplification/loss at this stage)
 @dataclass
 class Profile:
+    radar_identifiers: dict # From what.source, example: {'WMO':'06477', 'NOD':'bewid', 'RAD':'BX41', 'PLC':'Wideumont'}
     timestamp: datetime
     levels: List[Level] = field(default_factory=list)
 
@@ -71,8 +73,6 @@ class Profile:
 
     @classmethod
     def make_from_odim(cls, source_odim: ODIMReader):
-        print(f"Reading ODIM file: {ODIMReader}")
-
         dataset1 = source_odim.hdf5["dataset1"]
         height_values = get_values(dataset1, quantity="HGHT")
 
@@ -106,7 +106,9 @@ class Profile:
                 )
             )
 
-        return cls(timestamp=source_odim.root_datetime, levels=sorted(levels))
+        return cls(timestamp=source_odim.root_datetime,
+                   radar_identifiers=source_odim.root_source,
+                   levels=sorted(levels))
 
 
 def check_source_odim(source_odim: ODIMReader) -> None:
@@ -149,16 +151,19 @@ def datetime_to_proper8601(
     return str(d).replace("+00:00", "Z")
 
 
-def write_descriptor(output_dir, full_data_table):
+def write_descriptor(output_dir, full_data_table, source_metadata):
     content = {
+        "radar": {
+            "identifiers": source_metadata['radar_identifiers'] # TODO: decide and docmuent what to do with that (in VPTS)
+        },
+        "temporal": {
+            "start": datetime_to_proper8601(full_data_table[0]["timestamp"]),
+            "end": datetime_to_proper8601(full_data_table[-1]["timestamp"]),
+        },
         "resources": [
             {
                 "name": "VPTS data",
                 "path": CSV_FILENAME,
-                "temporal": {
-                    "start": datetime_to_proper8601(full_data_table[0]["timestamp"]),
-                    "end": datetime_to_proper8601(full_data_table[-1]["timestamp"]),
-                },
                 "dialect": {"delimiter": CSV_FIELD_DELIMITER},
                 "schema": {"fields": []},
             }
@@ -169,12 +174,12 @@ def write_descriptor(output_dir, full_data_table):
         json.dump(content, outfile, indent=4, sort_keys=True)
 
 
-def table_to_vpts(full_data_table, output_dir):
+def save_to_vpts(full_data_table, output_dir, source_metadata: dict):
     os.mkdir(output_dir)
     table_to_csv(
         full_data_table, output_csv_path=os.path.join(output_dir, CSV_FILENAME)
     )
-    write_descriptor(output_dir, full_data_table)
+    write_descriptor(output_dir, full_data_table, source_metadata)
 
 
 @click.command()
@@ -183,7 +188,9 @@ def table_to_vpts(full_data_table, output_dir):
 def cli(odim_hdf5_profiles, output_dir_path):
     """This tool aggregate/convert a bunch of ODIM hdf5 profiles files to a single vpts data package"""
     # Open all ODIM files
+    click.echo("Opening all the source ODIM files...", nl=False)
     odims = [ODIMReader(path) for path in glob.glob(odim_hdf5_profiles, recursive=True)]
+    click.echo("Done")
 
     if not odims:
         click.echo(
@@ -192,25 +199,44 @@ def cli(odim_hdf5_profiles, output_dir_path):
         sys.exit(EXIT_NO_SOURCE_DATA)
 
     # Individual checks for each of them
+    click.echo("Individual checks on all source files...", nl=False)
     for source_odim in odims:
         try:
             check_source_odim(source_odim)
         except InvalidSourceODIM as e:
             click.echo(f"Invalid ODIM source file: {e}")
             sys.exit(EXIT_INVALID_SOURCE_FILE)
+    click.echo("Done")
 
+
+    click.echo("Building and sorting profiles...", nl=False)
+    # Profiles will be sorted by timestamp, and (in each) levels by height
     profiles = sorted([Profile.make_from_odim(odim) for odim in odims])
-    # Profiles are now sorted by timestamp, and (in each) levels by height
+    click.echo("Done")
 
+    click.echo("Checking consistency of input files...", nl=False)
+    # Extract global (to all profiles) metadata, and return an error if inconsistent
+    global_metadata = {}  # Shared between all profiles
+    # Check all profile refer to the same radar:
+    if all(profile.radar_identifiers == profiles[0].radar_identifiers for profile in profiles):
+        global_metadata['radar_identifiers'] = profiles[0].radar_identifiers
+    else:
+        click.echo(f"Inconsistent radar identifiers in the source odim files!")
+        sys.exit(EXIT_INCONSISTENT_METADATA)
+    click.echo("Done")
+
+    click.echo("Aggregating data...", nl=False)
     # Aggregate the tables for each profile to a single one
-    full_table = []
+    full_data_table = []
     for profile in profiles:
         table = profile.to_table()
         for row in table:
-            full_table.append((row))
+            full_data_table.append((row))
+    click.echo("Done")
 
-    table_to_vpts(full_table, output_dir=output_dir_path)
-
+    click.echo("Saving to vpts...", nl=False)
+    save_to_vpts(full_data_table, output_dir=output_dir_path, source_metadata=global_metadata)
+    click.echo("Done")
 
 if __name__ == "__main__":
     cli(
@@ -226,3 +252,4 @@ if __name__ == "__main__":
 # TODO: CSV dialect: explicitly configure + express in datapackage.json (already done for field separator)
 # TODO: Write a full integration test (takes a few ODIM and check the end result)
 # TODO: VPTS: replace vol2bird example (+table schema) by something more up-to-date
+# TODO: Put more metadata (radar, ...) in datapackage.json
