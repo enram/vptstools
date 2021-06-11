@@ -16,6 +16,9 @@ EXIT_NO_SOURCE_DATA = 2
 
 DESCRIPTOR_FILENAME = "datapackage.json"
 CSV_FILENAME = "vpts.csv"
+CSV_ENCODING = "utf8"  # !! Don't change, only utf-8 is accepted in data packages
+CSV_FIELD_DELIMITER = ","
+
 
 class InvalidSourceODIM(Exception):
     pass
@@ -41,7 +44,7 @@ class Profile:
     def __lt__(self, other):  # Allows sorting by timestamp
         return self.timestamp < other.timestamp
 
-    def to_table(self):
+    def to_table(self, prepare_for_csv=True):
         """Return a list of dicts representing the content of the profile, such as
 
         [
@@ -49,7 +52,8 @@ class Profile:
             { timestamp: x, height: 200.0, ff: 5.23, ...}
         ]
 
-        The list is sorted by altitude. The timestamp is obviously identical for all entries
+        The list is sorted by altitude. The timestamp is obviously identical for all entries.
+        If prepare_for_csv is True, data is transformed to fit the final CSV format (data types, ...)
         """
         rows = []
 
@@ -57,6 +61,11 @@ class Profile:
             rows.append(
                 {"timestamp": self.timestamp, "height": level.height, **level.variables}
             )
+
+        if prepare_for_csv:
+            for i, row in enumerate(rows):
+                rows[i]["timestamp"] = datetime_to_proper8601(row["timestamp"])
+                rows[i]["height"] = int(row["height"])
 
         return rows
 
@@ -128,35 +137,44 @@ def get_values(dataset, quantity: str) -> List[Any]:
 
 def table_to_csv(full_data_table, output_csv_path):
     keys = full_data_table[0].keys()
-    with open(output_csv_path, "w", newline="", encoding="utf8") as output_file:
-        fc = csv.DictWriter(output_file, fieldnames=keys)
+    with open(output_csv_path, "w", newline="", encoding=CSV_ENCODING) as output_file:
+        fc = csv.DictWriter(output_file, fieldnames=keys, delimiter=CSV_FIELD_DELIMITER)
         fc.writeheader()
         fc.writerows(full_data_table)
 
 
-def write_descriptor(output_dir):
+def datetime_to_proper8601(
+    d,
+):  # See https://stackoverflow.com/questions/19654578/python-utc-datetime-objects-iso-format-doesnt-include-z-zulu-or-zero-offset
+    return str(d).replace("+00:00", "Z")
+
+
+def write_descriptor(output_dir, full_data_table):
     content = {
         "resources": [
             {
                 "name": "VPTS data",
                 "path": CSV_FILENAME,
-                "schema": {
-                    "fields": []
-                }
+                "temporal": {
+                    "start": datetime_to_proper8601(full_data_table[0]["timestamp"]),
+                    "end": datetime_to_proper8601(full_data_table[-1]["timestamp"]),
+                },
+                "dialect": {"delimiter": CSV_FIELD_DELIMITER},
+                "schema": {"fields": []},
             }
         ]
     }
 
-    with open(os.path.join(output_dir, DESCRIPTOR_FILENAME), 'w') as outfile:
+    with open(os.path.join(output_dir, DESCRIPTOR_FILENAME), "w") as outfile:
         json.dump(content, outfile, indent=4, sort_keys=True)
-
-
 
 
 def table_to_vpts(full_data_table, output_dir):
     os.mkdir(output_dir)
-    table_to_csv(full_data_table, output_csv_path=os.path.join(output_dir, CSV_FILENAME))
-    write_descriptor(output_dir)
+    table_to_csv(
+        full_data_table, output_csv_path=os.path.join(output_dir, CSV_FILENAME)
+    )
+    write_descriptor(output_dir, full_data_table)
 
 
 @click.command()
@@ -205,7 +223,6 @@ if __name__ == "__main__":
     # cli(['--help'])
 
 # TODO: print progress during execution (+progress bar)
-# TODO: CSV dialect: explicitly configure + express in datapackage.json
+# TODO: CSV dialect: explicitly configure + express in datapackage.json (already done for field separator)
 # TODO: Write a full integration test (takes a few ODIM and check the end result)
-# TODO: write a function that transform the Profile data (dict?) to a something ready for CSV (i.e. turn height from float to int)
 # TODO: VPTS: replace vol2bird example (+table schema) by something more up-to-date
