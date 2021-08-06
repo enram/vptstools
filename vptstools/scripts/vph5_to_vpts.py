@@ -77,21 +77,21 @@ class Profile:
         height_values = get_values(dataset1, quantity="HGHT")
 
         variables_to_load = (
-            "ff",
-            "dbz",
             "dens",
+            "ff",
+            "dd",
+            "eta",
+            "sd_vvp",
+            "DBZH",
+            "dbz",
             "u",
             "v",
             "gap",
             "w",
             "n_dbz",
-            "dd",
             "n",
-            "DBZH",
-            "n_dbz_all",
-            "eta",
-            "sd_vvp",
             "n_all",
+            "n_dbz_all",
         )
 
         levels = []
@@ -253,3 +253,4 @@ if __name__ == "__main__":
 # TODO: Write a full integration test (takes a few ODIM and check the end result)
 # TODO: VPTS: replace vol2bird example (+table schema) by something more up-to-date
 # TODO: Put more metadata (radar, ...) in datapackage.json
+# TODO: The standard allows temporal gap, but no height gap. Make sure all input ODIM files have the same altitudes?
