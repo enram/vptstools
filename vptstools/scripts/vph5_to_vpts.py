@@ -35,38 +35,38 @@ class Level:
 
 
 # Data class representing a single input source file (=https://github.com/adokter/vol2bird/wiki/ODIM-bird-profile-format-specification)
-# =single timestamp, single radar, multiple altitudes, usual variables for each altitude: dd, ff, ...
+# =single datetime, single radar, multiple altitudes, usual variables for each altitude: dd, ff, ...
 # This object aims to stay as close as possible to the HDF5 file (no data simplification/loss at this stage)
 @dataclass
 class Profile:
     radar_identifiers: dict # From what.source, example: {'WMO':'06477', 'NOD':'bewid', 'RAD':'BX41', 'PLC':'Wideumont'}
-    timestamp: datetime
+    datetime: datetime
     levels: List[Level] = field(default_factory=list)
 
-    def __lt__(self, other):  # Allows sorting by timestamp
-        return self.timestamp < other.timestamp
+    def __lt__(self, other):  # Allows sorting by datetime
+        return self.datetime < other.datetime
 
     def to_table(self, prepare_for_csv=True):
         """Return a list of dicts representing the content of the profile, such as
 
         [
-            { timestamp: x, height: 0.0, ff: 8.23, ... },
-            { timestamp: x, height: 200.0, ff: 5.23, ...}
+            { datetime: x, height: 0.0, ff: 8.23, ... },
+            { datetime: x, height: 200.0, ff: 5.23, ...}
         ]
 
-        The list is sorted by altitude. The timestamp is obviously identical for all entries.
+        The list is sorted by altitude. The datetime is obviously identical for all entries.
         If prepare_for_csv is True, data is transformed to fit the final CSV format (data types, ...)
         """
         rows = []
 
         for level in self.levels:
             rows.append(
-                {"timestamp": self.timestamp, "height": level.height, **level.variables}
+                {"datetime": self.datetime, "height": level.height, **level.variables}
             )
 
         if prepare_for_csv:
             for i, row in enumerate(rows):
-                rows[i]["timestamp"] = datetime_to_proper8601(row["timestamp"])
+                rows[i]["datetime"] = datetime_to_proper8601(row["datetime"])
                 rows[i]["height"] = int(row["height"])
 
         return rows
@@ -106,7 +106,7 @@ class Profile:
                 )
             )
 
-        return cls(timestamp=source_odim.root_datetime,
+        return cls(datetime=source_odim.root_datetime,
                    radar_identifiers=source_odim.root_source,
                    levels=sorted(levels))
 
@@ -157,8 +157,8 @@ def write_descriptor(output_dir, full_data_table, source_metadata):
             "identifiers": source_metadata['radar_identifiers'] # TODO: decide and docmuent what to do with that (in VPTS)
         },
         "temporal": {
-            "start": datetime_to_proper8601(full_data_table[0]["timestamp"]),
-            "end": datetime_to_proper8601(full_data_table[-1]["timestamp"]),
+            "start": datetime_to_proper8601(full_data_table[0]["datetime"]),
+            "end": datetime_to_proper8601(full_data_table[-1]["datetime"]),
         },
         "resources": [
             {
@@ -208,9 +208,8 @@ def cli(odim_hdf5_profiles, output_dir_path):
             sys.exit(EXIT_INVALID_SOURCE_FILE)
     click.echo("Done")
 
-
     click.echo("Building and sorting profiles...", nl=False)
-    # Profiles will be sorted by timestamp, and (in each) levels by height
+    # Profiles will be sorted by datetimes, and (in each) levels by height
     profiles = sorted([Profile.make_from_odim(odim) for odim in odims])
     click.echo("Done")
 
@@ -237,6 +236,7 @@ def cli(odim_hdf5_profiles, output_dir_path):
     click.echo("Saving to vpts...", nl=False)
     save_to_vpts(full_data_table, output_dir=output_dir_path, source_metadata=global_metadata)
     click.echo("Done")
+
 
 if __name__ == "__main__":
     cli(
