@@ -77,21 +77,21 @@ class Profile:
         height_values = get_values(dataset1, quantity="HGHT")
 
         variables_to_load = (
-            "dens",
-            "ff",
-            "dd",
-            "eta",
-            "sd_vvp",
-            "DBZH",
-            "dbz",
-            "u",
-            "v",
-            "gap",
-            "w",
-            "n_dbz",
-            "n",
-            "n_all",
-            "n_dbz_all",
+            {'name': 'dens', 'convert_to_bool': False},
+            {'name': 'ff', 'convert_to_bool': False},
+            {'name': 'dd', 'convert_to_bool': False},
+            {'name': 'eta', 'convert_to_bool': False},
+            {'name': 'sd_vvp', 'convert_to_bool': False},
+            {'name': 'DBZH', 'convert_to_bool': False},
+            {'name': 'dbz', 'convert_to_bool': False},
+            {'name': 'u', 'convert_to_bool': False},
+            {'name': 'v', 'convert_to_bool': False},
+            {'name': 'gap', 'convert_to_bool': True},
+            {'name': 'w', 'convert_to_bool': False},
+            {'name': 'n_dbz', 'convert_to_bool': False},
+            {'name': 'n', 'convert_to_bool': False},
+            {'name': 'n_all', 'convert_to_bool': False},
+            {'name': 'n_dbz_all', 'convert_to_bool': False},
         )
 
         levels = []
@@ -100,7 +100,7 @@ class Profile:
                 Level(
                     height=height,
                     variables={
-                        k: get_values(dataset1, quantity=k)[i]
+                        k['name']: get_values(dataset1, quantity=k['name'], convert_to_bool=k['convert_to_bool'])[i]
                         for k in variables_to_load
                     },
                 )
@@ -118,10 +118,11 @@ def check_source_odim(source_odim: ODIMReader) -> None:
         )
 
 
-def get_values(dataset, quantity: str) -> List[Any]:
+def get_values(dataset, quantity: str, convert_to_bool: bool = False) -> List[Any]:
     """In a given dataset, find the requested quantity and return a 1d list of the values
 
     'nodata' and 'undetect' are interpreted according to the metadata in the 'what' group
+    if convert_to_bool is true, 1 will be converted to True and 0 to False
     """
     for data_group in dataset:
         if dataset[data_group]["what"].attrs["quantity"].decode("utf8") == quantity:
@@ -134,11 +135,24 @@ def get_values(dataset, quantity: str) -> List[Any]:
                 "undetect" if value == undetect_val else value for value in values
             ]
 
+            if convert_to_bool:
+                values = [True if value == 1 else False for value in values]
+
             return values
 
 
-def table_to_csv(full_data_table, output_csv_path):
+def table_to_frictionless_csv(full_data_table, output_csv_path):
     keys = full_data_table[0].keys()
+
+    # Last round of processing: boolean values must be converted to an equivalent string, otherwise the CSV module will
+    # save them Capitalized, while the frictionless specs asks for lowercase.
+    for entry in full_data_table:
+        for key in entry:
+            if entry[key] is True:
+                entry[key] = 'true'
+            if entry[key] is False:
+                entry[key] = 'false'
+
     with open(output_csv_path, "w", newline="", encoding=CSV_ENCODING) as output_file:
         fc = csv.DictWriter(output_file, fieldnames=keys, delimiter=CSV_FIELD_DELIMITER)
         fc.writeheader()
@@ -176,7 +190,7 @@ def write_descriptor(output_dir, full_data_table, source_metadata):
 
 def save_to_vpts(full_data_table, output_dir, source_metadata: dict):
     os.mkdir(output_dir)
-    table_to_csv(
+    table_to_frictionless_csv(
         full_data_table, output_csv_path=os.path.join(output_dir, CSV_FILENAME)
     )
     write_descriptor(output_dir, full_data_table, source_metadata)
