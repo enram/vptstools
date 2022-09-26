@@ -50,9 +50,9 @@ jobs:
     strategy:
       matrix:
         python:
-        - "3.7"  # oldest Python supported by PSF
+        #- "3.7"  # oldest Python supported by PSF
         - "3.9"
-        - "3.10"
+        #- "3.10"
         platform:
         - ubuntu-latest
         - macos-latest
