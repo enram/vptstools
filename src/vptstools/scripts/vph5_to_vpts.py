@@ -34,12 +34,17 @@ class Level:
         return self.height < other.height
 
 
-# Data class representing a single input source file (=https://github.com/adokter/vol2bird/wiki/ODIM-bird-profile-format-specification)
-# =single datetime, single radar, multiple altitudes, usual variables for each altitude: dd, ff, ...
-# This object aims to stay as close as possible to the HDF5 file (no data simplification/loss at this stage)
+# Data class representing a single input source file
+# (=https://github.com/adokter/vol2bird/wiki/ODIM-bird-profile-format-specification)
+# =single datetime, single radar, multiple altitudes,
+# usual variables for each altitude: dd, ff, ...
+# This object aims to stay as close as possible to the HDF5 file
+# (no data simplification/loss at this stage)
 @dataclass
 class Profile:
-    radar_identifiers: dict # From what.source, example: {'WMO':'06477', 'NOD':'bewid', 'RAD':'BX41', 'PLC':'Wideumont'}
+    # From what.source,
+    # example: {'WMO':'06477', 'NOD':'bewid', 'RAD':'BX41', 'PLC':'Wideumont'}
+    radar_identifiers: dict
     datetime: datetime
     levels: List[Level] = field(default_factory=list)
 
@@ -47,15 +52,17 @@ class Profile:
         return self.datetime < other.datetime
 
     def to_table(self, prepare_for_csv=True):
-        """Return a list of dicts representing the content of the profile, such as
+        """Return a list of dicts representing the content of the profile,
+        such as::
 
-        [
-            { datetime: x, height: 0.0, ff: 8.23, ... },
-            { datetime: x, height: 200.0, ff: 5.23, ...}
-        ]
+            [
+                { datetime: x, height: 0.0, ff: 8.23, ... },
+                { datetime: x, height: 200.0, ff: 5.23, ...}
+            ]
 
-        The list is sorted by altitude. The datetime is obviously identical for all entries.
-        If prepare_for_csv is True, data is transformed to fit the final CSV format (data types, ...)
+        The list is sorted by altitude. The datetime is obviously identical for all
+        entries. If prepare_for_csv is True, data is transformed to fit the final
+        CSV format (data types, ...)
         """
         rows = []
 
@@ -77,21 +84,21 @@ class Profile:
         height_values = get_values(dataset1, quantity="HGHT")
 
         variables_to_load = (
-            {'name': 'dens', 'convert_to_bool': False},
-            {'name': 'ff', 'convert_to_bool': False},
-            {'name': 'dd', 'convert_to_bool': False},
-            {'name': 'eta', 'convert_to_bool': False},
-            {'name': 'sd_vvp', 'convert_to_bool': False},
-            {'name': 'DBZH', 'convert_to_bool': False},
-            {'name': 'dbz', 'convert_to_bool': False},
-            {'name': 'u', 'convert_to_bool': False},
-            {'name': 'v', 'convert_to_bool': False},
-            {'name': 'gap', 'convert_to_bool': True},
-            {'name': 'w', 'convert_to_bool': False},
-            {'name': 'n_dbz', 'convert_to_bool': False},
-            {'name': 'n', 'convert_to_bool': False},
-            {'name': 'n_all', 'convert_to_bool': False},
-            {'name': 'n_dbz_all', 'convert_to_bool': False},
+            {"name": "dens", "convert_to_bool": False},
+            {"name": "ff", "convert_to_bool": False},
+            {"name": "dd", "convert_to_bool": False},
+            {"name": "eta", "convert_to_bool": False},
+            {"name": "sd_vvp", "convert_to_bool": False},
+            {"name": "DBZH", "convert_to_bool": False},
+            {"name": "dbz", "convert_to_bool": False},
+            {"name": "u", "convert_to_bool": False},
+            {"name": "v", "convert_to_bool": False},
+            {"name": "gap", "convert_to_bool": True},
+            {"name": "w", "convert_to_bool": False},
+            {"name": "n_dbz", "convert_to_bool": False},
+            {"name": "n", "convert_to_bool": False},
+            {"name": "n_all", "convert_to_bool": False},
+            {"name": "n_dbz_all", "convert_to_bool": False},
         )
 
         levels = []
@@ -100,29 +107,43 @@ class Profile:
                 Level(
                     height=height,
                     variables={
-                        k['name']: get_values(dataset1, quantity=k['name'], convert_to_bool=k['convert_to_bool'])[i]
+                        k["name"]: get_values(
+                            dataset1,
+                            quantity=k["name"],
+                            convert_to_bool=k["convert_to_bool"],
+                        )[i]
                         for k in variables_to_load
                     },
                 )
             )
 
-        return cls(datetime=source_odim.root_datetime,
-                   radar_identifiers=source_odim.root_source,
-                   levels=sorted(levels))
+        return cls(
+            datetime=source_odim.root_datetime,
+            radar_identifiers=source_odim.root_source,
+            levels=sorted(levels),
+        )
 
 
 def check_source_odim(source_odim: ODIMReader) -> None:
+    if not {"what", "how", "where"}.issubset(source_odim.hdf5.keys()):
+        raise InvalidSourceODIM(
+            "No hdf5 ODIM format: File does not contain what/how/where "
+            "group information."
+        )
     if source_odim.root_object_str != "VP":
         raise InvalidSourceODIM(
-            f"Incorrect what.object value: expected VP, found {source_odim.root_object_str}"
+            f"Incorrect what.object value: expected VP, "
+            f"found {source_odim.root_object_str}"
         )
 
 
 def get_values(dataset, quantity: str, convert_to_bool: bool = False) -> List[Any]:
-    """In a given dataset, find the requested quantity and return a 1d list of the values
+    """In a given dataset, find the requested quantity and return a 1d list
+    of the values
 
-    'nodata' and 'undetect' are interpreted according to the metadata in the 'what' group
-    if convert_to_bool is true, 1 will be converted to True and 0 to False
+    'nodata' and 'undetect' are interpreted according to the metadata in the
+    'what' group if convert_to_bool is true, 1 will be converted to True and
+    0 to False
     """
     for data_group in dataset:
         if dataset[data_group]["what"].attrs["quantity"].decode("utf8") == quantity:
@@ -144,14 +165,15 @@ def get_values(dataset, quantity: str, convert_to_bool: bool = False) -> List[An
 def table_to_frictionless_csv(full_data_table, output_csv_path):
     keys = full_data_table[0].keys()
 
-    # Last round of processing: boolean values must be converted to an equivalent string, otherwise the CSV module will
-    # save them Capitalized, while the frictionless specs asks for lowercase.
+    # Last round of processing: boolean values must be converted to an equivalent
+    # string, otherwise the CSV module will save them Capitalized, while the
+    # frictionless specs asks for lowercase.
     for entry in full_data_table:
         for key in entry:
             if entry[key] is True:
-                entry[key] = 'true'
+                entry[key] = "true"
             if entry[key] is False:
-                entry[key] = 'false'
+                entry[key] = "false"
 
     with open(output_csv_path, "w", newline="", encoding=CSV_ENCODING) as output_file:
         fc = csv.DictWriter(output_file, fieldnames=keys, delimiter=CSV_FIELD_DELIMITER)
@@ -161,14 +183,18 @@ def table_to_frictionless_csv(full_data_table, output_csv_path):
 
 def datetime_to_proper8601(
     d,
-):  # See https://stackoverflow.com/questions/19654578/python-utc-datetime-objects-iso-format-doesnt-include-z-zulu-or-zero-offset
+):
+    # See https://stackoverflow.com/questions/19654578/python-utc-datetime-objects-iso-
+    # format-doesnt-include-z-zulu-or-zero-offset
     return str(d).replace("+00:00", "Z")
 
 
 def write_descriptor(output_dir, full_data_table, source_metadata):
     content = {
         "radar": {
-            "identifiers": source_metadata['radar_identifiers'] # TODO: decide and docmuent what to do with that (in VPTS)
+            "identifiers": source_metadata[
+                "radar_identifiers"
+            ]  # TODO: decide and docmuent what to do with that (in VPTS)
         },
         "temporal": {
             "start": datetime_to_proper8601(full_data_table[0]["datetime"]),
@@ -181,7 +207,7 @@ def write_descriptor(output_dir, full_data_table, source_metadata):
                 "dialect": {"delimiter": CSV_FIELD_DELIMITER},
                 "schema": {"fields": []},
             }
-        ]
+        ],
     }
 
     with open(os.path.join(output_dir, DESCRIPTOR_FILENAME), "w") as outfile:
@@ -200,7 +226,8 @@ def save_to_vpts(full_data_table, output_dir, source_metadata: dict):
 @click.argument("ODIM_hdf5_profiles")
 @click.option("-o", "--output-dir-path", default="vpts_out")
 def cli(odim_hdf5_profiles, output_dir_path):
-    """This tool aggregate/convert a bunch of ODIM hdf5 profiles files to a single vpts data package"""
+    """This tool aggregate/convert a bunch of ODIM hdf5 profiles files to a
+    single vpts data package"""
     # Open all ODIM files
     click.echo("Opening all the source ODIM files...", nl=False)
     odims = [ODIMReader(path) for path in glob.glob(odim_hdf5_profiles, recursive=True)]
@@ -208,7 +235,8 @@ def cli(odim_hdf5_profiles, output_dir_path):
 
     if not odims:
         click.echo(
-            f"No source data file found, is the supplied pattern ({odim_hdf5_profiles}) correct?"
+            f"No source data file found, is the supplied "
+            f"pattern ({odim_hdf5_profiles}) correct?"
         )
         sys.exit(EXIT_NO_SOURCE_DATA)
 
@@ -231,10 +259,13 @@ def cli(odim_hdf5_profiles, output_dir_path):
     # Extract global (to all profiles) metadata, and return an error if inconsistent
     global_metadata = {}  # Shared between all profiles
     # Check all profile refer to the same radar:
-    if all(profile.radar_identifiers == profiles[0].radar_identifiers for profile in profiles):
-        global_metadata['radar_identifiers'] = profiles[0].radar_identifiers
+    if all(
+        profile.radar_identifiers == profiles[0].radar_identifiers
+        for profile in profiles
+    ):
+        global_metadata["radar_identifiers"] = profiles[0].radar_identifiers
     else:
-        click.echo(f"Inconsistent radar identifiers in the source odim files!")
+        click.echo("Inconsistent radar identifiers in the source odim files!")
         sys.exit(EXIT_INCONSISTENT_METADATA)
     click.echo("Done")
 
@@ -248,7 +279,9 @@ def cli(odim_hdf5_profiles, output_dir_path):
     click.echo("Done")
 
     click.echo("Saving to vpts...", nl=False)
-    save_to_vpts(full_data_table, output_dir=output_dir_path, source_metadata=global_metadata)
+    save_to_vpts(
+        full_data_table, output_dir=output_dir_path, source_metadata=global_metadata
+    )
     click.echo("Done")
 
 
@@ -263,8 +296,10 @@ if __name__ == "__main__":
     # cli(['--help'])
 
 # TODO: print progress during execution (+progress bar)
-# TODO: CSV dialect: explicitly configure + express in datapackage.json (already done for field separator)
+# TODO: CSV dialect: explicitly configure + express in datapackage.json
+# (already done for field separator)
 # TODO: Write a full integration test (takes a few ODIM and check the end result)
 # TODO: VPTS: replace vol2bird example (+table schema) by something more up-to-date
 # TODO: Put more metadata (radar, ...) in datapackage.json
-# TODO: The standard allows temporal gap, but no height gap. Make sure all input ODIM files have the same altitudes?
+# TODO: The standard allows temporal gap, but no height gap. Make sure all input
+# ODIM files have the same altitudes?
