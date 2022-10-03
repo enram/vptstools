@@ -130,3 +130,7 @@ dmypy.json
 
 # vscode
 .vscode/
+
+# Project custom data ignores
+data/
+draft/
