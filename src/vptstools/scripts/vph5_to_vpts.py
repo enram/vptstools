@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import List, Any
 
 import click
-from odimh5.reader import ODIMReader
+from vptstools.odimh5 import ODIMReader
 
 # Return codes (0 = success)
 EXIT_INVALID_SOURCE_FILE = 1

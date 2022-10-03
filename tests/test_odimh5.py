@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from odimh5.reader import ODIMReader
+from vptstools.odimh5 import ODIMReader
 
 
 def test_open_and_expose_hdf5(path_with_sample_odimh5):
