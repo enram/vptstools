@@ -13,6 +13,12 @@ Python 3.9+ is required.
 pip install vptstools
 ```
 
+In case you also need the tools/services to run the data transfers (sftp, S3), make sure to install the additional dependencies to transfer files:
+
+```
+pip install vptstools[transfer]
+```
+
 Included modules/commands:
 
 ### odimh5 module
