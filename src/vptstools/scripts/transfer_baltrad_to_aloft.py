@@ -1,6 +1,3 @@
-from ast import Tuple
-from constants import CONFIG_FILE
-
 # Simple Python script that:
 # - Connects via SFTP to the BALTRAD server
 # - For each VP file (pvol gets ignored), download the file from the server and upload it to the "aloft" S3 bucket
@@ -9,11 +6,14 @@ from constants import CONFIG_FILE
 # Use a simple config file named config.ini. Create one by copying config.template.ini and filling in the values.
 # If file already exists at destination => do nothing
 import os
+from ast import Tuple
 import tempfile
 from configparser import ConfigParser
 
 import boto3
 import paramiko
+
+from vptstools.scripts.constants import CONFIG_FILE
 
 
 def s3_key_exists(key: str, bucket: str, s3_client) -> bool:
@@ -21,7 +21,7 @@ def s3_key_exists(key: str, bucket: str, s3_client) -> bool:
     return "Contents" in results
 
 
-def extract_metadata_from_filename(filename: str) -> Tuple[str, str, str, str]):
+def extract_metadata_from_filename(filename: str) -> Tuple[str, str, str, str]:
     """Extract the metadata from the filename (format such as 'fropo_vp_20220809T051000Z_0xb')
 
     All returned values are strings, month and days are 0-prefixed if they are single-digit.

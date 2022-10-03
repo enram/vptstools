@@ -9,8 +9,8 @@ from pathlib import PurePath
 
 import boto3
 
-from constants import CONFIG_FILE
-from s3_list_helper import s3list
+from vptstools.scripts.constants import CONFIG_FILE
+from vptstools.s3_list_helper import s3list
 
 
 def main():
