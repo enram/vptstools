@@ -1,15 +1,21 @@
-from setuptools import setup, find_packages
+"""
+    Setup file for vptstools.
+    Use setup.cfg to configure your project.
 
-setup(
-    name="vptstools",
-    version="0.1.0",
-    packages=find_packages(),
-    include_package_data=True,
-    python_requires=">3.7.0",
-    install_requires=["Click==8.0.1", "odimh5==0.1.0"],
-    entry_points={
-        "console_scripts": [
-            "vph5_to_vpts = vptstools.scripts.vph5_to_vpts:cli",
-        ],
-    },
-)
+    This file was generated with PyScaffold 4.3.1.
+    PyScaffold helps you to put up the scaffold of your new Python project.
+    Learn more under: https://pyscaffold.org/
+"""
+from setuptools import setup
+
+if __name__ == "__main__":
+    try:
+        setup(use_scm_version={"version_scheme": "no-guess-dev"})
+    except:  # noqa
+        print(
+            "\n\nAn error occurred while building the project, "
+            "please ensure you have the most updated version of setuptools, "
+            "setuptools_scm and wheel with:\n"
+            "   pip install -U setuptools setuptools_scm wheel\n\n"
+        )
+        raise
