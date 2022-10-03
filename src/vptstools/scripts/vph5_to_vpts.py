@@ -3,6 +3,7 @@ import glob
 import json
 import os
 import sys
+from pathlib import Path
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import List, Any
@@ -162,7 +163,7 @@ def get_values(dataset, quantity: str, convert_to_bool: bool = False) -> List[An
             return values
 
 
-def table_to_frictionless_csv(full_data_table, output_csv_path):
+def table_to_frictionless_csv(full_data_table, file_path_output_csv):
     keys = full_data_table[0].keys()
 
     # Last round of processing: boolean values must be converted to an equivalent
@@ -175,7 +176,7 @@ def table_to_frictionless_csv(full_data_table, output_csv_path):
             if entry[key] is False:
                 entry[key] = "false"
 
-    with open(output_csv_path, "w", newline="", encoding=CSV_ENCODING) as output_file:
+    with open(file_path_output_csv, "w", newline="", encoding=CSV_ENCODING) as output_file:
         fc = csv.DictWriter(output_file, fieldnames=keys, delimiter=CSV_FIELD_DELIMITER)
         fc.writeheader()
         fc.writerows(full_data_table)
@@ -189,7 +190,7 @@ def datetime_to_proper8601(
     return str(d).replace("+00:00", "Z")
 
 
-def write_descriptor(output_dir, full_data_table, source_metadata):
+def write_descriptor(folder_path_output: Path, full_data_table, source_metadata):
     content = {
         "radar": {
             "identifiers": source_metadata[
@@ -210,16 +211,17 @@ def write_descriptor(output_dir, full_data_table, source_metadata):
         ],
     }
 
-    with open(os.path.join(output_dir, DESCRIPTOR_FILENAME), "w") as outfile:
+    with open(folder_path_output / DESCRIPTOR_FILENAME, "w") as outfile:
         json.dump(content, outfile, indent=4, sort_keys=True)
 
 
-def save_to_vpts(full_data_table, output_dir, source_metadata: dict):
-    os.mkdir(output_dir)
+def save_to_vpts(full_data_table, folder_path_output: Path, source_metadata: dict):
+    if not folder_path_output.exists():
+        folder_path_output.mkdir()
     table_to_frictionless_csv(
-        full_data_table, output_csv_path=os.path.join(output_dir, CSV_FILENAME)
+        full_data_table, output_csv_path=folder_path_output / CSV_FILENAME
     )
-    write_descriptor(output_dir, full_data_table, source_metadata)
+    write_descriptor(folder_path_output, full_data_table, source_metadata)
 
 
 @click.command()
