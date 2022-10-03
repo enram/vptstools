@@ -83,7 +83,7 @@ Before you work on any non-trivial code contribution it's best to first create a
 4. You should run:
 
    ```
-   pip install -U pip setuptools -e .[develop]
+   pip install -U pip setuptools -e .[develop,transfer]
    ```
 
    to be able to import the package under development in the Python REPL and installing the required development dependencies.
