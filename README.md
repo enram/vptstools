@@ -13,7 +13,11 @@ Python 3.9+ is required.
 pip install vptstools
 ```
 
-Included commands:
+Included modules/commands:
+
+### odimh5 module
+
+A simple module to access data in [ODIM HDF5](https://www.eumetnet.eu/wp-content/uploads/2019/01/ODIM_H5_v23.pdf) format.
 
 ### vph5_to_vpts
 
