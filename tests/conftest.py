@@ -24,3 +24,9 @@ def path_with_wrong_h5():
 def path_with_pvol():
     """Return the folder containing wrong ODIM hdf5 file (pvol)"""
     return SAMPlE_DATA_DIR / "vp_no_odim_h5"
+
+
+@pytest.fixture
+def path_with_sample_odimh5():
+    """Return the folder containing minimal unit test files"""
+    return SAMPlE_DATA_DIR / "odimh5" / "bewid_pvol_20170214T0000Z_0x1.h5"
