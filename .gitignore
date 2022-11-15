@@ -134,3 +134,4 @@ dmypy.json
 # Project custom data ignores
 data/
 draft/
+config.ini
