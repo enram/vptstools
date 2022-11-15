@@ -7,10 +7,15 @@ import h5py  # type: ignore
 import pytz
 
 
-class ODIMReader(object):
-    """Simple class to read ODIM (HDF5) files
+class InvalidSourceODIM(Exception):
+    pass
 
-    - Can be used with the "with" statement
+
+class ODIMReader(object):
+    """Read ODIM (HDF5) files with context manager
+
+    Should be used with the "with" statement  (context manager) to
+    properly close the h5 file.
     """
 
     def __enter__(self) -> ODIMReader:
@@ -34,6 +39,24 @@ class ODIMReader(object):
         """Get a list of all the dataset elements (names, as str)"""
         keys = list(self.hdf5)
         return [key for key in keys if "dataset" in key]
+
+    @property
+    def how(self) -> dict:
+        """Get the 'how' as dictionary"""
+        # TODO - add unit test
+        return dict(self.hdf5["how"].attrs)
+
+    @property
+    def where(self) -> dict:
+        """Get the 'where' as dictionary"""
+        # TODO - add unit test
+        return dict(self.hdf5["where"].attrs)
+
+    @property
+    def what(self) -> dict:
+        """Get the 'what' as dictionary"""
+        # TODO - add unit test
+        return dict(self.hdf5["what"].attrs)
 
     @property
     def root_date_str(self) -> str:
