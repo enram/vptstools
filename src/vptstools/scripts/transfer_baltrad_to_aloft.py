@@ -6,7 +6,6 @@
 # Use a simple config file named config.ini. Create one by copying config.template.ini and filling in the values.
 # If file already exists at destination => do nothing
 import os
-from ast import Tuple
 import tempfile
 from configparser import ConfigParser
 
@@ -21,7 +20,7 @@ def s3_key_exists(key: str, bucket: str, s3_client) -> bool:
     return "Contents" in results
 
 
-def extract_metadata_from_filename(filename: str) -> Tuple[str, str, str, str]:
+def extract_metadata_from_filename(filename: str) -> tuple:
     """Extract the metadata from the filename (format such as 'fropo_vp_20220809T051000Z_0xb')
 
     All returned values are strings, month and days are 0-prefixed if they are single-digit.
