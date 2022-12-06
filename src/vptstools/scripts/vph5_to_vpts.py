@@ -10,7 +10,7 @@ from typing import List, Any
 
 import click
 from vptstools.odimh5 import ODIMReader, InvalidSourceODIM
-from vptstools.vph5 import check_vp_odim, Profile
+from vptstools.vpts import check_vp_odim, Profile
 
 # Return codes (0 = success)
 EXIT_INVALID_SOURCE_FILE = 1
