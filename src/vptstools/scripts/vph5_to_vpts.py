@@ -10,7 +10,7 @@ from typing import List, Any
 
 import click
 from vptstools.odimh5 import ODIMReader, InvalidSourceODIM
-from vptstools.vpts import check_vp_odim, Profile
+from vptstools.vpts import check_vp_odim, vpts, vpts_to_csv
 
 # Return codes (0 = success)
 EXIT_INVALID_SOURCE_FILE = 1
@@ -46,38 +46,35 @@ def cli(odim_hdf5_profiles, output_dir_path):
             sys.exit(EXIT_INVALID_SOURCE_FILE)
     click.echo("Done")
 
-    click.echo("Building and sorting profiles...", nl=False)
-    # Profiles will be sorted by datetimes, and (in each) levels by height
-    profiles = sorted([Profile.from_odim(odim) for odim in odims])
-    click.echo("Done")
+    # click.echo("Building and sorting profiles...", nl=False)
+    # # Profiles will be sorted by datetimes, and (in each) levels by height
+    # profiles = sorted([Profile.from_odim(odim) for odim in odims])
+    # click.echo("Done")
 
-    click.echo("Checking consistency of input files...", nl=False)
-    # Extract global (to all profiles) metadata, and return an error if inconsistent
-    global_metadata = {}  # Shared between all profiles
-    # Check all profile refer to the same radar:
-    if all(
-        profile.radar_identifiers == profiles[0].radar_identifiers
-        for profile in profiles
-    ):
-        global_metadata["radar_identifiers"] = profiles[0].radar_identifiers
-    else:
-        click.echo("Inconsistent radar identifiers in the source odim files!")
-        sys.exit(EXIT_INCONSISTENT_METADATA)
-    click.echo("Done")
+    # Ask Peter - what with consistency?
+
+    # click.echo("Checking consistency of input files...", nl=False)
+    # # Extract global (to all profiles) metadata, and return an error if inconsistent
+    # global_metadata = {}  # Shared between all profiles
+    # # Check all profile refer to the same radar:
+    # if all(
+    #     profile.radar_identifiers == profiles[0].radar_identifiers
+    #     for profile in profiles
+    # ):
+    #     global_metadata["radar_identifiers"] = profiles[0].radar_identifiers
+    # else:
+    #     click.echo("Inconsistent radar identifiers in the source odim files!")
+    #     sys.exit(EXIT_INCONSISTENT_METADATA)
+    # click.echo("Done")
 
     click.echo("Aggregating data...", nl=False)
     # Aggregate the tables for each profile to a single one
-    full_data_table = []
-    for profile in profiles:
-        table = profile.to_table()
-        for row in table:
-            full_data_table.append((row))
+    df_vpts = vpts(odims, "v1")
     click.echo("Done")
 
     click.echo("Saving to vpts...", nl=False)
-    save_to_vpts(
-        full_data_table, folder_path_output=Path(output_dir_path), source_metadata=global_metadata
-    )
+    vpts_to_csv(df_vpts, Path(output_dir_path) / "vpts.csv", descriptor=False)
+
     click.echo("Done")
 
 
