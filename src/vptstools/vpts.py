@@ -1,26 +1,29 @@
 import csv
 import json
+from pathlib import Path
 import functools
 import multiprocessing
 from datetime import datetime
 from typing import List, Any
 from abc import ABC, abstractmethod
-from pathlib import Path
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 
 import pandas as pd
 import numpy as np
 
 from vptstools.odimh5 import ODIMReader, InvalidSourceODIM
 
-
 NODATA = ""
 UNDETECT = "NaN"
 
 DESCRIPTOR_FILENAME = "datapackage.json"
-CSV_FILENAME = "vpts.csv"
 CSV_ENCODING = "utf8"  # !! Don't change, only utf-8 is accepted in data packages
 CSV_FIELD_DELIMITER = ","
+
+class VptsCsvVersionError(Exception):
+    """Raised when non supported VPTS version is asked"""
+    pass
+
 
 def check_vp_odim(source_odim: ODIMReader) -> None:
     """Verify ODIM file is an hdf5 ODIM format containing 'VP' data."""
@@ -86,32 +89,23 @@ def _odim_get_variables(dataset, variable_mapping: dict, quantity: str) -> List[
     return values
 
 
-@dataclass
-class Level:
-    height: float  # Coded as a 64-bit float in HDF5 file
-    variables: dict = field(default_factory=dict)
-
-    def __lt__(self, other):  # Allows sorting by height
-        return self.height < other.height
-
-
 class AbstractVptsCsv(ABC):
     """Abstract class to define VPTS CSV conversion rules"""
 
     @property
     @abstractmethod
-    def nodata(self):
+    def nodata(self) -> str:
         """'No data' representation"""
         return ""
 
     @property
     @abstractmethod
-    def undetect(self):
+    def undetect(self) -> str:
         """'Undetect' representation"""
         return "NaN"
 
     @property
-    def level_name(self):
+    def level_name(self) -> str:
         """Column name of the level/height data column"""
         return "height"
 
@@ -121,27 +115,26 @@ class AbstractVptsCsv(ABC):
         return {}
 
     @property
-    def sort(self) -> list:
+    def sort(self) -> dict:
         """Columns to define row order"""
         return {"radar" : str, "datetime": str, "height": int}
 
     @property
-    def variables(self):
+    def variables(self) -> list:
         """Variables to extract from ODIM level data"""
         return ["u", "v", "w", "ff", "dd", "sd_vvp", "gap", "eta",
                 "dens", "dbz", "dbz_all", "n", "n_dbz", "n_all",
                 "n_dbz_all"]
 
     @property
-    def cast_to_bool(self):
+    def cast_to_bool(self) -> list:
         """Define the variables that need to be converted to TRUE/FALSE"""
         return ["gap"]
 
     @property
     def order(self) -> list:
         """Column order of the output table"""
-        # TODO - Add check to verify column combination
-        return ["radar", "datetime", "height"] + self.variables + \
+        return ["radar", "datetime", self.level_name] + self.variables + \
             ["rcs", "sd_vvp_threshold", "vcp",
              "radar_longitude", "radar_latitude",
              "radar_height", "radar_wavelength"]
@@ -188,6 +181,23 @@ class VptsCsvV1(AbstractVptsCsv):
         return {
             "DBZH" : "dbz_all"
         }
+
+
+def _get_vpts_version(version: str):
+    """Link version ID with correct class"""
+    if version == "v1":
+        return VptsCsvV1()
+    else:
+        raise VptsCsvVersionError(f"Version {version} not supported.")
+
+
+@dataclass
+class Level:
+    height: float  # Coded as a 64-bit float in HDF5 file
+    variables: dict = field(default_factory=dict)
+
+    def __lt__(self, other):  # Allows sorting by height
+        return self.height < other.height
 
 
 @dataclass(frozen=True)
@@ -274,8 +284,7 @@ class BirdProfile:
             ]
 
         The list is sorted by altitude. The datetime is obviously identical for all
-        entries. If prepare_for_csv is True, data is transformed to fit the final
-        CSV format (data types, ...)
+        entries. The representaion is independent from the VPTS CSV representation
         """
         rows = []
 
@@ -337,14 +346,14 @@ class BirdProfile:
         )
 
 
-def vp(file_path, vpts_csv):
+def vp(file_path, vpts_csv_version="v1"):
     """Convert ODIM h5 file to a DataFrame
 
     Parameters
     ----------
     file_path : Path
         File Path of ODIM h5
-    vpts_csv : AbstractVptsCsv
+    vpts_csv_version : str
         Ruleset with the VPTS-CSV ruleset to use
 
     Examples
@@ -354,17 +363,17 @@ def vp(file_path, vpts_csv):
     """
     with ODIMReader(file_path) as odim_vp:
         vp = BirdProfile.from_odim(odim_vp)
-    return vp.to_vp(vpts_csv)
+    return vp.to_vp(_get_vpts_version(vpts_csv_version))
 
 
-def vpts(file_paths, vpts_csv):
+def vpts(file_paths, vpts_csv_version="v1"):
     """Convert set of h5 files to a DataFrame all as string
 
     Parameters
     ----------
     file_paths : Iterable of file paths
         Iterable of ODIM h5 file paths
-    vpts_csv : AbstractVptsCsv
+    vpts_csv_version : str
         Ruleset with the VPTS-CSV ruleset to use
 
     Examples
@@ -373,12 +382,88 @@ def vpts(file_paths, vpts_csv):
     >>> vpts(file_paths)
     """
     with multiprocessing.Pool(processes = (multiprocessing.cpu_count() - 1)) as pool:
-        data = pool.map(vp, file_paths)
+        data = pool.map(functools.partial(vp, vpts_csv_version=vpts_csv_version), file_paths)
+    # TODO - heights; requirement to have the same heights in each file
+    # TODO - ask Peter -> ignore or Error?
+    # TODO - constraints -> how to handle these? ignore or error?
+
+    # TODO - add other consistency checks -- verify with Peter
+    # - profile.radar_identifiers need to be the same; requirement to have same radar
+    #
     vpts = pd.concat(data)
 
     # Remove duplicates by taking first, see https://github.com/enram/vptstools/issues/11
     vpts = vpts.drop_duplicates(subset=["radar", "datetime", "height"])
 
     # Convert according to defined ruleset
+    vpts_csv = _get_vpts_version(vpts_csv_version)
     vpts = vpts.astype(vpts_csv.sort).sort_values(by=list(vpts_csv.sort.keys())).astype(str)
     return vpts
+
+
+def vpts_to_csv(df, file_path, descriptor=False):
+    """Write vp or vpts to file
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame with vp or vpts data
+    file_path : Path | str
+        File path to store the VPTS CSV file
+    """
+    # check for str input of Path
+    if not isinstance(file_path, Path):
+        file_path = Path(file_path)
+
+    # create directory if not yet existing
+    file_path.parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(file_path, sep=CSV_FIELD_DELIMITER,
+              encoding=CSV_ENCODING, index=False)
+    if descriptor:
+        _write_descriptor(file_path)
+
+
+def _write_descriptor(vpts_file_path: Path):
+    """"""
+    # FROM - https://github.com/enram/vptstools/issues/10
+    content = {
+        "profile": "tabular-data-package",
+        "resources": [
+            {
+            "name": "vpts",
+            "path": vpts_file_path.name,
+            "profile": "tabular-data-resource",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": CSV_ENCODING,
+            "dialect": {"delimiter": CSV_FIELD_DELIMITER},
+            "schema": "https://raw.githubusercontent.com/enram/vpts-csv/main/vpts-csv-table-schema.json"
+            }
+        ]
+    }
+
+    ## TODO - ask Peter - what to do with the descriptor format?
+    ## # --existing code  ? we can have multiple radars? or a radar for each file?
+    # content = {
+    #     "radar": {
+    #         "identifiers": source_metadata[
+    #             "radar_identifiers"
+    #         ]  # TODO: decide and docmuent what to do with that (in VPTS)
+    #     },
+    #     "temporal": {
+    #         "start": datetime_to_proper8601(full_data_table[0]["datetime"]),
+    #         "end": datetime_to_proper8601(full_data_table[-1]["datetime"]),
+    #     },
+    #     "resources": [
+    #         {
+    #             "name": "VPTS data",
+    #             "path": CSV_FILENAME,
+    #             "dialect": {"delimiter": CSV_FIELD_DELIMITER},
+    #             "schema": {"fields": []},
+    #         }
+    #     ],
+    # }
+    vpts_file_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(vpts_file_path.parent / DESCRIPTOR_FILENAME, "w") as outfile:
+        json.dump(content, outfile, indent=4, sort_keys=True)
