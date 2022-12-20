@@ -20,6 +20,8 @@ DESCRIPTOR_FILENAME = "datapackage.json"
 CSV_ENCODING = "utf8"  # !! Don't change, only utf-8 is accepted in data packages
 CSV_FIELD_DELIMITER = ","
 
+# TODO - make logical file split of the functionalit
+
 class VptsCsvVersionError(Exception):
     """Raised when non supported VPTS version is asked"""
     pass
@@ -55,6 +57,12 @@ def datetime_to_proper8601(timestamp):
     return timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
+def number_to_bool_str(values):
+    """"""
+    to_bool = {1: "TRUE", 0: "FALSE"}
+    return [to_bool[value] for value in values]
+
+
 def _odim_get_variables(dataset, variable_mapping: dict, quantity: str) -> List[Any]:
     """In a given dataset, find the requested quantity and return a 1d list
     of the values
@@ -76,7 +84,7 @@ def _odim_get_variables(dataset, variable_mapping: dict, quantity: str) -> List[
     In order to handle the 'nodata' and 'undetect', a list overcomes casting as is done
     when using numpy in this case (and the non exsitence of Nan for integer in numpy).
     """
-    # TODO - check with Peter what to do with the gain/offset
+    # TODO - check with Adriaan what to do with the gain/offset
     data_group = variable_mapping[quantity]
 
     nodata_val = dataset[data_group]["what"].attrs["nodata"]
@@ -105,82 +113,117 @@ class AbstractVptsCsv(ABC):
         return "NaN"
 
     @property
-    def level_name(self) -> str:
-        """Column name of the level/height data column"""
-        return "height"
-
-    @property
-    def mapping(self) -> dict:
-        """Variable names that require renaming from ODIM -> standard"""
-        return {}
-
-    @property
+    @abstractmethod
     def sort(self) -> dict:
-        """Columns to define row order"""
-        return {"radar" : str, "datetime": str, "height": int}
+        """Columns to define row order
+
+        The dict need to provide the column name in
+        combination with the data type to use for
+        the sorting, e.g.::
+
+            dict(radar=str, datetime=str, height=int)
+
+        As the data is returned as strings, casting to the data
+        is done before sorting, after which the casting to str
+        is applied again.
+        """
+        return dict()
 
     @property
-    def variables(self) -> list:
-        """Variables to extract from ODIM level data"""
-        return ["u", "v", "w", "ff", "dd", "sd_vvp", "gap", "eta",
-                "dens", "dbz", "dbz_all", "n", "n_dbz", "n_all",
-                "n_dbz_all"]
+    @abstractmethod
+    def mapping(self) -> dict:
+        """Translation from bird-profile to vtps CSV data standard.
 
-    @property
-    def cast_to_bool(self) -> list:
-        """Define the variables that need to be converted to TRUE/FALSE"""
-        return ["gap"]
+        Data columns can be derived from the different attributes of the
+        bird profile:
 
-    @property
-    def order(self) -> list:
-        """Column order of the output table"""
-        return ["radar", "datetime", self.level_name] + self.variables + \
-            ["rcs", "sd_vvp_threshold", "vcp",
-             "radar_longitude", "radar_latitude",
-             "radar_height", "radar_wavelength"]
+            - ``identifiers``: radar identification metadata
+            - ``datetime``: the timestamp
+            - ``levels``: the heights or levels of the measurement
+            - ``variables``: the variables in the data (e.g. dd, ff, u,...)
+            - ``how``: ODIM5 metadata
+            - ``where``: ODIM5 metadata
+            - ``what``: ODIM5 metadata
 
-    def metadata(self, bird_profile) -> dict:
-        """Metadata values to extract from ODIM returned as str values
+        An example of the dict to return::
 
-        Parameters
-        ----------
-        bird_profile : BirdProfile
-            BirdProfile to extract metadata from.
+            dict(
+                radar=bird_profile.identifiers["NOD"],
+                height=bird_profile.levels,
+                u=bird_profile.variables["u"],
+                v=bird_profile.variables["v"],
+                vcp=int(bird_profile.how["vcp"])
+            )
+
+        As data is extracted as suchn additional helper functions can
+        be added as well, e.g.::
+
+            ...
+            datetime=datetime_to_proper8601(bird_profile.datetime),
+            gap=number_to_bool_str(bird_profile.variables["gap"]),
+            radar_latitude=np.round(bird_profile.where["lat"], 6)
+            ...
 
         Notes
         -----
-        "datetime" is required to merge with the level data.
+        The order of the variables matter, as this defines the column
+        order.
         """
-        timestamp = datetime_to_proper8601(bird_profile.datetime)
-        return dict(
-            datetime=timestamp,
-            radar=bird_profile.identifiers.get('NOD'),
-            rcs=str(bird_profile.how["rcs_bird"]),
-            sd_vvp_threshold=str(bird_profile.how["sd_vvp_thresh"]),
-            vcp=str(int(bird_profile.how["vcp"])),
-            radar_longitude=str(np.round(bird_profile.where["lon"], 6)),
-            radar_latitude=str(np.round(bird_profile.where["lat"], 6)),
-            radar_height=str(int(bird_profile.where["height"])),
-            radar_wavelength=str(np.round(bird_profile.how["wavelength"], 6)),
-        )
+        return dict()
 
 
 class VptsCsvV1(AbstractVptsCsv):
 
     @property
-    def nodata(self):
+    def nodata(self) -> str:
+        """'No data' representation"""
         return ""
 
     @property
-    def undetect(self):
+    def undetect(self) -> str:
+        """'Undetect' representation"""
         return "NaN"
 
     @property
-    def mapping(self):
-        """Variables that require renaming from ODIM file -> VPTS CSV standard"""
-        return {
-            "DBZH" : "dbz_all"
-        }
+    def sort(self) -> dict:
+        """Columns to define row order"""
+        return dict(radar=str, datetime=str, height=int)
+
+    def mapping(self, bird_profile):
+        """Translation from bird-profile to vtps CSV data standard.
+
+        Notes
+        -----
+        The order of the variables matter, as this defines the column
+        order.
+        """
+        return dict(
+            radar=bird_profile.identifiers["NOD"],
+            datetime=datetime_to_proper8601(bird_profile.datetime),
+            height=bird_profile.levels,
+            u=bird_profile.variables["u"],
+            v=bird_profile.variables["v"],
+            w=bird_profile.variables["w"],
+            ff=bird_profile.variables["ff"],
+            dd=bird_profile.variables["dd"],
+            sd_vvp=bird_profile.variables["sd_vvp"],
+            gap=number_to_bool_str(bird_profile.variables["gap"]),
+            eta=bird_profile.variables["eta"],
+            dens=bird_profile.variables["dens"],
+            dbz=bird_profile.variables["dbz"],
+            dbz_all=bird_profile.variables["DBZH"],
+            n=bird_profile.variables["n"],
+            n_dbz=bird_profile.variables["n_dbz"],
+            n_all=bird_profile.variables["n_all"],
+            n_dbz_all=bird_profile.variables["n_dbz_all"],
+            rcs=bird_profile.how["rcs_bird"],
+            sd_vvp_threshold=bird_profile.how["sd_vvp_thresh"],
+            vcp=int(bird_profile.how["vcp"]),
+            radar_longitude=np.round(bird_profile.where["lon"], 6),
+            radar_latitude=np.round(bird_profile.where["lat"], 6),
+            radar_height=int(bird_profile.where["height"]),
+            radar_wavelength=np.round(bird_profile.how["wavelength"], 6)
+        )
 
 
 def _get_vpts_version(version: str):
@@ -189,15 +232,6 @@ def _get_vpts_version(version: str):
         return VptsCsvV1()
     else:
         raise VptsCsvVersionError(f"Version {version} not supported.")
-
-
-@dataclass
-class Level:
-    height: float  # Coded as a 64-bit float in HDF5 file
-    variables: dict = field(default_factory=dict)
-
-    def __lt__(self, other):  # Allows sorting by height
-        return self.height < other.height
 
 
 @dataclass(frozen=True)
@@ -218,7 +252,8 @@ class BirdProfile:
     what: dict
     where: dict
     how: dict
-    levels: List[Level] = field(default_factory=list)
+    levels: List[int]
+    variables: dict
 
     def __lt__(self, other):  # Allows sorting by datetime
         return self.datetime < other.datetime
@@ -231,7 +266,7 @@ class BirdProfile:
         """"""
         return f"Bird profile: {self.datetime:%Y-%m-%d %H:%M} - {self.identifiers}"
 
-    def to_vp(self, vpts_csv):
+    def to_vp(self, vpts_csv_version):
         """Convert profile data to a CSV
 
         Parameters
@@ -246,63 +281,19 @@ class BirdProfile:
         this overcomes int to float conversion when Nans are available as no int NaN
         is supported by Pandas.
         """
-        df = pd.DataFrame(self.data_table, dtype=str)
-
-        # Add metadata as specified in standard
-        metadata = pd.DataFrame([vpts_csv.metadata(self)]).astype(str)
-        df = df.merge(metadata, on=["radar", "datetime"])
-
-        # Adjust to standard column name mapping
-        df = df.rename(columns={"height": vpts_csv.level_name, **vpts_csv.mapping})
+        df = pd.DataFrame(vpts_csv_version.mapping(self), dtype=str)
 
         # Adjust to standard undetect/nodata data mapping
         # Workaround to specify columns with those value only;
         # otherwise other columns are casted to numbers
         #df[df.columns[(df == UNDETECT).any()]] = df[df.columns[(df == UNDETECT).any()]].replace(UNDETECT, vpts_csv.undetect)
         #df[df.columns[(df == NODATA).any()]] = df[df.columns[(df == NODATA).any()]].replace(NODATA, vpts_csv.nodata)
-        df = df.replace({UNDETECT: vpts_csv.undetect, NODATA: vpts_csv.nodata})
-
-        # Select relevant variables in order of standard
-        df = df[vpts_csv.order]
-
-        # Convert to (str representation of) boolean TRUE/FALSE
-        for variable in vpts_csv.cast_to_bool:
-            df[variable] = df[variable].replace({"1": "TRUE", "0": "FALSE"})
+        df = df.replace({UNDETECT: vpts_csv_version.undetect, NODATA: vpts_csv_version.nodata})
 
         # sort the data according to sorting rule
-        df = df.astype(vpts_csv.sort).sort_values(by=list(vpts_csv.sort.keys())).astype(str)
+        df = df.astype(vpts_csv_version.sort).sort_values(by=list(vpts_csv_version.sort.keys())).astype(str)
+
         return df
-
-    @functools.cached_property
-    def data_table(self):
-        """Return a list of dicts representing the content of the profile,
-        such as::
-
-            [
-                { radar: "bejab", datetime: x, height: 0.0, ff: 8.23, ... },
-                { radar: "bejab", datetime: x, height: 200.0, ff: 5.23, ...}
-            ]
-
-        The list is sorted by altitude. The datetime is obviously identical for all
-        entries. The representaion is independent from the VPTS CSV representation
-        """
-        rows = []
-
-        for level in self.levels:
-            rows.append(
-                {
-                    "radar": self.identifiers.get('NOD'),
-                    "datetime": self.datetime,
-                    "height": level.height,
-                    **level.variables
-                }
-            )
-
-        for i, row in enumerate(rows):
-            rows[i]["datetime"] = datetime_to_proper8601(row["datetime"])
-            rows[i]["height"] = int(row["height"])
-
-        return rows
 
     @classmethod
     def from_odim(cls, source_odim: ODIMReader):
@@ -320,21 +311,14 @@ class BirdProfile:
             }
         height_values = _odim_get_variables(dataset1, variable_mapping, quantity="HGHT")
 
-        levels = []
-        for i, height in enumerate(height_values):
-            levels.append(
-                Level(
-                    height=height,
-                    variables={
-                        variable: _odim_get_variables(
-                            dataset1,
-                            variable_mapping,
-                            quantity=variable
-                        )[i]
-                        for variable in variable_mapping.keys()
-                    },
+        variable_mapping.pop("HGHT")
+        variables = dict()
+        for variable in variable_mapping.keys():
+            variables[variable] = _odim_get_variables(
+                dataset1,
+                variable_mapping,
+                quantity=variable
                 )
-            )
 
         return cls(
             datetime=source_odim.root_datetime,
@@ -342,7 +326,8 @@ class BirdProfile:
             what=dict(source_odim.what),
             where=dict(source_odim.where),
             how=dict(source_odim.how),
-            levels=sorted(levels)
+            levels=[int(height) for height in height_values],
+            variables=variables
         )
 
 
@@ -383,9 +368,6 @@ def vpts(file_paths, vpts_csv_version="v1"):
     """
     with multiprocessing.Pool(processes = (multiprocessing.cpu_count() - 1)) as pool:
         data = pool.map(functools.partial(vp, vpts_csv_version=vpts_csv_version), file_paths)
-    # TODO - heights; requirement to have the same heights in each file
-    # TODO - ask Peter -> ignore or Error?
-    # TODO - constraints -> how to handle these? ignore or error?
 
     # TODO - add other consistency checks -- verify with Peter
     # - profile.radar_identifiers need to be the same; requirement to have same radar
@@ -441,28 +423,6 @@ def _write_descriptor(vpts_file_path: Path):
             }
         ]
     }
-
-    ## TODO - ask Peter - what to do with the descriptor format?
-    ## # --existing code  ? we can have multiple radars? or a radar for each file?
-    # content = {
-    #     "radar": {
-    #         "identifiers": source_metadata[
-    #             "radar_identifiers"
-    #         ]  # TODO: decide and docmuent what to do with that (in VPTS)
-    #     },
-    #     "temporal": {
-    #         "start": datetime_to_proper8601(full_data_table[0]["datetime"]),
-    #         "end": datetime_to_proper8601(full_data_table[-1]["datetime"]),
-    #     },
-    #     "resources": [
-    #         {
-    #             "name": "VPTS data",
-    #             "path": CSV_FILENAME,
-    #             "dialect": {"delimiter": CSV_FIELD_DELIMITER},
-    #             "schema": {"fields": []},
-    #         }
-    #     ],
-    # }
     vpts_file_path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(vpts_file_path.parent / DESCRIPTOR_FILENAME, "w") as outfile:
