@@ -1,6 +1,6 @@
 import pytest
 
-from frictionless import validate
+from frictionless import validate, validate_resource
 from vptstools.odimh5 import ODIMReader
 from vptstools.vpts import (vpts, vpts_to_csv,
                             _get_vpts_version, BirdProfile,
@@ -24,15 +24,10 @@ class TestVptsVersionClass():
         assert isinstance(vpts_spec.nodata, str)
         assert isinstance(vpts_spec.undetect, str)
 
-    def test_level_name_str(self, vpts_version):
-        """vpts returns a label to use as level reprented column name"""
-        vpts_spec = vpts_version()
-        assert isinstance(vpts_spec.level_name, str)
-
     def test_mapping_dict(self, vpts_version):
         """vpts returns a dictionary to translate specific variables"""
         vpts_spec = vpts_version()
-        assert isinstance(vpts_spec.mapping, dict)
+        # TODO - add additional checks
 
     def test_sort_columns(self, vpts_version):
         """vpts returns a non-empty dictionary to define the mapping"""
@@ -42,37 +37,6 @@ class TestVptsVersionClass():
         assert bool(vpts_spec.sort)
         # values define if it need to defined as str, int or float
         assert set(vpts_spec.sort.values()).issubset([int, float, str])
-
-    def test_variables_list(self, vpts_version):
-        """vpts returns list of variables from odim"""
-        vpts_spec = vpts_version()
-        assert isinstance(vpts_spec.variables, list)
-
-    def test_cast_to_bool_list(self, vpts_version):
-        """vpts returns list of variables to cast to boolean"""
-        vpts_spec = vpts_version()
-        assert isinstance(vpts_spec.cast_to_bool, list)
-        # variables need to be defined as variables in class
-        assert set(vpts_spec.cast_to_bool).issubset(vpts_spec.variables)
-
-    def test_order_list(self, vpts_version, path_with_vp):
-        """vpts returns list of variables to cast to boolean"""
-        vpts_spec = vpts_version()
-        assert isinstance(vpts_spec.order, list)
-        # names need to be combination of metadata, level & var columns
-        vp_file = next(path_with_vp.rglob("*.h5"))
-        with ODIMReader(vp_file) as odim_vp:
-            vp = BirdProfile.from_odim(odim_vp)
-        set(vpts_spec.order ) == set(list(vpts_spec.metadata(vp).keys()) + [vpts_spec.level_name] + vpts_spec.variables)
-
-    def test_metadata_str(self, vpts_version, path_with_vp):
-        """Metadata extraction returns all str values"""
-        vpts_spec = vpts_version()
-        vp_file = next(path_with_vp.rglob("*.h5"))
-        with ODIMReader(vp_file) as odim_vp:
-            vp = BirdProfile.from_odim(odim_vp)
-
-        assert all([isinstance(value, str) for value in vpts_spec.metadata(vp).values()])
 
 class TestVptsVersionMapper():
 
@@ -102,6 +66,8 @@ class TestVpts():
 
         vpts_to_csv(df_vpts, tmp_path / "vpts.csv", descriptor=True)
 
+        #validate_resource() # TODO ) convert to validate resource
+
         report = validate(tmp_path / "datapackage.json")
         assert report["stats"]["errors"] == 0
 
@@ -117,7 +83,9 @@ class TestVpts():
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
         vpts_spec = _get_vpts_version(vpts_version)
-        assert list(df_vpts.columns) == vpts_spec.order
+        with ODIMReader(file_paths[0]) as odim_vp:
+            bird_profile = BirdProfile.from_odim(odim_vp)
+        assert list(df_vpts.columns) == list(vpts_spec.mapping(bird_profile).keys())
 
     def test_duplicate_entries(self, vpts_version, path_with_vp):
         """Pick only first if duplicate entries (radar, datetime and height combination) are present."""
@@ -151,17 +119,10 @@ class TestVpts():
 
     def test_heights_all_the_same(self, vpts_version, path_with_vp):
         """vpts data contains the same levels/heights for each timestamp/radar"""
-        # TODO - ask Peter - unit test material or just blocking in routine?
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
         levels = df_vpts.groupby(["radar", "datetime"])["height"].unique()
         assert len(levels.apply(pd.Series).astype(int).drop_duplicates()) == 1
-
-    def test_constraints(self, vpts_version):
-        """vpts variables are within the constraints of the VPTS CSV standard"""
-        # TODO - ask Peter - unit test material or just blocking in routine?
-        # Note - we can not test for this, but we can test the handling (error?)
-        assert True
 
 
 @pytest.mark.parametrize("vpts_version", ["v1"])
@@ -187,20 +148,6 @@ class TestVptsToCsv:
 
 
 class TestBirdProfile:
-
-    def test_data_table_cache(self, path_with_vp):
-        """Data table property is memoized"""
-        vp_file = next(path_with_vp.rglob("*.h5"))
-        with ODIMReader(vp_file) as odim_vp:
-            vp = BirdProfile.from_odim(odim_vp)
-        assert "data_table" not in vp.__dict__
-        vp.data_table
-        # check if metadata is memoized
-        assert "data_table" in vp.__dict__
-
-    def test_data_table_format(self, path_with_vp):
-        """data_table is a list of dicst with the data"""
-        assert True # TODO
 
     def test_from_odim(self, path_with_vp):
         """odim format is correctly mapped"""
