@@ -7,20 +7,20 @@ from datetime import datetime
 from typing import List, Any
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+import tempfile
 
 import pandas as pd
 import numpy as np
+from frictionless import validate
 
 from vptstools.odimh5 import ODIMReader, InvalidSourceODIM
 
 NODATA = ""
 UNDETECT = "NaN"
 
-DESCRIPTOR_FILENAME = "datapackage.json"
-CSV_ENCODING = "utf8"  # !! Don't change, only utf-8 is accepted in data packages
+DESCRIPTOR_FILENAME = "vpts.resource.json"
+CSV_ENCODING = "utf8"  # !! Don't change, only utf-8 is accepted in frictionless resources
 CSV_FIELD_DELIMITER = ","
-
-# TODO - make logical file split of the functionalit
 
 
 class VptsCsvVersionError(Exception):
@@ -255,7 +255,7 @@ class BirdProfile:
     (no data simplification/loss at this stage). Use the `from_odim` method
     as a convenient instantiation.
     """
-    identifiers: dict # {'WMO':'06477', 'NOD':'bewid', 'RAD':'BX41', 'PLC':'Wideumont'}
+    identifiers: dict  # {'WMO':'06477', 'NOD':'bewid', 'RAD':'BX41', 'PLC':'Wideumont'}
     datetime: datetime
     what: dict
     where: dict
@@ -280,7 +280,7 @@ class BirdProfile:
         Parameters
         ----------
         vpts_csv_version : AbstractVptsCsv
-            Ruleset with the VPTS-CSV ruleset to use
+            Ruleset with the VPTS-CSV ruleset to use, e.g. v1
 
         Notes
         -----
@@ -291,11 +291,6 @@ class BirdProfile:
         """
         df = pd.DataFrame(vpts_csv_version.mapping(self), dtype=str)
 
-        # Adjust to standard undetect/nodata data mapping
-        # Workaround to specify columns with those value only;
-        # otherwise other columns are casted to numbers
-        #df[df.columns[(df == UNDETECT).any()]] = df[df.columns[(df == UNDETECT).any()]].replace(UNDETECT, vpts_csv.undetect)
-        #df[df.columns[(df == NODATA).any()]] = df[df.columns[(df == NODATA).any()]].replace(NODATA, vpts_csv.nodata)
         df = df.replace({UNDETECT: vpts_csv_version.undetect, NODATA: vpts_csv_version.nodata})
 
         # sort the data according to sorting rule
@@ -347,7 +342,7 @@ def vp(file_path, vpts_csv_version="v1"):
     file_path : Path
         File Path of ODIM h5
     vpts_csv_version : str
-        Ruleset with the VPTS-CSV ruleset to use
+        Ruleset with the VPTS-CSV ruleset to use, e.g. v1
 
     Examples
     --------
@@ -367,7 +362,7 @@ def vpts(file_paths, vpts_csv_version="v1"):
     file_paths : Iterable of file paths
         Iterable of ODIM h5 file paths
     vpts_csv_version : str
-        Ruleset with the VPTS-CSV ruleset to use
+        Ruleset with the VPTS-CSV ruleset to use, e.g. v1
 
     Examples
     --------
@@ -412,26 +407,44 @@ def vpts_to_csv(df, file_path, descriptor=False):
     df.to_csv(file_path, sep=CSV_FIELD_DELIMITER,
               encoding=CSV_ENCODING, index=False)
     if descriptor:
-        _write_descriptor(file_path)
+        _write_resource_descriptor(file_path)
 
 
-def _write_descriptor(vpts_file_path: Path):
-    """"""
-    # FROM - https://github.com/enram/vptstools/issues/10
+def validate_vpts(df):
+    """Validate vpts DataFrame against the frictionless data schema and return report
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame as created by the vp or vpts functions
+
+    Returns
+    -------
+    dict
+        Frictionless validation report
+    """
+    tmp_path = Path(tempfile.mkdtemp())
+    vpts_to_csv(df, tmp_path / "vpts.csv", descriptor=True)
+    report = validate(tmp_path / DESCRIPTOR_FILENAME)
+    return report
+
+
+def _write_resource_descriptor(vpts_file_path: Path):
+    """Write a frictionless resource descriptor file
+
+    Parameters
+    ----------
+    vpts_file_path : pathlib.Path
+        File path of the resource (vpts file) written to disk
+    """
     content = {
-        "profile": "tabular-data-package",
-        "resources": [
-            {
-            "name": "vpts",
-            "path": vpts_file_path.name,
-            "profile": "tabular-data-resource",
-            "format": "csv",
-            "mediatype": "text/csv",
-            "encoding": CSV_ENCODING,
-            "dialect": {"delimiter": CSV_FIELD_DELIMITER},
-            "schema": "https://raw.githubusercontent.com/enram/vpts-csv/main/vpts-csv-table-schema.json"
-            }
-        ]
+        "name": "vpts",
+        "path": vpts_file_path.name,
+        "format": "csv",
+        "mediatype": "text/csv",
+        "encoding": CSV_ENCODING,
+        "dialect": {"delimiter": CSV_FIELD_DELIMITER},
+        "schema": "https://raw.githubusercontent.com/enram/vpts-csv/main/vpts-csv-table-schema.json"
     }
     vpts_file_path.parent.mkdir(parents=True, exist_ok=True)
 

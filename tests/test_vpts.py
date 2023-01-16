@@ -1,14 +1,13 @@
-import collections
-
 import pytest
 import numpy as np
-from frictionless import validate, validate_resource
+from frictionless import validate
 
 from vptstools.odimh5 import ODIMReader
 from vptstools.vpts import (vpts, vpts_to_csv,
                             _get_vpts_version, BirdProfile,  # noqa
                             int_to_nodata, datetime_to_proper8601,
-                            VptsCsvV1, VptsCsvVersionError)
+                            VptsCsvV1, VptsCsvVersionError, validate_vpts,
+                            DESCRIPTOR_FILENAME)
 
 import pandas as pd
 
@@ -38,7 +37,7 @@ class TestVptsVersionClass:
         assert isinstance(vpts_spec.sort, dict)
         # non-empty dict
         assert bool(vpts_spec.sort)
-        # values define if it need to defined as str, int or float
+        # values define if it needs to defined as str, int or float
         assert set(vpts_spec.sort.values()).issubset([int, float, str])
         # sort keys should be part of the defined mapping as well
         with ODIMReader(next(path_with_vp.rglob("*.h5"))) as odim_vp:
@@ -77,16 +76,12 @@ class TestVpts:
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
 
-        # TODO - DUMMY FIXES - ask peter (see notebook)
+        # TODO - DUMMY FIXES - CAN BE REMOVED AFTER SCHEMA UPDATES
         df_vpts["vcp"] = "12"
         df_vpts[["u", "v", "ff", "dd", "sd_vvp"]] = df_vpts[["u", "v", "ff", "dd", "sd_vvp"]].replace("NaN", 1)
         df_vpts[["ff", "dd", "sd_vvp", "eta"]] = df_vpts[["ff", "dd", "sd_vvp", "eta"]].replace("", 1)
 
-        vpts_to_csv(df_vpts, tmp_path / "vpts.csv", descriptor=True)
-
-        #validate_resource() # TODO ) convert to validate resource
-
-        report = validate(tmp_path / "datapackage.json")
+        report = validate_vpts(df_vpts)
         assert report["stats"]["errors"] == 0
 
     def test_str_dtypes(self, vpts_version, path_with_vp):
@@ -111,7 +106,7 @@ class TestVpts:
         df_vpts = vpts(file_paths, vpts_version)
         vpts_spec = _get_vpts_version(vpts_version)
         assert df_vpts[list(vpts_spec.sort.keys())].duplicated().sum() == 0
-        # TODO - check only first one is used chen duplicated are present
+        # TODO - check only first one is used then duplicated are present
         # ...
 
     def test_sorting(self, vpts_version, path_with_vp):
@@ -122,7 +117,8 @@ class TestVpts:
 
         # Resorting does not change dataframe (already sorted)
         df_pre = df_vpts[list(vpts_spec.sort.keys())]
-        df_post = df_vpts[list(vpts_spec.sort.keys())].astype(vpts_spec.sort).sort_values(by=list(vpts_spec.sort.keys())).astype(str)
+        df_post = df_vpts[list(vpts_spec.sort.keys())].astype(vpts_spec.sort).sort_values(
+            by=list(vpts_spec.sort.keys())).astype(str)
         pd.testing.assert_frame_equal(df_pre, df_post)
 
     def test_nodata(self, vpts_version):
@@ -171,6 +167,7 @@ class TestVpts:
         df = vp_metadata_only.to_vp(vpts_csv_version)
         assert df["vcp"].unique() == vpts_csv_version.nodata
 
+
 @pytest.mark.parametrize("vpts_version", ["v1"])
 class TestVptsToCsv:
 
@@ -182,7 +179,7 @@ class TestVptsToCsv:
         vpts_to_csv(df_vpts, custom_folder / "vpts.csv", descriptor=True)
         assert custom_folder.exists()
         assert (custom_folder / "vpts.csv").exists()
-        assert (custom_folder / "datapackage.json").exists()
+        assert (custom_folder / DESCRIPTOR_FILENAME).exists()
 
     def test_no_descriptor(self, vpts_version, path_with_vp, tmp_path):
         """No datapackage written when False"""
@@ -190,7 +187,7 @@ class TestVptsToCsv:
         df_vpts = vpts(file_paths, vpts_version)
         vpts_to_csv(df_vpts, tmp_path / "vpts.csv", descriptor=False)
         assert (tmp_path / "vpts.csv").exists()
-        assert not (tmp_path / "datapackage.json").exists()
+        assert not (tmp_path / DESCRIPTOR_FILENAME).exists()
 
 
 class TestBirdProfile:
