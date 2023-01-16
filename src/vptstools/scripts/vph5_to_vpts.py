@@ -69,7 +69,7 @@ def cli(odim_hdf5_profiles, output_dir_path):
 
     click.echo("Aggregating data...", nl=False)
     # Aggregate the tables for each profile to a single one
-    df_vpts = vpts(odims, "v1")
+    df_vpts = vpts(odims, "v1")  # TODO -- versie als input van de CLI
     click.echo("Done")
 
     click.echo("Saving to vpts...", nl=False)

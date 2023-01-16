@@ -35,8 +35,7 @@ def extract_metadata_from_filename(filename: str) -> tuple:
 
     return radar_code, year, month_str, day_str
 
-# TODO Ask Peter - should conversion be done as part of the transit
-# or rather collect them all -> convert when all available
+
 def main():
     print("1. Read configuration from file")
     config = ConfigParser()
