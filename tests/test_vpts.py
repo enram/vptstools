@@ -1,6 +1,9 @@
-import pytest
+import collections
 
+import pytest
+import numpy as np
 from frictionless import validate, validate_resource
+
 from vptstools.odimh5 import ODIMReader
 from vptstools.vpts import (vpts, vpts_to_csv,
                             _get_vpts_version, BirdProfile,  # noqa
@@ -10,13 +13,18 @@ from vptstools.vpts import (vpts, vpts_to_csv,
 import pandas as pd
 
 
+"""
+IMPORTANT!
+
+When creating a new version of the vpts specification class (VptsCsvVx), add this as additional vpts version
+to the pytest parameterize decorators of these test classes to apply these tests to the new version as well. All
+tests should be VptsCsv independent.
+"""
+
+
 @pytest.mark.parametrize("vpts_version", ["v1"])
 class TestVptsVersionClass:
     """Test VPTS specification mapping classes
-
-    When creating a new version, add this as additional vpts version
-    to the pytest parameterize decorator to apply these tests to the
-    new version.
     """
     def test_nodata_undetect_str(self, vpts_version):
         """vpts returns nodata/undetect as str representation"""
@@ -24,20 +32,29 @@ class TestVptsVersionClass:
         assert isinstance(vpts_spec.nodata, str)
         assert isinstance(vpts_spec.undetect, str)
 
-    def test_mapping_dict(self, vpts_version):
-        """vpts returns a dictionary to translate specific variables"""
-        vpts_spec = _get_vpts_version(vpts_version)
-        # TODO - add additional checks
-        assert isinstance(vpts_spec.nodata, str)
-
-    def test_sort_columns(self, vpts_version):
-        """vpts returns a non-empty dictionary to define the mapping"""
+    def test_sort_columns(self, vpts_version, path_with_vp):
+        """vpts returns a non-empty dictionary to define the mapping wit names available in the mapping"""
         vpts_spec = _get_vpts_version(vpts_version)
         assert isinstance(vpts_spec.sort, dict)
         # non-empty dict
         assert bool(vpts_spec.sort)
         # values define if it need to defined as str, int or float
         assert set(vpts_spec.sort.values()).issubset([int, float, str])
+        # sort keys should be part of the defined mapping as well
+        with ODIMReader(next(path_with_vp.rglob("*.h5"))) as odim_vp:
+            vp = BirdProfile.from_odim(odim_vp)
+        mapping = vpts_spec.mapping(vp)
+        assert set(vpts_spec.sort.keys()).issubset(mapping.keys())
+
+    def test_mapping_dict(self, vpts_version, path_with_vp):
+        """vpts returns a dictionary to translate specific variables"""
+        vpts_spec = _get_vpts_version(vpts_version)
+        with ODIMReader(next(path_with_vp.rglob("*.h5"))) as odim_vp:
+            vp = BirdProfile.from_odim(odim_vp)
+        mapping = vpts_spec.mapping(vp)
+        assert isinstance(mapping, dict)
+        # dict values should not all be scalars but contain list.array as values as well (pd conversion support)
+        assert np.array([isinstance(value, (list, np.ndarray)) for value in mapping.values()]).any()
 
 
 class TestVptsVersionMapper:
