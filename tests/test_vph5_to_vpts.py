@@ -20,14 +20,13 @@ def test_error_non_odim_source_file(path_with_wrong_h5):
     assert "No hdf5 ODIM format" in result.output
 
 
-# TODO - enable if pvol/vp test files are available
-# def test_error_non_vp_source_file(path_with_pvol):
-#     """Error if non-VP ODIM file in source"""
-#     runner = CliRunner()
-#     result = runner.invoke(cli, [f"{path_with_pvol}/*"])
-#     assert result.exit_code == 1
-#     assert "Invalid ODIM source file" in result.output
-#     assert "Expected VP, found PVOL"
+def test_error_non_vp_source_file(path_with_pvol):
+    """Error if non-VP ODIM file in source"""
+    runner = CliRunner()
+    result = runner.invoke(cli, [f"{path_with_pvol}/*"])
+    assert result.exit_code == 1
+    assert "Invalid ODIM source file" in result.output
+    assert "Expected VP, found PVOL"
 
 
 def test_error_no_source(tmp_path):

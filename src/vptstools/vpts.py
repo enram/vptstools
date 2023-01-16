@@ -369,21 +369,21 @@ def vpts(file_paths, vpts_csv_version="v1"):
     >>> file_paths = sorted(Path("../data/raw/baltrad/").rglob("*.h5"))
     >>> vpts(file_paths)
     """
-    with multiprocessing.Pool(processes = (multiprocessing.cpu_count() - 1)) as pool:
+    with multiprocessing.Pool(processes=(multiprocessing.cpu_count() - 1)) as pool:
         data = pool.map(functools.partial(vp, vpts_csv_version=vpts_csv_version), file_paths)
 
     # TODO - add other consistency checks -- verify with Peter
     # - profile.radar_identifiers need to be the same; requirement to have same radar
     #
-    vpts = pd.concat(data)
+    vpts_ = pd.concat(data)
 
     # Remove duplicates by taking first, see https://github.com/enram/vptstools/issues/11
-    vpts = vpts.drop_duplicates(subset=["radar", "datetime", "height"])
+    vpts_ = vpts_.drop_duplicates(subset=["radar", "datetime", "height"])
 
     # Convert according to defined ruleset
     vpts_csv = _get_vpts_version(vpts_csv_version)
-    vpts = vpts.astype(vpts_csv.sort).sort_values(by=list(vpts_csv.sort.keys())).astype(str)
-    return vpts
+    vpts_ = vpts_.astype(vpts_csv.sort).sort_values(by=list(vpts_csv.sort.keys())).astype(str)
+    return vpts_
 
 
 def vpts_to_csv(df, file_path, descriptor=False):

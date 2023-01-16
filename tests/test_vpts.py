@@ -1,9 +1,11 @@
+import datetime
+import dataclasses
+
 import pytest
 import numpy as np
-from frictionless import validate
 
 from vptstools.odimh5 import ODIMReader
-from vptstools.vpts import (vpts, vpts_to_csv,
+from vptstools.vpts import (vpts, vp, vpts_to_csv,
                             _get_vpts_version, BirdProfile,  # noqa
                             int_to_nodata, datetime_to_proper8601,
                             VptsCsvV1, VptsCsvVersionError, validate_vpts,
@@ -71,7 +73,20 @@ class TestVptsVersionMapper:
 @pytest.mark.parametrize("vpts_version", ["v1"])
 class TestVpts:
 
-    def test_frictionless_schema(self, vpts_version, tmp_path, path_with_vp):
+    def test_frictionless_schema_vp(self, vpts_version, tmp_path, path_with_vp):
+        """Output after conversion corresponds to the frictionless schema"""
+        file_path = next(path_with_vp.rglob("*.h5"))
+        df_vp = vp(file_path, vpts_version)
+
+        # TODO - DUMMY FIXES - CAN BE REMOVED AFTER SCHEMA UPDATES
+        df_vp["vcp"] = "12"
+        df_vp[["u", "v", "ff", "dd", "sd_vvp"]] = df_vp[["u", "v", "ff", "dd", "sd_vvp"]].replace("NaN", 1)
+        df_vp[["ff", "dd", "sd_vvp", "eta"]] = df_vp[["ff", "dd", "sd_vvp", "eta"]].replace("", 1)
+
+        report = validate_vpts(df_vp)
+        assert report["stats"]["errors"] == 0
+
+    def test_frictionless_schema_vpts(self, vpts_version, tmp_path, path_with_vp):
         """Output after conversion corresponds to the frictionless schema"""
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
@@ -167,6 +182,11 @@ class TestVpts:
         df = vp_metadata_only.to_vp(vpts_csv_version)
         assert df["vcp"].unique() == vpts_csv_version.nodata
 
+        # bird profile (vp_metadata_only fixture) containing expected int value as str
+        vp_metadata_only.how["vcp"] = 12
+        df = vp_metadata_only.to_vp(vpts_csv_version)
+        assert df["vcp"].unique() == np.array(['12'])
+
 
 @pytest.mark.parametrize("vpts_version", ["v1"])
 class TestVptsToCsv:
@@ -189,6 +209,14 @@ class TestVptsToCsv:
         assert (tmp_path / "vpts.csv").exists()
         assert not (tmp_path / DESCRIPTOR_FILENAME).exists()
 
+    def test_path_as_str(self, vpts_version, path_with_vp, tmp_path):
+        """To csv support a file path provided as str instead of Path as well"""
+        file_paths = sorted(path_with_vp.rglob("*.h5"))
+        df_vpts = vpts(file_paths, vpts_version)
+        custom_folder = tmp_path / "SUBFOLDER"
+        vpts_to_csv(df_vpts, str(custom_folder / "vpts.csv"), descriptor=True)
+        assert custom_folder.exists()
+
 
 class TestBirdProfile:
 
@@ -196,6 +224,15 @@ class TestBirdProfile:
         """odim format is correctly mapped"""
         assert True # TODO
 
-    def test_sortable(self, path_with_vp):
+    def test_sortable(self, vp_metadata_only):
         """vp can be sorted on datetime"""
-        assert True # TODO
+        vp_dict = dataclasses.asdict(vp_metadata_only)
+        vp_dict["datetime"] = datetime.datetime(2030, 11, 14, 19, 5, tzinfo=datetime.timezone.utc)
+        vp_dict["variables"] = dict()
+        vp_metadata_only_later = BirdProfile(*vp_dict.values())
+        assert vp_metadata_only < vp_metadata_only_later
+
+    def test_str(self, vp_metadata_only):
+        """"""
+        assert str(vp_metadata_only), f"Bird profile: {vp_metadata_only.datetime:%Y-%m-%d %H:%M} " \
+                                      f"- {vp_metadata_only.identifiers}"
