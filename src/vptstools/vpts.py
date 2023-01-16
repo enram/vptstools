@@ -59,7 +59,31 @@ def datetime_to_proper8601(timestamp):
 
 
 def int_to_nodata(value, nodata_values, nodata=""):
-    """"""
+    """Convert to integer or nodata value if enlisted
+
+    Parameters
+    ----------
+    value : str | int | float
+        Single data value
+    nodata_values : list
+        List of values in which case the data point need to be converted to ``nodata``
+    nodata : str | float, default ""
+        Data value to use when incoming value is one of the ``nodata_values``
+
+    Returns
+    -------
+    str | int
+
+    Examples
+    --------
+    >>> int_to_nodata('0', [0, 'NULL'], nodata="")
+    ''
+    >>> int_to_nodata('12', [0, 'NULL'], nodata="")
+    12
+    >>> int_to_nodata('NULL', [0, 'NULL'], nodata="")
+    ''
+    ""
+    """
     if value in nodata_values:
         return nodata
     else:
@@ -67,7 +91,17 @@ def int_to_nodata(value, nodata_values, nodata=""):
 
 
 def number_to_bool_str(values):
-    """"""
+    """Convert list of boolean values to str versions
+
+    Parameters
+    ----------
+    values : list of bool
+        List of Boolean values
+
+    Returns
+    -------
+    list of str [TRUE, FALSE,...]
+    """
     to_bool = {1: "TRUE", 0: "FALSE"}
     return [to_bool[value] for value in values]
 
@@ -267,11 +301,9 @@ class BirdProfile:
         return self.datetime < other.datetime
 
     def __str__(self):
-        """"""
         return f"Bird profile: {self.datetime:%Y-%m-%d %H:%M} - {self.identifiers}"
 
     def __repr__(self):
-        """"""
         return f"Bird profile: {self.datetime:%Y-%m-%d %H:%M} - {self.identifiers}"
 
     def to_vp(self, vpts_csv_version):
@@ -372,15 +404,12 @@ def vpts(file_paths, vpts_csv_version="v1"):
     with multiprocessing.Pool(processes=(multiprocessing.cpu_count() - 1)) as pool:
         data = pool.map(functools.partial(vp, vpts_csv_version=vpts_csv_version), file_paths)
 
-    # TODO - add other consistency checks -- verify with Peter
-    # - profile.radar_identifiers need to be the same; requirement to have same radar
-    #
     vpts_ = pd.concat(data)
 
     # Remove duplicates by taking first, see https://github.com/enram/vptstools/issues/11
     vpts_ = vpts_.drop_duplicates(subset=["radar", "datetime", "height"])
 
-    # Convert according to defined ruleset
+    # Convert according to defined rule set
     vpts_csv = _get_vpts_version(vpts_csv_version)
     vpts_ = vpts_.astype(vpts_csv.sort).sort_values(by=list(vpts_csv.sort.keys())).astype(str)
     return vpts_
