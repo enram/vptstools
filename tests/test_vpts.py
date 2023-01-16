@@ -84,7 +84,7 @@ class TestVpts:
         df_vp[["ff", "dd", "sd_vvp", "eta"]] = df_vp[["ff", "dd", "sd_vvp", "eta"]].replace("", 1)
 
         report = validate_vpts(df_vp)
-        assert report["stats"]["errors"] == 0
+        assert report.stats.errors == 0
 
     def test_frictionless_schema_vpts(self, vpts_version, tmp_path, path_with_vp):
         """Output after conversion corresponds to the frictionless schema"""
@@ -97,7 +97,7 @@ class TestVpts:
         df_vpts[["ff", "dd", "sd_vvp", "eta"]] = df_vpts[["ff", "dd", "sd_vvp", "eta"]].replace("", 1)
 
         report = validate_vpts(df_vpts)
-        assert report["stats"]["errors"] == 0
+        assert report.stats.errors == 0
 
     def test_str_dtypes(self, vpts_version, path_with_vp):
         """All columns are handled as str columns"""
