@@ -3,15 +3,15 @@ import pytest
 from frictionless import validate, validate_resource
 from vptstools.odimh5 import ODIMReader
 from vptstools.vpts import (vpts, vpts_to_csv,
-                            _get_vpts_version, BirdProfile,
+                            _get_vpts_version, BirdProfile,  # noqa
+                            int_to_nodata, datetime_to_proper8601,
                             VptsCsvV1, VptsCsvVersionError)
 
 import pandas as pd
 
-# TODO - make sure the vpts_version is either str or class representation everywhere
 
-@pytest.mark.parametrize("vpts_version", [VptsCsvV1])
-class TestVptsVersionClass():
+@pytest.mark.parametrize("vpts_version", ["v1"])
+class TestVptsVersionClass:
     """Test VPTS specification mapping classes
 
     When creating a new version, add this as additional vpts version
@@ -20,25 +20,27 @@ class TestVptsVersionClass():
     """
     def test_nodata_undetect_str(self, vpts_version):
         """vpts returns nodata/undetect as str representation"""
-        vpts_spec = vpts_version()
+        vpts_spec = _get_vpts_version(vpts_version)
         assert isinstance(vpts_spec.nodata, str)
         assert isinstance(vpts_spec.undetect, str)
 
     def test_mapping_dict(self, vpts_version):
         """vpts returns a dictionary to translate specific variables"""
-        vpts_spec = vpts_version()
+        vpts_spec = _get_vpts_version(vpts_version)
         # TODO - add additional checks
+        assert isinstance(vpts_spec.nodata, str)
 
     def test_sort_columns(self, vpts_version):
         """vpts returns a non-empty dictionary to define the mapping"""
-        vpts_spec = vpts_version()
+        vpts_spec = _get_vpts_version(vpts_version)
         assert isinstance(vpts_spec.sort, dict)
         # non-empty dict
         assert bool(vpts_spec.sort)
         # values define if it need to defined as str, int or float
         assert set(vpts_spec.sort.values()).issubset([int, float, str])
 
-class TestVptsVersionMapper():
+
+class TestVptsVersionMapper:
 
     def test_version_mapper(self):
         """User defined version is mapped to correct class"""
@@ -51,12 +53,11 @@ class TestVptsVersionMapper():
 
 
 @pytest.mark.parametrize("vpts_version", ["v1"])
-class TestVpts():
+class TestVpts:
 
     def test_frictionless_schema(self, vpts_version, tmp_path, path_with_vp):
         """Output after conversion corresponds to the frictionless schema"""
         file_paths = sorted(path_with_vp.rglob("*.h5"))
-
         df_vpts = vpts(file_paths, vpts_version)
 
         # TODO - DUMMY FIXES - ask peter (see notebook)
@@ -124,6 +125,34 @@ class TestVpts():
         levels = df_vpts.groupby(["radar", "datetime"])["height"].unique()
         assert len(levels.apply(pd.Series).astype(int).drop_duplicates()) == 1
 
+    def test_vcp_nodata(self, vpts_version, vp_metadata_only, monkeypatch):
+        """Both 0 and 'NULL' VCP values need to be converted to nodata
+
+        See also
+        --------
+        For discussion, see https://github.com/adokter/vol2bird/issues/198
+        """
+        vpts_csv_version = _get_vpts_version(vpts_version)
+
+        def _mock_mapping(bird_profile):
+            return dict(
+                radar=bird_profile.identifiers["NOD"],
+                datetime=datetime_to_proper8601(bird_profile.datetime),
+                vcp=int_to_nodata(vp_metadata_only.how["vcp"], ["NULL", 0],
+                                  vpts_csv_version.nodata),
+                height=bird_profile.levels
+            )
+        monkeypatch.setattr(vpts_csv_version, "mapping", _mock_mapping)
+
+        # bird profile (vp_metadata_only fixture) containing 0 values
+        vp_metadata_only.how["vcp"] = 0
+        df = vp_metadata_only.to_vp(vpts_csv_version)
+        assert df["vcp"].unique() == vpts_csv_version.nodata
+
+        # bird profile (vp) containing NULL values
+        vp_metadata_only.how["vcp"] = "NULL"
+        df = vp_metadata_only.to_vp(vpts_csv_version)
+        assert df["vcp"].unique() == vpts_csv_version.nodata
 
 @pytest.mark.parametrize("vpts_version", ["v1"])
 class TestVptsToCsv:

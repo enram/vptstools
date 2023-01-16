@@ -6,7 +6,7 @@ import multiprocessing
 from datetime import datetime
 from typing import List, Any
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import pandas as pd
 import numpy as np
@@ -21,6 +21,7 @@ CSV_ENCODING = "utf8"  # !! Don't change, only utf-8 is accepted in data package
 CSV_FIELD_DELIMITER = ","
 
 # TODO - make logical file split of the functionalit
+
 
 class VptsCsvVersionError(Exception):
     """Raised when non supported VPTS version is asked"""
@@ -55,6 +56,14 @@ def datetime_to_proper8601(timestamp):
     objects-iso-format-doesnt-include-z-zulu-or-zero-offset
     """
     return timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+
+def int_to_nodata(value, nodata_values, nodata=""):
+    """"""
+    if value in nodata_values:
+        return nodata
+    else:
+        return int(value)
 
 
 def number_to_bool_str(values):
@@ -98,7 +107,7 @@ def _odim_get_variables(dataset, variable_mapping: dict, quantity: str) -> List[
 
 
 class AbstractVptsCsv(ABC):
-    """Abstract class to define VPTS CSV conversion rules"""
+    """Abstract class to define VPTS CSV conversion rules with a certain version"""
 
     @property
     @abstractmethod
@@ -129,7 +138,6 @@ class AbstractVptsCsv(ABC):
         """
         return dict()
 
-    @property
     @abstractmethod
     def mapping(self) -> dict:
         """Translation from bird-profile to vtps CSV data standard.
@@ -155,7 +163,7 @@ class AbstractVptsCsv(ABC):
                 vcp=int(bird_profile.how["vcp"])
             )
 
-        As data is extracted as suchn additional helper functions can
+        As data is extracted as such additional helper functions can
         be added as well, e.g.::
 
             ...
@@ -218,7 +226,7 @@ class VptsCsvV1(AbstractVptsCsv):
             n_dbz_all=bird_profile.variables["n_dbz_all"],
             rcs=bird_profile.how["rcs_bird"],
             sd_vvp_threshold=bird_profile.how["sd_vvp_thresh"],
-            vcp=int(bird_profile.how["vcp"]),
+            vcp=int_to_nodata(bird_profile.how["vcp"], ["NULL", 0], self.nodata),
             radar_longitude=np.round(bird_profile.where["lon"], 6),
             radar_latitude=np.round(bird_profile.where["lat"], 6),
             radar_height=int(bird_profile.where["height"]),
@@ -271,7 +279,7 @@ class BirdProfile:
 
         Parameters
         ----------
-        vpts_csv : AbstractVptsCsv
+        vpts_csv_version : AbstractVptsCsv
             Ruleset with the VPTS-CSV ruleset to use
 
         Notes
@@ -392,6 +400,8 @@ def vpts_to_csv(df, file_path, descriptor=False):
         DataFrame with vp or vpts data
     file_path : Path | str
         File path to store the VPTS CSV file
+    descriptor : bool
+        Add additional frictionless metadata description
     """
     # check for str input of Path
     if not isinstance(file_path, Path):
