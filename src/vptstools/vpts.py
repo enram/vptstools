@@ -139,27 +139,32 @@ def _odim_get_variables(dataset, variable_mapping: dict, quantity: str) -> List[
 
     return values
 
-
-@dataclass
+# TODO - change naming and put in logic module
+@dataclass(frozen=True)
 class OdimFilePath:
     """ODIM file path with translation to different s3 key paths"""
     source: str
-    h5_file_name: str
+    radar_code: str
+    data_type: str
+    year: str
+    month: str
+    day: str
+    hour: str = "00"
+    minute: str = "00"
 
-    def __post_init__(self):
+    @classmethod
+    def from_file_name(cls, h5_file_path, source):
         """"""
-        country, radar, _, year, month, day, *_ = self.parse_file_name(self.h5_file_name)
-        self._country = country
-        self._radar = radar
-        self._year = year
-        self._month = month
-        self._day = day
+        return cls(source, *cls.parse_file_name(h5_file_path))
+
+    @classmethod
+    def from_inventory(cls, h5_file_path):
+        """"""
+        return cls(h5_file_path.split("/")[0], *cls.parse_file_name(h5_file_path))
 
     @staticmethod
     def parse_file_name(name):
-        """parse enram bird profile name to individual descriptions dict
-
-        Parse an hdf5 file name radar_code, year, month, day, hour, minute.
+        """Parse an hdf5 file name radar_code, year, month, day, hour, minute.
 
         Parameters
         ----------
@@ -169,7 +174,7 @@ class OdimFilePath:
 
         Returns
         -------
-        radar_code, year, month, day, hour, minute
+        radar_code, data_type, year, month, day, hour, minute
 
         Notes
         -----
@@ -179,65 +184,47 @@ class OdimFilePath:
 
         with ``c`` the country code two-letter ids and ``rrr``
         the radar three-letter id, e.g. bejab_vp_20161120235500.h5.
+        Path information in front of the h5 name itself are ignored.
         """
 
         name_regex = re.compile(
-            r'([^_]{2})([^_]{3})_([^_]*)_(\d\d\d\d)(\d\d)(\d\d)T?'
-            r'(\d\d)(\d\d)(?:Z|00)?.*\.h5')
+            r'.*([^_]{2})([^_]{3})_([^_]*)_(\d\d\d\d)(\d\d)(\d\d)T?'
+            r'(\d\d)(\d\d)(?:Z|00)+.*\.h5')
 
         match = re.match(name_regex, name)
         if match:
             country, radar, data_type, year, \
                 month, day, hour, minute = match.groups()
-            return country, radar, data_type, year, month, day, hour, minute
+            radar_code = country + radar
+            return radar_code, data_type, year, month, day, hour, minute
         else:
             raise ValueError("File name is not a valid ODIM h5 file.")
 
     @property
     def country(self):
         """"""
-        return self._country
+        return self.radar_code[:2]
 
     @property
     def radar(self):
         """"""
-        return self._radar
-
-    @property
-    def radar_code(self):
-        """"""
-        return self._country + self._radar
-
-    @property
-    def year(self):
-        """"""
-        return self._year
-
-    @property
-    def month(self):
-        """"""
-        return self._month
-
-    @property
-    def day(self):
-        """"""
-        return self._day
+        return self.radar_code[2:]
 
     def _s3_path_setup(self, file_output):
         """Common setup of the s3 bucket logic"""
-        return f"{self.source}/{file_output}/{self.radar_code}/{self._year}/{self._month}/{self._day}"
+        return f"{self.source}/{file_output}/{self.radar_code}/{self.year}"
 
     @property
-    def s3_path_h5(self):
-        return self._s3_path_setup("hdf5")
+    def s3_folder_path_h5(self):
+        return f"{self._s3_path_setup('hdf5')}/{self.month}/{self.day}"
 
     @property
-    def s3_path_daily(self):
-        return self._s3_path_setup("daily")
+    def s3_file_path_daily_vpts(self):
+        return f"{self._s3_path_setup('daily')}/{self.radar_code}_vpts_{self.year}{self.month}{self.day}.csv"
 
     @property
-    def s3_path_monthly(self):
-        return self._s3_path_setup("monthly")
+    def s3_file_path_monthly_vpts(self):
+        return f"{self._s3_path_setup('monthly')}/{self.radar_code}_vpts_{self.year}{self.month}.csv"
 
 
 class AbstractVptsCsv(ABC):
@@ -581,3 +568,4 @@ def _write_resource_descriptor(vpts_file_path: Path):
 
     with open(vpts_file_path.parent / DESCRIPTOR_FILENAME, "w") as outfile:
         json.dump(content, outfile, indent=4, sort_keys=True)
+
