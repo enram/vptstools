@@ -1,4 +1,4 @@
-import csv
+import re
 import json
 from pathlib import Path
 import functools
@@ -138,6 +138,106 @@ def _odim_get_variables(dataset, variable_mapping: dict, quantity: str) -> List[
     values = [UNDETECT if value == undetect_val else value for value in values]
 
     return values
+
+
+@dataclass
+class OdimFilePath:
+    """ODIM file path with translation to different s3 key paths"""
+    source: str
+    h5_file_name: str
+
+    def __post_init__(self):
+        """"""
+        country, radar, _, year, month, day, *_ = self.parse_file_name(self.h5_file_name)
+        self._country = country
+        self._radar = radar
+        self._year = year
+        self._month = month
+        self._day = day
+
+    @staticmethod
+    def parse_file_name(name):
+        """parse enram bird profile name to individual descriptions dict
+
+        Parse an hdf5 file name radar_code, year, month, day, hour, minute.
+
+        Parameters
+        ----------
+        name : str
+            File name to be parsed. An eventual parent path and
+            extension will be removed
+
+        Returns
+        -------
+        radar_code, year, month, day, hour, minute
+
+        Notes
+        -----
+        File format is according to the following file format::
+
+            ccrrr_vp_yyyymmddhhmmss.h5
+
+        with ``c`` the country code two-letter ids and ``rrr``
+        the radar three-letter id, e.g. bejab_vp_20161120235500.h5.
+        """
+
+        name_regex = re.compile(
+            r'([^_]{2})([^_]{3})_([^_]*)_(\d\d\d\d)(\d\d)(\d\d)T?'
+            r'(\d\d)(\d\d)(?:Z|00)?.*\.h5')
+
+        match = re.match(name_regex, name)
+        if match:
+            country, radar, data_type, year, \
+                month, day, hour, minute = match.groups()
+            return country, radar, data_type, year, month, day, hour, minute
+        else:
+            raise ValueError("File name is not a valid ODIM h5 file.")
+
+    @property
+    def country(self):
+        """"""
+        return self._country
+
+    @property
+    def radar(self):
+        """"""
+        return self._radar
+
+    @property
+    def radar_code(self):
+        """"""
+        return self._country + self._radar
+
+    @property
+    def year(self):
+        """"""
+        return self._year
+
+    @property
+    def month(self):
+        """"""
+        return self._month
+
+    @property
+    def day(self):
+        """"""
+        return self._day
+
+    def _s3_path_setup(self, file_output):
+        """Common setup of the s3 bucket logic"""
+        return f"{self.source}/{file_output}/{self.radar_code}/{self._year}/{self._month}/{self._day}"
+
+    @property
+    def s3_path_h5(self):
+        return self._s3_path_setup("hdf5")
+
+    @property
+    def s3_path_daily(self):
+        return self._s3_path_setup("daily")
+
+    @property
+    def s3_path_monthly(self):
+        return self._s3_path_setup("monthly")
 
 
 class AbstractVptsCsv(ABC):
@@ -439,13 +539,15 @@ def vpts_to_csv(df, file_path, descriptor=False):
         _write_resource_descriptor(file_path)
 
 
-def validate_vpts(df):
+def validate_vpts(df, version="v1"):
     """Validate vpts DataFrame against the frictionless data schema and return report
 
     Parameters
     ----------
     df : pandas.DataFrame
         DataFrame as created by the vp or vpts functions
+    version : str, v1 | v2 | ...
+
 
     Returns
     -------
