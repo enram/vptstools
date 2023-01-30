@@ -1,12 +1,21 @@
 # From https://stackoverflow.com/questions/35803027/retrieving-subfolders-names-in-s3-bucket-from-boto3
 
 import os
+import json
 import boto3
 from collections import namedtuple
 from operator import attrgetter
 
-
 S3Obj = namedtuple('S3Obj', ['key', 'mtime', 'size', 'ETag'])
+
+
+def list_manifest_file_keys(bucket, manifest_key):
+    """Enlist the manifest indidivual files"""
+    s3 = boto3.resource('s3')
+    manifest = json.load(s3.Object(bucket, manifest_key).get()['Body'])
+    for obj in manifest['files']:
+        yield obj
+
 
 
 def s3list(bucket, path, start=None, end=None, recursive=True, list_dirs=True,
