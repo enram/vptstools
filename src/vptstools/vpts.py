@@ -130,10 +130,13 @@ def _odim_get_variables(dataset, variable_mapping: dict, quantity: str) -> List[
     # TODO - check with Adriaan what to do with the gain/offset
     data_group = variable_mapping[quantity]
 
+    gain = dataset[data_group]["what"].attrs["gain"]
+    offset = dataset[data_group]["what"].attrs["offset"]
+
     nodata_val = dataset[data_group]["what"].attrs["nodata"]
     undetect_val = dataset[data_group]["what"].attrs["undetect"]
 
-    values = [entry[0] for entry in dataset[data_group]["data"]]
+    values = [(entry[0]*gain + offset) for entry in dataset[data_group]["data"]]
     values = [NODATA if value == nodata_val else value for value in values]
     values = [UNDETECT if value == undetect_val else value for value in values]
 
