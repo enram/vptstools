@@ -116,13 +116,11 @@ class TestVpts:
         assert list(df_vpts.columns) == list(vpts_spec.mapping(bird_profile).keys())
 
     def test_duplicate_entries(self, vpts_version, path_with_vp):
-        """Pick only first if duplicate entries (radar, datetime and height combination) are present."""
+        """Keep duplicate entries (radar, datetime and height combination) are present."""
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
         vpts_spec = _get_vpts_version(vpts_version)
-        assert df_vpts[list(vpts_spec.sort.keys())].duplicated().sum() == 0
-        # TODO - check only first one is used then duplicated are present
-        # ...
+        assert df_vpts[list(vpts_spec.sort.keys())].duplicated().sum() == 75
 
     def test_sorting(self, vpts_version, path_with_vp):
         """vpts data is sorted, e.g. 'radar > timestamp > height'"""

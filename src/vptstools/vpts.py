@@ -136,10 +136,12 @@ def _odim_get_variables(dataset, variable_mapping: dict, quantity: str) -> List[
     nodata_val = dataset[data_group]["what"].attrs["nodata"]
     undetect_val = dataset[data_group]["what"].attrs["undetect"]
 
-    values = [(entry[0]*gain + offset) for entry in dataset[data_group]["data"]]
+    # Apply offset/gain while preserving the original variable datatype
+    variable_dtype = dataset[data_group]["data"].dtype
+    values = (dataset[data_group]["data"] * gain + offset).astype(variable_dtype).flatten().tolist()
+    # use regular list here to have mixed dtypes for the data versus nodata/undetect
     values = [NODATA if value == nodata_val else value for value in values]
     values = [UNDETECT if value == undetect_val else value for value in values]
-
     return values
 
 # TODO - change naming and put in logic module
@@ -495,9 +497,6 @@ def vpts(file_paths, vpts_csv_version="v1"):
         data = pool.map(functools.partial(vp, vpts_csv_version=vpts_csv_version), file_paths)
 
     vpts_ = pd.concat(data)
-
-    # Remove duplicates by taking first, see https://github.com/enram/vptstools/issues/11
-    vpts_ = vpts_.drop_duplicates(subset=["radar", "datetime", "height"])
 
     # Convert according to defined rule set
     vpts_csv = _get_vpts_version(vpts_csv_version)
