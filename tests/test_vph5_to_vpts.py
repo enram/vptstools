@@ -2,7 +2,7 @@ import os
 
 from click.testing import CliRunner
 
-from vptstools.scripts.vph5_to_vpts import cli
+from vptstools.scripts.vph5_to_daily_vpts import cli
 
 
 def test_help():
