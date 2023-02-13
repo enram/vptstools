@@ -10,7 +10,7 @@ from vptstools.vpts import (vpts, vp, vpts_to_csv,
                             _get_vpts_version, BirdProfile,  # noqa
                             int_to_nodata, datetime_to_proper8601,
                             VptsCsvV1, VptsCsvVersionError, validate_vpts,
-                            DESCRIPTOR_FILENAME)
+                            DESCRIPTOR_FILENAME, OdimFilePath)
 
 import pandas as pd
 
@@ -69,6 +69,16 @@ class TestVptsVersionMapper:
         """Raise error when none-supported version is requested"""
         with pytest.raises(VptsCsvVersionError):
             _get_vpts_version("v2")
+
+
+def _convert_to_source_dummy(file_path):
+    """Return the file name itself from a file path"""
+    return "DUMMY VALUE"
+
+
+def _convert_to_source_s3(file_path):
+    """Return the file name itself from a file path"""
+    return OdimFilePath.from_file_name(file_path, source="baltrad").s3_url_h5("aloft")
 
 
 @pytest.mark.parametrize("vpts_version", ["v1"])
@@ -179,6 +189,23 @@ class TestVpts:
         df = vp_metadata_only.to_vp(vpts_csv_version)
         assert df["vcp"].unique() == np.array(['12'])
 
+    def test_vpts_no_source_file(self, vpts_version, path_with_vp):
+        """The file name itself is used when no source_file reference is provided"""
+        file_paths = sorted(path_with_vp.rglob("*.h5"))
+        df_vpts = vpts(file_paths, vpts_version)
+        assert set(df_vpts["source_file"].unique()) == set(file_path.name for file_path in file_paths)
+        assert df_vpts.reset_index(drop=True)["source_file"][0] == "bejab_vp_20221111T233000Z_0x9.h5"
+
+    def test_vpts_no_source_file(self, vpts_version, path_with_vp):
+        """The source°file reference can be overwritten by a custom callable using the file_path as input"""
+        file_paths = sorted(path_with_vp.rglob("*.h5"))
+        # Use a function returning a dummy value for each
+        df_vpts = vpts(file_paths, vpts_version, _convert_to_source_dummy)
+        assert (df_vpts["source_file"] == "DUMMY VALUE").all()
+
+        # Use a conversion to s3 function
+        df_vpts = vpts(file_paths, vpts_version, _convert_to_source_s3)
+        assert df_vpts["source_file"].str.startswith("s3://aloft/baltrad").all()
 
 @pytest.mark.parametrize("vpts_version", ["v1"])
 class TestVptsToCsv:
