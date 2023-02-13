@@ -376,8 +376,8 @@ class VptsCsvV1(AbstractVptsCsv):
             rcs=bird_profile.how["rcs_bird"],
             sd_vvp_threshold=bird_profile.how["sd_vvp_thresh"],
             vcp=int_to_nodata(bird_profile.how["vcp"], ["NULL", 0], self.nodata),
-            radar_longitude=np.round(bird_profile.where["lon"], 6),
             radar_latitude=np.round(bird_profile.where["lat"], 6),
+            radar_longitude=np.round(bird_profile.where["lon"], 6),
             radar_height=int(bird_profile.where["height"]),
             radar_wavelength=np.round(bird_profile.how["wavelength"], 6),
             source_file=check_source_file(bird_profile.source_file, self.source_file_regex)
