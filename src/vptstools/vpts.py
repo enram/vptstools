@@ -42,6 +42,25 @@ def check_vp_odim(source_odim: ODIMReader) -> None:
         )
 
 
+def check_source_file(source_file, regex):
+    """Raise Exception when the source_file str is not according to the regex
+
+    Parameters
+    ----------
+    source_file : str
+        URL or path to the source file from which the data were derived.
+    regex : str
+        Regular expression to test the source_file against
+    """
+    sf_regex = re.compile(regex)
+    if re.match(sf_regex, source_file):
+        return source_file
+    else:
+        raise ValueError(
+            f"Incorrect file description for the source_file."
+        )
+
+
 def datetime_to_proper8601(timestamp):
     """Convert datetime to ISO8601 standard
 
@@ -144,6 +163,7 @@ def _odim_get_variables(dataset, variable_mapping: dict, quantity: str) -> List[
     values = [UNDETECT if value == undetect_val else value for value in values]
     return values
 
+
 # TODO - change naming and put in logic module
 @dataclass(frozen=True)
 class OdimFilePath:
@@ -160,12 +180,12 @@ class OdimFilePath:
     @classmethod
     def from_file_name(cls, h5_file_path, source):
         """"""
-        return cls(source, *cls.parse_file_name(h5_file_path))
+        return cls(source, *cls.parse_file_name(str(h5_file_path)))
 
     @classmethod
     def from_inventory(cls, h5_file_path):
         """"""
-        return cls(h5_file_path.split("/")[0], *cls.parse_file_name(h5_file_path))
+        return cls(h5_file_path.split("/")[0], *cls.parse_file_name(str(h5_file_path)))
 
     @staticmethod
     def parse_file_name(name):
@@ -195,7 +215,6 @@ class OdimFilePath:
         name_regex = re.compile(
             r'.*([^_]{2})([^_]{3})_([^_]*)_(\d\d\d\d)(\d\d)(\d\d)T?'
             r'(\d\d)(\d\d)(?:Z|00)+.*\.h5')
-
         match = re.match(name_regex, name)
         if match:
             country, radar, data_type, year, \
@@ -234,6 +253,8 @@ class OdimFilePath:
 
 class AbstractVptsCsv(ABC):
     """Abstract class to define VPTS CSV conversion rules with a certain version"""
+
+    source_file_regex = ".*"
 
     @property
     @abstractmethod
@@ -308,6 +329,8 @@ class AbstractVptsCsv(ABC):
 
 class VptsCsvV1(AbstractVptsCsv):
 
+    source_file_regex = r"^(?=^[^.\/~])(^((?!\.{2}).)*$).*$"
+
     @property
     def nodata(self) -> str:
         """'No data' representation"""
@@ -321,7 +344,7 @@ class VptsCsvV1(AbstractVptsCsv):
     @property
     def sort(self) -> dict:
         """Columns to define row order"""
-        return dict(radar=str, datetime=str, height=int)
+        return dict(radar=str, datetime=str, height=int, source_file=str)
 
     def mapping(self, bird_profile):
         """Translation from bird-profile to vtps CSV data standard.
@@ -356,7 +379,8 @@ class VptsCsvV1(AbstractVptsCsv):
             radar_longitude=np.round(bird_profile.where["lon"], 6),
             radar_latitude=np.round(bird_profile.where["lat"], 6),
             radar_height=int(bird_profile.where["height"]),
-            radar_wavelength=np.round(bird_profile.how["wavelength"], 6)
+            radar_wavelength=np.round(bird_profile.how["wavelength"], 6),
+            source_file=check_source_file(bird_profile.source_file, self.source_file_regex)
         )
 
 
@@ -388,6 +412,11 @@ class BirdProfile:
     how: dict
     levels: List[int]
     variables: dict
+    source_file: str = ""
+
+    def __post_init__(self):
+        if not isinstance(self.source_file, str):
+            raise TypeError("Source_file need to be a str representation of a file path.")
 
     def __lt__(self, other):  # Allows sorting by datetime
         return self.datetime < other.datetime
@@ -423,13 +452,15 @@ class BirdProfile:
         return df
 
     @classmethod
-    def from_odim(cls, source_odim: ODIMReader):
+    def from_odim(cls, source_odim: ODIMReader, source_file=None):
         """Extract BirdProfile information from ODIM with OdimReader
 
         Parameters
         ----------
         source_odim : ODIMReader
             ODIM file reader interface.
+        source_file : str, optional
+            URL or path to the source file from which the data were derived.
         """
         dataset1 = source_odim.hdf5["dataset1"]
         variable_mapping = {
@@ -447,6 +478,10 @@ class BirdProfile:
                 quantity=variable
                 )
 
+        # Resolve hdf5 file full path if no source_file is provided by the user
+        if not source_file:
+            source_file = Path(source_odim.hdf5.filename).name
+
         return cls(
             datetime=source_odim.root_datetime,
             identifiers=source_odim.root_source,
@@ -454,18 +489,19 @@ class BirdProfile:
             where=dict(source_odim.where),
             how=dict(source_odim.how),
             levels=[int(height) for height in height_values],
-            variables=variables
+            variables=variables,
+            source_file=str(source_file)
         )
 
 
-def vp(file_path, vpts_csv_version="v1"):
+def vp(file_path, vpts_csv_version="v1", source_file=""):
     """Convert ODIM h5 file to a DataFrame
 
     Parameters
     ----------
     file_path : Path
         File Path of ODIM h5
-    vpts_csv_version : str
+    vpts_csv_version : str, default ""
         Ruleset with the VPTS-CSV ruleset to use, e.g. v1
 
     Examples
@@ -474,7 +510,7 @@ def vp(file_path, vpts_csv_version="v1"):
     >>> vp(file_path)
     """
     with ODIMReader(file_path) as odim_vp:
-        vp = BirdProfile.from_odim(odim_vp)
+        vp = BirdProfile.from_odim(odim_vp, source_file)
     return vp.to_vp(_get_vpts_version(vpts_csv_version))
 
 

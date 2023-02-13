@@ -1,5 +1,6 @@
 import datetime
 import dataclasses
+from pathlib import Path
 
 import pytest
 import numpy as np
@@ -234,6 +235,62 @@ class TestBirdProfile:
         """"""
         assert str(vp_metadata_only), f"Bird profile: {vp_metadata_only.datetime:%Y-%m-%d %H:%M} " \
                                       f"- {vp_metadata_only.identifiers}"
+
+    def test_source_file(self, vp_metadata_only):
+        """BirdProfile can be created with a source_file reference.
+
+        No checks on the format are done (checks are only linked to a certain vpts-csv version when converting to vp).
+        """
+        vp_dict = dataclasses.asdict(vp_metadata_only)
+        source_file = "s3://noaa-nexrad-level2/2016/09/01/KBGM/KBGM20160901_000212_V06.h5"
+        vp_dict["source_file"] = source_file
+        vp_with_source_file = BirdProfile(*vp_dict.values())
+        assert vp_with_source_file.source_file == source_file
+        assert isinstance(vp_with_source_file.source_file, str)
+
+        source_file = "any/path/can/be/added"
+        vp_dict["source_file"] = source_file
+        vp_with_source_file = BirdProfile(*vp_dict.values())
+        assert vp_with_source_file.source_file == source_file
+        assert isinstance(vp_with_source_file.source_file, str)
+
+        source_file = Path("./test.h5")
+        vp_dict["source_file"] = str(source_file)
+        vp_with_source_file = BirdProfile(*vp_dict.values())
+        assert vp_with_source_file.source_file == str(source_file)
+        assert isinstance(vp_with_source_file.source_file, str)
+
+    def test_source_file_no_str(self, vp_metadata_only):
+        """A TypeError is raised when the input source_file is not a str representation
+        """
+        vp_dict = dataclasses.asdict(vp_metadata_only)
+        with pytest.raises(TypeError):
+            vp_dict["source_file"] = Path("./test.h5")
+            BirdProfile(*vp_dict.values())
+
+    def test_source_file_from_odim(self, path_with_vp):
+        """BirdProfile from ODIM with a user-defined source_file uses the custom path (without check)
+        """
+        file_paths = sorted(path_with_vp.rglob("*.h5"))
+        source_file = "s3://custom_path/file.h5"
+        with ODIMReader(file_paths[0]) as odim_vp:
+            bird_profile = BirdProfile.from_odim(odim_vp, source_file)
+        assert bird_profile.source_file == source_file
+        assert isinstance(bird_profile.source_file, str)
+
+    def test_source_file_none(self, vp_metadata_only):
+        """BirdProfile can be created without a source_file resulting in an empty string"""
+        assert vp_metadata_only.source_file == ""
+
+    def test_source_file_none_from_odim(self, path_with_vp):
+        """BirdProfile from ODIM without providing a source_file uses the file name
+        of the ODIM path as source_file
+        """
+        file_paths = sorted(path_with_vp.rglob("*.h5"))
+        current_path = file_paths[0]
+        with ODIMReader(current_path) as odim_vp:
+            bird_profile = BirdProfile.from_odim(odim_vp)
+        assert bird_profile.source_file == str(current_path.name)
 
 
 class TestOdimFilePath:
