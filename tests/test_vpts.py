@@ -79,11 +79,6 @@ class TestVpts:
         file_path = next(path_with_vp.rglob("*.h5"))
         df_vp = vp(file_path, vpts_version)
 
-        # TODO - DUMMY FIXES - CAN BE REMOVED AFTER SCHEMA UPDATES
-        df_vp["vcp"] = "12"
-        df_vp[["u", "v", "ff", "dd", "sd_vvp"]] = df_vp[["u", "v", "ff", "dd", "sd_vvp"]].replace("NaN", 1)
-        df_vp[["ff", "dd", "sd_vvp", "eta"]] = df_vp[["ff", "dd", "sd_vvp", "eta"]].replace("", 1)
-
         report = validate_vpts(df_vp)
         assert report.stats.errors == 0
 
@@ -91,11 +86,6 @@ class TestVpts:
         """Output after conversion corresponds to the frictionless schema"""
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
-
-        # TODO - DUMMY FIXES - CAN BE REMOVED AFTER SCHEMA UPDATES
-        df_vpts["vcp"] = "12"
-        df_vpts[["u", "v", "ff", "dd", "sd_vvp"]] = df_vpts[["u", "v", "ff", "dd", "sd_vvp"]].replace("NaN", 1)
-        df_vpts[["ff", "dd", "sd_vvp", "eta"]] = df_vpts[["ff", "dd", "sd_vvp", "eta"]].replace("", 1)
 
         report = validate_vpts(df_vpts)
         assert report.stats.errors == 0
@@ -121,7 +111,9 @@ class TestVpts:
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
         vpts_spec = _get_vpts_version(vpts_version)
-        assert df_vpts[list(vpts_spec.sort.keys())].duplicated().sum() == 75
+        # remove source_file for duplicate test
+        df_ = df_vpts[list(vpts_spec.sort.keys())].drop(columns="source_file")
+        assert df_.duplicated().sum() == 75
 
     def test_sorting(self, vpts_version, path_with_vp):
         """vpts data is sorted, e.g. 'radar > timestamp > height'"""
@@ -167,7 +159,8 @@ class TestVpts:
                 datetime=datetime_to_proper8601(bird_profile.datetime),
                 vcp=int_to_nodata(vp_metadata_only.how["vcp"], ["NULL", 0],
                                   vpts_csv_version.nodata),
-                height=bird_profile.levels
+                height=bird_profile.levels,
+                source_file=bird_profile.source_file
             )
         monkeypatch.setattr(vpts_csv_version, "mapping", _mock_mapping)
 
