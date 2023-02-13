@@ -124,7 +124,7 @@ def handle_manifest(manifest_url, bucket, look_back="2day"):
 S3Obj = namedtuple('S3Obj', ['key', 'mtime', 'size', 'ETag'])
 
 
-def s3list(bucket, path, start=None, end=None, recursive=True, list_dirs=True,
+def s3list(bucket, path, start=None, end=None, recursive=True, list_dirs=True,  # noqa: C901
            list_objs=True, limit=None):
     """
     Iterator that lists a bucket's objects under path, (optionally) starting with

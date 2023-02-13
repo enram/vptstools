@@ -57,7 +57,7 @@ def check_source_file(source_file, regex):
         return source_file
     else:
         raise ValueError(
-            f"Incorrect file description for the source_file."
+            "Incorrect file description for the source_file."
         )
 
 
@@ -646,4 +646,3 @@ def _write_resource_descriptor(vpts_file_path: Path):
 
     with open(vpts_file_path.parent / DESCRIPTOR_FILENAME, "w") as outfile:
         json.dump(content, outfile, indent=4, sort_keys=True)
-
