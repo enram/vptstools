@@ -1,5 +1,6 @@
 # Script that parse the whole aloft bucket and generate a coverage.csv file
-# After discussion with Peter, we decided to keep a simple file count per directory (all listed in a global CSV file, one row per "directory")
+# After discussion with Peter, we decided to keep a simple file count per directory (all listed in a global
+# CSV file, one row per "directory")
 import csv
 import os
 import tempfile
@@ -31,7 +32,6 @@ def main():
         counter[str(dir)] += 1
         if i % 10000 == 0:
             print(".", end="")
-
 
     print("Done, will now generate coverage.csv")
     with tempfile.TemporaryDirectory() as tmpdirname:

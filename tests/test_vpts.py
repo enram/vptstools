@@ -1,5 +1,6 @@
 import datetime
 import dataclasses
+from pathlib import Path
 
 import pytest
 import numpy as np
@@ -9,7 +10,7 @@ from vptstools.vpts import (vpts, vp, vpts_to_csv,
                             _get_vpts_version, BirdProfile,  # noqa
                             int_to_nodata, datetime_to_proper8601,
                             VptsCsvV1, VptsCsvVersionError, validate_vpts,
-                            DESCRIPTOR_FILENAME)
+                            DESCRIPTOR_FILENAME, OdimFilePath)
 
 import pandas as pd
 
@@ -70,6 +71,16 @@ class TestVptsVersionMapper:
             _get_vpts_version("v2")
 
 
+def _convert_to_source_dummy(file_path):
+    """Return the file name itself from a file path"""
+    return "DUMMY VALUE"
+
+
+def _convert_to_source_s3(file_path):
+    """Return the file name itself from a file path"""
+    return OdimFilePath.from_file_name(file_path, source="baltrad").s3_url_h5("aloft")
+
+
 @pytest.mark.parametrize("vpts_version", ["v1"])
 class TestVpts:
 
@@ -78,11 +89,6 @@ class TestVpts:
         file_path = next(path_with_vp.rglob("*.h5"))
         df_vp = vp(file_path, vpts_version)
 
-        # TODO - DUMMY FIXES - CAN BE REMOVED AFTER SCHEMA UPDATES
-        df_vp["vcp"] = "12"
-        df_vp[["u", "v", "ff", "dd", "sd_vvp"]] = df_vp[["u", "v", "ff", "dd", "sd_vvp"]].replace("NaN", 1)
-        df_vp[["ff", "dd", "sd_vvp", "eta"]] = df_vp[["ff", "dd", "sd_vvp", "eta"]].replace("", 1)
-
         report = validate_vpts(df_vp)
         assert report.stats.errors == 0
 
@@ -90,11 +96,6 @@ class TestVpts:
         """Output after conversion corresponds to the frictionless schema"""
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
-
-        # TODO - DUMMY FIXES - CAN BE REMOVED AFTER SCHEMA UPDATES
-        df_vpts["vcp"] = "12"
-        df_vpts[["u", "v", "ff", "dd", "sd_vvp"]] = df_vpts[["u", "v", "ff", "dd", "sd_vvp"]].replace("NaN", 1)
-        df_vpts[["ff", "dd", "sd_vvp", "eta"]] = df_vpts[["ff", "dd", "sd_vvp", "eta"]].replace("", 1)
 
         report = validate_vpts(df_vpts)
         assert report.stats.errors == 0
@@ -120,7 +121,9 @@ class TestVpts:
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
         vpts_spec = _get_vpts_version(vpts_version)
-        assert df_vpts[list(vpts_spec.sort.keys())].duplicated().sum() == 75
+        # remove source_file for duplicate test
+        df_ = df_vpts[list(vpts_spec.sort.keys())].drop(columns="source_file")
+        assert df_.duplicated().sum() == 75
 
     def test_sorting(self, vpts_version, path_with_vp):
         """vpts data is sorted, e.g. 'radar > timestamp > height'"""
@@ -166,7 +169,8 @@ class TestVpts:
                 datetime=datetime_to_proper8601(bird_profile.datetime),
                 vcp=int_to_nodata(vp_metadata_only.how["vcp"], ["NULL", 0],
                                   vpts_csv_version.nodata),
-                height=bird_profile.levels
+                height=bird_profile.levels,
+                source_file=bird_profile.source_file
             )
         monkeypatch.setattr(vpts_csv_version, "mapping", _mock_mapping)
 
@@ -185,6 +189,23 @@ class TestVpts:
         df = vp_metadata_only.to_vp(vpts_csv_version)
         assert df["vcp"].unique() == np.array(['12'])
 
+    def test_vpts_no_source_file(self, vpts_version, path_with_vp):
+        """The file name itself is used when no source_file reference is provided"""
+        file_paths = sorted(path_with_vp.rglob("*.h5"))
+        df_vpts = vpts(file_paths, vpts_version)
+        assert set(df_vpts["source_file"].unique()) == set(file_path.name for file_path in file_paths)
+        assert df_vpts.reset_index(drop=True)["source_file"][0] == "bejab_vp_20221111T233000Z_0x9.h5"
+
+    def test_vpts_no_source_file(self, vpts_version, path_with_vp):
+        """The source°file reference can be overwritten by a custom callable using the file_path as input"""
+        file_paths = sorted(path_with_vp.rglob("*.h5"))
+        # Use a function returning a dummy value for each
+        df_vpts = vpts(file_paths, vpts_version, _convert_to_source_dummy)
+        assert (df_vpts["source_file"] == "DUMMY VALUE").all()
+
+        # Use a conversion to s3 function
+        df_vpts = vpts(file_paths, vpts_version, _convert_to_source_s3)
+        assert df_vpts["source_file"].str.startswith("s3://aloft/baltrad").all()
 
 @pytest.mark.parametrize("vpts_version", ["v1"])
 class TestVptsToCsv:
@@ -234,6 +255,62 @@ class TestBirdProfile:
         """"""
         assert str(vp_metadata_only), f"Bird profile: {vp_metadata_only.datetime:%Y-%m-%d %H:%M} " \
                                       f"- {vp_metadata_only.identifiers}"
+
+    def test_source_file(self, vp_metadata_only):
+        """BirdProfile can be created with a source_file reference.
+
+        No checks on the format are done (checks are only linked to a certain vpts-csv version when converting to vp).
+        """
+        vp_dict = dataclasses.asdict(vp_metadata_only)
+        source_file = "s3://noaa-nexrad-level2/2016/09/01/KBGM/KBGM20160901_000212_V06.h5"
+        vp_dict["source_file"] = source_file
+        vp_with_source_file = BirdProfile(*vp_dict.values())
+        assert vp_with_source_file.source_file == source_file
+        assert isinstance(vp_with_source_file.source_file, str)
+
+        source_file = "any/path/can/be/added"
+        vp_dict["source_file"] = source_file
+        vp_with_source_file = BirdProfile(*vp_dict.values())
+        assert vp_with_source_file.source_file == source_file
+        assert isinstance(vp_with_source_file.source_file, str)
+
+        source_file = Path("./test.h5")
+        vp_dict["source_file"] = str(source_file)
+        vp_with_source_file = BirdProfile(*vp_dict.values())
+        assert vp_with_source_file.source_file == str(source_file)
+        assert isinstance(vp_with_source_file.source_file, str)
+
+    def test_source_file_no_str(self, vp_metadata_only):
+        """A TypeError is raised when the input source_file is not a str representation
+        """
+        vp_dict = dataclasses.asdict(vp_metadata_only)
+        with pytest.raises(TypeError):
+            vp_dict["source_file"] = Path("./test.h5")
+            BirdProfile(*vp_dict.values())
+
+    def test_source_file_from_odim(self, path_with_vp):
+        """BirdProfile from ODIM with a user-defined source_file uses the custom path (without check)
+        """
+        file_paths = sorted(path_with_vp.rglob("*.h5"))
+        source_file = "s3://custom_path/file.h5"
+        with ODIMReader(file_paths[0]) as odim_vp:
+            bird_profile = BirdProfile.from_odim(odim_vp, source_file)
+        assert bird_profile.source_file == source_file
+        assert isinstance(bird_profile.source_file, str)
+
+    def test_source_file_none(self, vp_metadata_only):
+        """BirdProfile can be created without a source_file resulting in an empty string"""
+        assert vp_metadata_only.source_file == ""
+
+    def test_source_file_none_from_odim(self, path_with_vp):
+        """BirdProfile from ODIM without providing a source_file uses the file name
+        of the ODIM path as source_file
+        """
+        file_paths = sorted(path_with_vp.rglob("*.h5"))
+        current_path = file_paths[0]
+        with ODIMReader(current_path) as odim_vp:
+            bird_profile = BirdProfile.from_odim(odim_vp)
+        assert bird_profile.source_file == str(current_path.name)
 
 
 class TestOdimFilePath:

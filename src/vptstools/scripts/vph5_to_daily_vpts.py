@@ -1,21 +1,13 @@
-import csv
 import urllib
-import glob
 import tempfile
 import shutil
-import json
-import os
-import sys
 from pathlib import Path
-from dataclasses import dataclass, field
-from datetime import datetime, date
-from typing import List, Any
+from datetime import date
 
 import click
 import s3fs
 
-from vptstools.odimh5 import ODIMReader, InvalidSourceODIM
-from vptstools.vpts import check_vp_odim, vpts, vpts_to_csv, OdimFilePath
+from vptstools.vpts import vpts, vpts_to_csv, OdimFilePath
 from vptstools.s3 import handle_manifest
 
 # Return codes (0 = success)
@@ -73,16 +65,13 @@ def cli(look_back):
 
         # - save file
         tmp_vpts_file = odim_path.s3_file_path_daily_vpts.split("/")[-1]
-        vpts_to_csv(df_vpts, folder_path / odim_path.s3_file_path_daily_vpts)
+        vpts_to_csv(df_vpts, folder_path / tmp_vpts_file)
 
         # - copy to s3
         inbo_s3.put(str(folder_path / odim_path.s3_file_path_daily_vpts), f"aloft/{odim_path.s3_file_path_daily_vpts}")
 
         # - remove tempdir
         shutil.rmtree(folder_path)
-
-
-
 
     # # Open all ODIM files
     # click.echo("Opening all the source ODIM files...", nl=False)
