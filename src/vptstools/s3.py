@@ -1,9 +1,6 @@
-import os
 import re
 import json
 from pathlib import Path
-from operator import attrgetter
-from collections import namedtuple
 from dataclasses import dataclass
 
 import boto3
@@ -12,7 +9,29 @@ import pandas as pd
 
 @dataclass(frozen=True)
 class OdimFilePath:
-    """ODIM file path with translation to different s3 key paths"""
+    """ODIM file path with translation to different s3 key paths
+
+    Parameters
+    ----------
+    source: str
+        Data source, e.g. baltrad, ecog-04003,...
+    radar_code: str
+        country + radar code
+    data_type: str
+        ODIM data type, e.g. vp, pvol,...
+    year: str
+        year, YYYY
+    month: str
+        month, MM
+    day: str
+        day, DD
+    hour: str = "00"
+        hour, HH
+    minute: str = "00"
+        minute, MM
+    file_name: str = "", optional
+        File name from which the other properties were derived
+    """
     source: str
     radar_code: str
     data_type: str
@@ -25,12 +44,12 @@ class OdimFilePath:
 
     @classmethod
     def from_file_name(cls, h5_file_path, source):
-        """"""
+        """Initialize class from ODIM file path"""
         return cls(source, *cls.parse_file_name(str(h5_file_path)))
 
     @classmethod
     def from_inventory(cls, h5_file_path):
-        """"""
+        """Initialize class from s3 inventory"""
         return cls(h5_file_path.split("/")[0], *cls.parse_file_name(str(h5_file_path)))
 
     @staticmethod
@@ -73,12 +92,12 @@ class OdimFilePath:
 
     @property
     def country(self):
-        """"""
+        """Country code"""
         return self.radar_code[:2]
 
     @property
     def radar(self):
-        """"""
+        """Radar code"""
         return self.radar_code[2:]
 
     def _s3_path_setup(self, file_output):
@@ -86,6 +105,7 @@ class OdimFilePath:
         return f"{self.source}/{file_output}/{self.radar_code}/{self.year}"
 
     def s3_url_h5(self, bucket="aloft"):
+        """Full S3 URL for the stored h5 file"""
         return f"s3://{bucket}/{self._s3_path_setup('hdf5')}/{self.month}/{self.day}/{self.file_name}"
 
     @property
