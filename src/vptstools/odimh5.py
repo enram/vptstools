@@ -8,6 +8,7 @@ import pytz
 
 
 class InvalidSourceODIM(Exception):
+    """Wrong ODIM file"""
     pass
 
 
@@ -16,23 +17,42 @@ class ODIMReader(object):
 
     Should be used with the "with" statement  (context manager) to
     properly close the h5 file.
+
+    Attributes
+    ----------
+    hdf5 : HDF5 file object
     """
 
     def __enter__(self) -> ODIMReader:
         return self
 
-    def __init__(self, path: str):
-        """Open the ODIM file
+    def __init__(self, file_path: str):
+        """Open an ODIM file
 
-        Raises: OSError: Unable to open file
+        Parameters
+        ----------
+        file_path : Path | str
+            HDF5 ODIM File path
+
+        Raises
+        ------
+        OSError: Unable to open file
         """
-        self.hdf5 = h5py.File(path, mode="r")
+        self.hdf5 = h5py.File(file_path, mode="r")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
 
     def _extract_root_attribute_str(self, group: str, attribute: str) -> str:
         return self.hdf5[group].attrs.get(attribute).decode("utf-8")
+
+    def _extract_root_attributes_dict(self, group: str) -> dict:
+        attr = self.hdf5[group].attrs
+        return {
+            key: value.decode("utf-8")
+            if isinstance(value, bytes) else value
+            for key, value in attr.items()
+        }
 
     @property
     def dataset_names(self) -> List[str]:
@@ -43,20 +63,17 @@ class ODIMReader(object):
     @property
     def how(self) -> dict:
         """Get the 'how' as dictionary"""
-        # TODO - add unit test
-        return dict(self.hdf5["how"].attrs)
+        return self._extract_root_attributes_dict("how")
 
     @property
     def where(self) -> dict:
         """Get the 'where' as dictionary"""
-        # TODO - add unit test
-        return dict(self.hdf5["where"].attrs)
+        return self._extract_root_attributes_dict("where")
 
     @property
     def what(self) -> dict:
         """Get the 'what' as dictionary"""
-        # TODO - add unit test
-        return dict(self.hdf5["what"].attrs)
+        return self._extract_root_attributes_dict("what")
 
     @property
     def root_date_str(self) -> str:
