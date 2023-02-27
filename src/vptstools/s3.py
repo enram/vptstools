@@ -1,4 +1,5 @@
 import re
+import urllib
 import json
 from pathlib import Path
 from dataclasses import dataclass
@@ -176,18 +177,20 @@ def _radar_day_counts_from_manifest_subfile(df, group_callable=extract_coverage_
     return df.set_index("file").groupby(group_callable).size()
 
 
-def handle_manifest(manifest_url, bucket, look_back="2day"):
+def handle_manifest(manifest_url, look_back="2day", storage_options=None):
     """Extract modified days and coverage from a manifest file
 
     Parameters
     ----------
     manifest_url : str
         URL of the s3 inventory manifest file to use
-    bucket : str
-        Name of the bucket
     look_back : str, default '2day'
         Time period to check for 'modified date' to extract
         the subset of files that should trigger a rerun.
+    storage_options : dict, optional
+        Additional parameters passed to the read_csv to access the
+        s3 manifest files, eg. custom AWS profile options
+        ({"profile": "inbo-prd"})
 
     Returns
     -------
@@ -202,15 +205,27 @@ def handle_manifest(manifest_url, bucket, look_back="2day"):
     Notes
     -----
     Check https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-inventory.html
-    for more informationn on s3 bucket inventory and manifest files.
+    for more information on s3 bucket inventory and manifest files.
     """
+    # Parse the s3 URL - TODO - add additional checks
+    manifest_url = urllib.parse.urlparse(manifest_url)
+
     df_last_n_days = []
     df_coverage = []
     for j, obj in enumerate(list_manifest_file_keys(manifest_url.hostname, manifest_url.path.lstrip('/'))):
         print(obj["key"])
         # Read the manifest subfile
-        df = pd.read_csv(f"s3://{bucket}/{obj['key']}", engine="pyarrow",
-                         names=["repo", "file", "size", "modified"])
+        df = pd.read_csv(f"s3://{manifest_url.netloc}/{obj['key']}", engine="pyarrow",
+                         names=["repo", "file", "size", "modified"], storage_options=storage_options)
+
+        # Filter for h5 files and extract source
+        df["file_items"] = df["file"].str.split("/")
+        df["suffix"] = df["file_items"].str.get(-1).str.split(".").str.get(-1)
+        df = df[df["suffix"] == "h5"]
+        df["source"] = df["file_items"].str.get(0)
+        df = df.drop(columns=["file_items", "suffix"])
+
+        # TODO - Create inventory for each of the 'sources'
 
         # Count occurrences per radar-day -> coverage input
         df_coverage.append(_radar_day_counts_from_manifest_subfile(df, extract_coverage_group_from_s3_inventory))
