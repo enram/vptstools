@@ -3,9 +3,8 @@ import datetime
 from pathlib import Path
 
 import pytest
-import numpy as np
 
-from vptstools.vpts import BirdProfile, AbstractVptsCsv, int_to_nodata
+from vptstools.vpts import BirdProfile
 
 
 CURRENT_DIR = Path(os.path.dirname(__file__))

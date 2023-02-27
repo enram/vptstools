@@ -129,6 +129,7 @@ To create a new version of the VPTS-CSV implementation, create a new class `Vpts
 functionality. Make sure to add the mapping to the `_get_vpts_version` function
 """
 
+
 def get_vpts_version(version: str):
     """Link version ID (v1, v2,..) with correct AbstractVptsCsv child class
 

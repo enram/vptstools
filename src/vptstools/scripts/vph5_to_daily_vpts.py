@@ -7,8 +7,8 @@ from datetime import date
 import click
 import s3fs
 
-from vptstools.vpts import vpts, vpts_to_csv, OdimFilePath
-from vptstools.s3 import handle_manifest
+from vptstools.vpts import vpts, vpts_to_csv
+from vptstools.s3 import handle_manifest, OdimFilePath
 
 # Return codes (0 = success)
 EXIT_INVALID_SOURCE_FILE = 1

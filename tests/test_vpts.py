@@ -6,11 +6,11 @@ import pytest
 import numpy as np
 
 from vptstools.odimh5 import ODIMReader
-from vptstools.vpts import (vpts, vp, vpts_to_csv,
-                            _get_vpts_version, BirdProfile,  # noqa
-                            int_to_nodata, datetime_to_proper8601,
-                            VptsCsvV1, VptsCsvVersionError, validate_vpts,
-                            DESCRIPTOR_FILENAME, OdimFilePath)
+from vptstools.vpts import (vpts, vp, vpts_to_csv, BirdProfile,
+                            validate_vpts, DESCRIPTOR_FILENAME)
+from vptstools.vpts_csv import (int_to_nodata, datetime_to_proper8601,
+                                get_vpts_version)
+from vptstools.s3 import OdimFilePath
 
 import pandas as pd
 
@@ -22,54 +22,6 @@ When creating a new version of the vpts specification class (VptsCsvVx), add thi
 to the pytest parameterize decorators of these test classes to apply these tests to the new version as well. All
 tests should be VptsCsv independent.
 """
-
-
-@pytest.mark.parametrize("vpts_version", ["v1"])
-class TestVptsVersionClass:
-    """Test VPTS specification mapping classes
-    """
-    def test_nodata_undetect_str(self, vpts_version):
-        """vpts returns nodata/undetect as str representation"""
-        vpts_spec = _get_vpts_version(vpts_version)
-        assert isinstance(vpts_spec.nodata, str)
-        assert isinstance(vpts_spec.undetect, str)
-
-    def test_sort_columns(self, vpts_version, path_with_vp):
-        """vpts returns a non-empty dictionary to define the mapping wit names available in the mapping"""
-        vpts_spec = _get_vpts_version(vpts_version)
-        assert isinstance(vpts_spec.sort, dict)
-        # non-empty dict
-        assert bool(vpts_spec.sort)
-        # values define if it needs to defined as str, int or float
-        assert set(vpts_spec.sort.values()).issubset([int, float, str])
-        # sort keys should be part of the defined mapping as well
-        with ODIMReader(next(path_with_vp.rglob("*.h5"))) as odim_vp:
-            vp = BirdProfile.from_odim(odim_vp)
-        mapping = vpts_spec.mapping(vp)
-        assert set(vpts_spec.sort.keys()).issubset(mapping.keys())
-
-    def test_mapping_dict(self, vpts_version, path_with_vp):
-        """vpts returns a dictionary to translate specific variables"""
-        vpts_spec = _get_vpts_version(vpts_version)
-        with ODIMReader(next(path_with_vp.rglob("*.h5"))) as odim_vp:
-            vp = BirdProfile.from_odim(odim_vp)
-        mapping = vpts_spec.mapping(vp)
-        assert isinstance(mapping, dict)
-        # dict values should not all be scalars but contain list.array as values as well (pd conversion support)
-        assert np.array([isinstance(value, (list, np.ndarray)) for value in mapping.values()]).any()
-
-
-class TestVptsVersionMapper:
-
-    def test_version_mapper(self):
-        """User defined version is mapped to correct class"""
-        assert isinstance(_get_vpts_version("v1"), VptsCsvV1)
-
-    def test_version_non_existent(self):
-        """Raise error when none-supported version is requested"""
-        with pytest.raises(VptsCsvVersionError):
-            _get_vpts_version("v2")
-
 
 def _convert_to_source_dummy(file_path):
     """Return the file name itself from a file path"""
@@ -111,7 +63,7 @@ class TestVpts:
         """vpts column names are present and have correct sequence of VPTS CSV standard"""
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
-        vpts_spec = _get_vpts_version(vpts_version)
+        vpts_spec = get_vpts_version(vpts_version)
         with ODIMReader(file_paths[0]) as odim_vp:
             bird_profile = BirdProfile.from_odim(odim_vp)
         assert list(df_vpts.columns) == list(vpts_spec.mapping(bird_profile).keys())
@@ -120,7 +72,7 @@ class TestVpts:
         """Keep duplicate entries (radar, datetime and height combination) are present."""
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
-        vpts_spec = _get_vpts_version(vpts_version)
+        vpts_spec = get_vpts_version(vpts_version)
         # remove source_file for duplicate test
         df_ = df_vpts[list(vpts_spec.sort.keys())].drop(columns="source_file")
         assert df_.duplicated().sum() == 75
@@ -129,7 +81,7 @@ class TestVpts:
         """vpts data is sorted, e.g. 'radar > timestamp > height'"""
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
-        vpts_spec = _get_vpts_version(vpts_version)
+        vpts_spec = get_vpts_version(vpts_version)
 
         # Resorting does not change dataframe (already sorted)
         df_pre = df_vpts[list(vpts_spec.sort.keys())]
@@ -161,7 +113,7 @@ class TestVpts:
         --------
         For discussion, see https://github.com/adokter/vol2bird/issues/198
         """
-        vpts_csv_version = _get_vpts_version(vpts_version)
+        vpts_csv_version = get_vpts_version(vpts_version)
 
         def _mock_mapping(bird_profile):
             return dict(
@@ -207,6 +159,7 @@ class TestVpts:
         df_vpts = vpts(file_paths, vpts_version, _convert_to_source_s3)
         assert df_vpts["source_file"].str.startswith("s3://aloft/baltrad").all()
 
+
 @pytest.mark.parametrize("vpts_version", ["v1"])
 class TestVptsToCsv:
 
@@ -241,7 +194,7 @@ class TestBirdProfile:
 
     def test_from_odim(self, path_with_vp):
         """odim format is correctly mapped"""
-        assert True # TODO
+        assert True  # TODO
 
     def test_sortable(self, vp_metadata_only):
         """vp can be sorted on datetime"""
@@ -313,11 +266,3 @@ class TestBirdProfile:
         assert bird_profile.source_file == str(current_path.name)
 
 
-class TestOdimFilePath:
-    # TODO - add unit tests
-
-    def test_parse_file_name(self):
-        """"""
-        pass
-        # baltrad/hdf5/fivan/2016/10/25/fivan_vp_20161025T2100Z_0x7_147742969449.h5
-        # baltrad/hdf5/fiuta/2021/11/14/fiuta_vp_20211114T214500Z_0xb.h5
