@@ -225,8 +225,6 @@ def handle_manifest(manifest_url, look_back="2day", storage_options=None):
         df["source"] = df["file_items"].str.get(0)
         df = df.drop(columns=["file_items", "suffix"])
 
-        # TODO - Create inventory for each of the 'sources'
-
         # Count occurrences per radar-day -> coverage input
         df_coverage.append(_radar_day_counts_from_manifest_subfile(df, extract_coverage_group_from_s3_inventory))
 
