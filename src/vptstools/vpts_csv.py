@@ -117,7 +117,8 @@ def check_source_file(source_file, regex):
         return source_file
     else:
         raise ValueError(
-            "Incorrect file description for the source_file."
+            "Incorrect file description for the source_file. Make sure "
+            "the file path is not starting with '../' or '/'"
         )
 
 
