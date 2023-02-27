@@ -79,7 +79,7 @@ class OdimFilePath:
 
         name_regex = re.compile(
             r'.*([^_]{2})([^_]{3})_([^_]*)_(\d\d\d\d)(\d\d)(\d\d)T?'
-            r'(\d\d)(\d\d)(?:Z|00)+.*\.h5')
+            r'(\d\d)(\d\d)(?:Z|00)?.*\.h5')
         match = re.match(name_regex, name)
         if match:
             file_name = Path(name).name
