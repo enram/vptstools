@@ -42,7 +42,7 @@ class TestVpts:
         df_vp = vp(file_path, vpts_version)
 
         report = validate_vpts(df_vp)
-        assert report.stats.errors == 0
+        assert report.stats["errors"] == 0
 
     def test_frictionless_schema_vpts(self, vpts_version, tmp_path, path_with_vp):
         """Output after conversion corresponds to the frictionless schema"""
@@ -50,7 +50,7 @@ class TestVpts:
         df_vpts = vpts(file_paths, vpts_version)
 
         report = validate_vpts(df_vpts)
-        assert report.stats.errors == 0
+        assert report.stats["errors"] == 0
 
     def test_str_dtypes(self, vpts_version, path_with_vp):
         """All columns are handled as str columns"""
