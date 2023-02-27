@@ -1,12 +1,104 @@
 import os
+import re
 import json
+from pathlib import Path
 from operator import attrgetter
 from collections import namedtuple
+from dataclasses import dataclass
 
 import boto3
 import pandas as pd
 
-from vptstools.vpts import OdimFilePath
+
+@dataclass(frozen=True)
+class OdimFilePath:
+    """ODIM file path with translation to different s3 key paths"""
+    source: str
+    radar_code: str
+    data_type: str
+    year: str
+    month: str
+    day: str
+    hour: str = "00"
+    minute: str = "00"
+    file_name: str = ""  # optional as this can be constructed from scratch as well
+
+    @classmethod
+    def from_file_name(cls, h5_file_path, source):
+        """"""
+        return cls(source, *cls.parse_file_name(str(h5_file_path)))
+
+    @classmethod
+    def from_inventory(cls, h5_file_path):
+        """"""
+        return cls(h5_file_path.split("/")[0], *cls.parse_file_name(str(h5_file_path)))
+
+    @staticmethod
+    def parse_file_name(name):
+        """Parse an hdf5 file name radar_code, year, month, day, hour, minute.
+
+        Parameters
+        ----------
+        name : str
+            File name to be parsed. An eventual parent path and
+            extension will be removed
+
+        Returns
+        -------
+        radar_code, data_type, year, month, day, hour, minute
+
+        Notes
+        -----
+        File format is according to the following file format::
+
+            ccrrr_vp_yyyymmddhhmmss.h5
+
+        with ``c`` the country code two-letter ids and ``rrr``
+        the radar three-letter id, e.g. bejab_vp_20161120235500.h5.
+        Path information in front of the h5 name itself are ignored.
+        """
+
+        name_regex = re.compile(
+            r'.*([^_]{2})([^_]{3})_([^_]*)_(\d\d\d\d)(\d\d)(\d\d)T?'
+            r'(\d\d)(\d\d)(?:Z|00)+.*\.h5')
+        match = re.match(name_regex, name)
+        if match:
+            file_name = Path(name).name
+            country, radar, data_type, year, \
+                month, day, hour, minute = match.groups()
+            radar_code = country + radar
+            return radar_code, data_type, year, month, day, hour, minute, file_name
+        else:
+            raise ValueError("File name is not a valid ODIM h5 file.")
+
+    @property
+    def country(self):
+        """"""
+        return self.radar_code[:2]
+
+    @property
+    def radar(self):
+        """"""
+        return self.radar_code[2:]
+
+    def _s3_path_setup(self, file_output):
+        """Common setup of the s3 bucket logic"""
+        return f"{self.source}/{file_output}/{self.radar_code}/{self.year}"
+
+    def s3_url_h5(self, bucket="aloft"):
+        return f"s3://{bucket}/{self._s3_path_setup('hdf5')}/{self.month}/{self.day}/{self.file_name}"
+
+    @property
+    def s3_folder_path_h5(self):
+        return f"{self._s3_path_setup('hdf5')}/{self.month}/{self.day}"
+
+    @property
+    def s3_file_path_daily_vpts(self):
+        return f"{self._s3_path_setup('daily')}/{self.radar_code}_vpts_{self.year}{self.month}{self.day}.csv"
+
+    @property
+    def s3_file_path_monthly_vpts(self):
+        return f"{self._s3_path_setup('monthly')}/{self.radar_code}_vpts_{self.year}{self.month}.csv"
 
 
 def extract_coverage_group_from_s3_inventory(file_path):
@@ -118,111 +210,3 @@ def handle_manifest(manifest_url, bucket, look_back="2day"):
     days_to_create_vpts = days_to_create_vpts.rename(columns={"index": "directory", 0: "file_count"})
 
     return df_cov, days_to_create_vpts
-
-
-# From https://stackoverflow.com/questions/35803027/retrieving-subfolders-names-in-s3-bucket-from-boto3
-S3Obj = namedtuple('S3Obj', ['key', 'mtime', 'size', 'ETag'])
-
-
-def s3list(bucket, path, start=None, end=None, recursive=True, list_dirs=True,  # noqa: C901
-           list_objs=True, limit=None):
-    """
-    Iterator that lists a bucket's objects under path, (optionally) starting with
-    start and ending before end.
-
-    If recursive is False, then list only the "depth=0" items (dirs and objects).
-
-    If recursive is True, then list recursively all objects (no dirs).
-
-    Args:
-        bucket:
-            a boto3.resource('s3').Bucket().
-        path:
-            a directory in the bucket.
-        start:
-            optional: start key, inclusive (may be a relative path under path, or
-            absolute in the bucket)
-        end:
-            optional: stop key, exclusive (may be a relative path under path, or
-            absolute in the bucket)
-        recursive:
-            optional, default True. If True, lists only objects. If False, lists
-            only depth 0 "directories" and objects.
-        list_dirs:
-            optional, default True. Has no effect in recursive listing. On
-            non-recursive listing, if False, then directories are omitted.
-        list_objs:
-            optional, default True. If False, then directories are omitted.
-        limit:
-            optional. If specified, then lists at most this many items.
-
-    Returns:
-        an iterator of S3Obj.
-
-    Examples:
-        # set up
-        >>> s3 = boto3.resource('s3')
-        ... bucket = s3.Bucket('bucket-name')
-
-        # iterate through all S3 objects under some dir
-        >>> for p in s3list(bucket, 'some/dir'):
-        ...     print(p)
-
-        # iterate through up to 20 S3 objects under some dir, starting with foo_0010
-        >>> for p in s3list(bucket, 'some/dir', limit=20, start='foo_0010'):
-        ...     print(p)
-
-        # non-recursive listing under some dir:
-        >>> for p in s3list(bucket, 'some/dir', recursive=False):
-        ...     print(p)
-
-        # non-recursive listing under some dir, listing only dirs:
-        >>> for p in s3list(bucket, 'some/dir', recursive=False, list_objs=False):
-        ...     print(p)
-"""
-    kwargs = dict()
-    if start is not None:
-        if not start.startswith(path):
-            start = os.path.join(path, start)
-        # note: need to use a string just smaller than start, because
-        # the list_object API specifies that start is excluded (the first
-        # result is *after* start).
-        kwargs.update(Marker=__prev_str(start))
-    if end is not None:
-        if not end.startswith(path):
-            end = os.path.join(path, end)
-    if not recursive:
-        kwargs.update(Delimiter='/')
-        if not path.endswith('/'):
-            path += '/'
-    kwargs.update(Prefix=path)
-    if limit is not None:
-        kwargs.update(PaginationConfig={'MaxItems': limit})
-
-    paginator = bucket.meta.client.get_paginator('list_objects')
-    for resp in paginator.paginate(Bucket=bucket.name, **kwargs):
-        q = []
-        if 'CommonPrefixes' in resp and list_dirs:
-            q = [S3Obj(f['Prefix'], None, None, None) for f in resp['CommonPrefixes']]
-        if 'Contents' in resp and list_objs:
-            q += [S3Obj(f['Key'], f['LastModified'], f['Size'], f['ETag']) for f in resp['Contents']]
-        # note: even with sorted lists, it is faster to sort(a+b)
-        # than heapq.merge(a, b) at least up to 10K elements in each list
-        q = sorted(q, key=attrgetter('key'))
-        if limit is not None:
-            q = q[:limit]
-            limit -= len(q)
-        for p in q:
-            if end is not None and p.key >= end:
-                return
-            yield p
-
-
-def __prev_str(s):
-    if len(s) == 0:
-        return s
-    s, c = s[:-1], ord(s[-1])
-    if c > 0:
-        s += chr(c - 1)
-    s += ''.join(['\u7FFF' for _ in range(10)])
-    return s
