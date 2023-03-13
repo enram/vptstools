@@ -30,9 +30,9 @@ jobs:
       - uses: actions/checkout@v3
         with: {fetch-depth: 0}  # deep clone for setuptools-scm
       - uses: actions/setup-python@v4
-        with: {python-version: "3.10"}
+        with: {python-version: "3.9"}
       - name: Build package distribution files
-        run: pipx run tox -e clean,build
+        run: pipx run --spec tox==3.27.1 tox -e clean,build
       - name: Record the path of wheel distribution
         id: wheel-distribution
         run: echo "::set-output name=path::$(ls dist/*.whl)"
@@ -68,13 +68,13 @@ jobs:
         with: {name: python-distribution-files, path: dist/}
       - name: Run tests
         run: >-
-          pipx run tox
+          pipx run --spec tox==3.27.1 tox
           --installpkg '${{ needs.prepare.outputs.wheel-distribution }}'
           -- -rFEx --durations 10 --color yes
       - name: Run code formatting
-        run: pipx run tox -e format
+        run: pipx run --spec tox==3.27.1 tox -e format
       - name: Run code linting
-        run: pipx run tox -e lint
+        run: pipx run --spec tox==3.27.1 tox -e lint
       - name: Generate coverage report
         run: pipx run coverage lcov -o coverage.lcov
       - name: Upload partial coverage report
@@ -114,4 +114,4 @@ jobs:
           TWINE_REPOSITORY: pypi
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-        run: pipx run tox -e publish
+        run: pipx run --spec tox==3.27.1 tox -e publish

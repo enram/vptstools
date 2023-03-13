@@ -130,3 +130,11 @@ dmypy.json
 
 # vscode
 .vscode/
+
+#pycharm
+.idea/
+
+# Project custom data ignores
+data/
+draft/
+config.ini

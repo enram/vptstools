@@ -1,0 +1,13 @@
+{
+  "sourceBucket" : "aloft",
+  "destinationBucket" : "arn:aws:s3:::aloft-inventory",
+  "version" : "2016-11-30",
+  "creationTimestamp" : "1678582800000",
+  "fileFormat" : "CSV",
+  "fileSchema" : "Bucket, Key, Size, LastModifiedDate",
+  "files" : [ {
+    "key" : "aloft/aloft-hdf5-files-inventory/data/dummy_inventory.csv.gz",
+    "size" : 1,
+    "MD5checksum" : "DUMMY"
+  }]
+}
