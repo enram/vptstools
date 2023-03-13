@@ -133,26 +133,6 @@ class OdimFilePath:
         return f"{self.s3_path_setup('monthly')}/{self.radar_code}_vpts_{self.year}{self.month}.csv.gz"
 
 
-def extract_daily_group_from_s3_inventory(file_path):
-    """Extract file name components to define a group
-
-    The coverage file counts the number of files available
-    per group (e.g. daily files per radar). This function is passed
-    to the Pandas ``groupby`` to translate the file path to a
-    countable set (e.g. source, radar-code, year month and day for
-    daily files per radar).
-
-    Parameters
-    ----------
-    file_path : str
-        File path of the ODIM h5 file. Only the file name is taken
-        into account and a folder-path is ignored.
-    """
-    path_info = OdimFilePath.from_inventory(file_path)
-    return (path_info.source, path_info.file_type, path_info.radar_code,
-            path_info.year, path_info.month, path_info.day)
-
-
 def list_manifest_file_keys(s3_manifest_url, storage_options=None):
     """Enlist the manifest individual files
 
@@ -174,7 +154,27 @@ def list_manifest_file_keys(s3_manifest_url, storage_options=None):
             yield obj
 
 
-def _last_modified_from_manifest_subfile(df, look_back="2day"):
+def extract_daily_group_from_inventory(file_path):
+    """Extract file name components to define a group
+
+    The coverage file counts the number of files available
+    per group (e.g. daily files per radar). This function is passed
+    to the Pandas ``groupby`` to translate the file path to a
+    countable set (e.g. source, radar-code, year month and day for
+    daily files per radar).
+
+    Parameters
+    ----------
+    file_path : str
+        File path of the ODIM h5 file. Only the file name is taken
+        into account and a folder-path is ignored.
+    """
+    path_info = OdimFilePath.from_inventory(file_path)
+    return (path_info.source, path_info.file_type, path_info.radar_code,
+            path_info.year, path_info.month, path_info.day)
+
+
+def _last_modified_from_inventory(df, look_back="2day"):
     """Filter manifest files on last modified
 
     Parameters
@@ -187,7 +187,7 @@ def _last_modified_from_manifest_subfile(df, look_back="2day"):
     return df[df["modified"] > (pd.Timestamp.now(tz="utc") - pd.Timedelta(look_back))]
 
 
-def _radar_day_counts_from_manifest_subfile(df, group_callable=extract_daily_group_from_s3_inventory):
+def _radar_day_counts_from_inventory(df, group_callable=extract_daily_group_from_inventory):
     """Count files according to groups as defined by callable
 
     Parameters
@@ -205,7 +205,7 @@ def _radar_day_counts_from_manifest_subfile(df, group_callable=extract_daily_gro
     return df.set_index("file").groupby(group_callable).size()
 
 
-def _handle_inventory(df, look_back, group_func=extract_daily_group_from_s3_inventory):
+def _handle_inventory(df, look_back, group_func=extract_daily_group_from_inventory):
     """Extract modified days and coverage from a single inventory df
 
     Parameters
@@ -237,9 +237,9 @@ def _handle_inventory(df, look_back, group_func=extract_daily_group_from_s3_inve
     df = df.drop(columns=["file_items", "suffix"])
 
     # Extract IDs latest N days modified files
-    df_last_n_days = _last_modified_from_manifest_subfile(df, look_back)
+    df_last_n_days = _last_modified_from_inventory(df, look_back)
     # Count occurrences per radar-day -> coverage input
-    df_coverage = _radar_day_counts_from_manifest_subfile(df, group_func)
+    df_coverage = _radar_day_counts_from_inventory(df, group_func)
     return df_coverage, df_last_n_days
 
 
@@ -285,7 +285,7 @@ def handle_manifest(manifest_url, look_back="2day", storage_options=None):
 
         # Extract counts per group and groups within defined time window
         df_co, df_last = _handle_inventory(df, look_back,
-                                           group_func=extract_daily_group_from_s3_inventory)
+                                           group_func=extract_daily_group_from_inventory)
         # Extract IDs latest N days modified files
         df_last_n_days.append(df_last)
         # Count occurrences per radar-day -> coverage input
@@ -299,7 +299,7 @@ def handle_manifest(manifest_url, look_back="2day", storage_options=None):
     # Create modified days DataFrame
     df_mod = pd.concat(df_last_n_days)
     df_days_to_create_vpts = df_mod.set_index("file").groupby(
-            extract_daily_group_from_s3_inventory).size().reset_index()
+            extract_daily_group_from_inventory).size().reset_index()
     df_days_to_create_vpts = df_days_to_create_vpts.rename(
         columns={"index": "directory", "file": "directory",  # mapping depends on content; both included
                  0: "file_count"}

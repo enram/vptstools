@@ -4,8 +4,8 @@ import pytest
 import pandas as pd
 
 from vptstools.s3 import (OdimFilePath, handle_manifest, _handle_inventory,  # noqa
-                          extract_daily_group_from_s3_inventory,
-                          _last_modified_from_manifest_subfile) # noqa
+                          extract_daily_group_from_inventory,
+                          _last_modified_from_inventory) # noqa
 
 
 class TestOdimFilePath:
@@ -130,7 +130,7 @@ class TestOdimFilePath:
     def test_extract_coverage_group_from_s3_inventory(self, file_path, components):
         """combination of source, type, radar_code and date are used
         as grouping level for coverage/daily-vpts"""
-        assert extract_daily_group_from_s3_inventory
+        assert extract_daily_group_from_inventory
 
     def test_last_modified_from_manifest_subfile(self):
         """Manifest records are correctly filtered on modified date"""
@@ -141,10 +141,10 @@ class TestOdimFilePath:
                                        pd.Timedelta("2hours")
              }
         )
-        assert _last_modified_from_manifest_subfile(df_, "2days").shape[0] == 2
-        assert _last_modified_from_manifest_subfile(df_, "5days").shape[0] == 5
-        assert _last_modified_from_manifest_subfile(df_, "10days").shape[0] == 10
-        assert _last_modified_from_manifest_subfile(df_, "30days").shape[0] == 10
+        assert _last_modified_from_inventory(df_, "2days").shape[0] == 2
+        assert _last_modified_from_inventory(df_, "5days").shape[0] == 5
+        assert _last_modified_from_inventory(df_, "10days").shape[0] == 10
+        assert _last_modified_from_inventory(df_, "30days").shape[0] == 10
 
 
 class TestHandleManifest:
