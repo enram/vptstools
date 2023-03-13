@@ -177,7 +177,7 @@ class BirdProfile:
         )
 
 
-def vp(file_path, vpts_csv_version="v1", source_file=""):
+def vp(file_path, vpts_csv_version="v1.0", source_file=""):
     """Convert ODIM h5 file to a DataFrame
 
     Parameters
@@ -185,7 +185,7 @@ def vp(file_path, vpts_csv_version="v1", source_file=""):
     file_path : Path
         File Path of ODIM h5
     vpts_csv_version : str, default ""
-        Ruleset with the VPTS-CSV ruleset to use, e.g. v1
+        Ruleset with the VPTS-CSV ruleset to use, e.g. v1.0
     source_file : str | callable
         URL or path to the source file from which the data were derived or
         a callable that converts the file_path to the source_file
@@ -214,7 +214,7 @@ def _convert_to_source(file_path):
     return Path(file_path).name
 
 
-def vpts(file_paths, vpts_csv_version="v1", source_file=None):
+def vpts(file_paths, vpts_csv_version="v1.0", source_file=None):
     """Convert set of h5 files to a DataFrame all as string
 
     Parameters
@@ -222,7 +222,7 @@ def vpts(file_paths, vpts_csv_version="v1", source_file=None):
     file_paths : Iterable of file paths
         Iterable of ODIM h5 file paths
     vpts_csv_version : str
-        Ruleset with the VPTS-CSV ruleset to use, e.g. v1
+        Ruleset with the VPTS-CSV ruleset to use, e.g. v1.0
     source_file : callable, optional
         A callable that converts the file_path to the source_file. When None,
         the file name itself (without parent folder reference) is used.
@@ -258,7 +258,7 @@ def vpts(file_paths, vpts_csv_version="v1", source_file=None):
     return vpts_
 
 
-def vpts_to_csv(df, file_path, descriptor=False):
+def vpts_to_csv(df, file_path):
     """Write vp or vpts to file
 
     Parameters
@@ -267,8 +267,6 @@ def vpts_to_csv(df, file_path, descriptor=False):
         DataFrame with vp or vpts data
     file_path : Path | str
         File path to store the VPTS CSV file
-    descriptor : bool
-        Add additional frictionless metadata description
     """
     # check for str input of Path
     if not isinstance(file_path, Path):
@@ -278,19 +276,17 @@ def vpts_to_csv(df, file_path, descriptor=False):
     file_path.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(file_path, sep=CSV_FIELD_DELIMITER,
               encoding=CSV_ENCODING, index=False)
-    if descriptor:
-        _write_resource_descriptor(file_path)
 
 
-def validate_vpts(df, version="v1"):
+def validate_vpts(df, schema_version="v1.0"):
     """Validate vpts DataFrame against the frictionless data schema and return report
 
     Parameters
     ----------
     df : pandas.DataFrame
         DataFrame as created by the vp or vpts functions
-    version : str, v1 | v2 | ...
-
+    schema_version : str, v1.0,...
+        Version according to a release tag of https://github.com/enram/vpts-csv/tags
 
     Returns
     -------
@@ -298,18 +294,22 @@ def validate_vpts(df, version="v1"):
         Frictionless validation report
     """
     tmp_path = Path(tempfile.mkdtemp())
-    vpts_to_csv(df, tmp_path / "vpts.csv", descriptor=True)
+    vpts_file_path = tmp_path / "vpts.csv"
+    vpts_to_csv(df, vpts_file_path)
+    _write_resource_descriptor(vpts_file_path, schema_version)
     report = validate(tmp_path / DESCRIPTOR_FILENAME)
     return report
 
 
-def _write_resource_descriptor(vpts_file_path: Path):
+def _write_resource_descriptor(vpts_file_path: Path, schema_version="v1.0"):
     """Write a frictionless resource descriptor file
 
     Parameters
     ----------
     vpts_file_path : pathlib.Path
         File path of the resource (vpts file) written to disk
+    schema_version :
+        Version according to a release tag of https://github.com/enram/vpts-csv/tags
     """
     content = {
         "name": "vpts",
@@ -318,7 +318,7 @@ def _write_resource_descriptor(vpts_file_path: Path):
         "mediatype": "text/csv",
         "encoding": CSV_ENCODING,
         "dialect": {"delimiter": CSV_FIELD_DELIMITER},
-        "schema": "https://raw.githubusercontent.com/enram/vpts-csv/main/vpts-csv-table-schema.json"
+        "schema": f"https://raw.githubusercontent.com/enram/vpts-csv/{schema_version}/vpts-csv-table-schema.json"
     }
     vpts_file_path.parent.mkdir(parents=True, exist_ok=True)
 

@@ -147,7 +147,7 @@ def get_vpts_version(version: str):
     ------
     VptsCsvVersionError : Version of the VPTS-CSV is not supported by an implementation
     """
-    if version == "v1":
+    if version == "v1.0":
         return VptsCsvV1()
     else:
         raise VptsCsvVersionError(f"Version {version} not supported.")

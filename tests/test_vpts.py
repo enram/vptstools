@@ -33,7 +33,7 @@ def _convert_to_source_s3(file_path):
     return OdimFilePath.from_file_name(file_path, source="baltrad").s3_url_h5("aloft")
 
 
-@pytest.mark.parametrize("vpts_version", ["v1"])
+@pytest.mark.parametrize("vpts_version", ["v1.0"])
 class TestVpts:
 
     def test_frictionless_schema_vp(self, vpts_version, tmp_path, path_with_vp):
@@ -56,7 +56,7 @@ class TestVpts:
         """All columns are handled as str columns"""
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
-        # check for str in data itsefl instread of 'object' on pandas level
+        # check for str in data itsefl insread of 'object' on Pandas level
         assert all([isinstance(value, str) for value in df_vpts.iloc[0, :].to_dict().values()])
 
     def test_column_order(self, vpts_version, path_with_vp):
@@ -160,7 +160,7 @@ class TestVpts:
         assert df_vpts["source_file"].str.startswith("s3://aloft/baltrad").all()
 
 
-@pytest.mark.parametrize("vpts_version", ["v1"])
+@pytest.mark.parametrize("vpts_version", ["v1.0"])
 class TestVptsToCsv:
 
     def test_path_created(self, vpts_version, path_with_vp, tmp_path):
@@ -168,16 +168,16 @@ class TestVptsToCsv:
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
         custom_folder = tmp_path / "SUBFOLDER"
-        vpts_to_csv(df_vpts, custom_folder / "vpts.csv", descriptor=True)
+        vpts_to_csv(df_vpts, custom_folder / "vpts.csv")
         assert custom_folder.exists()
         assert (custom_folder / "vpts.csv").exists()
-        assert (custom_folder / DESCRIPTOR_FILENAME).exists()
+        assert not (custom_folder / DESCRIPTOR_FILENAME).exists()
 
     def test_no_descriptor(self, vpts_version, path_with_vp, tmp_path):
         """No datapackage written when False"""
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
-        vpts_to_csv(df_vpts, tmp_path / "vpts.csv", descriptor=False)
+        vpts_to_csv(df_vpts, tmp_path / "vpts.csv")
         assert (tmp_path / "vpts.csv").exists()
         assert not (tmp_path / DESCRIPTOR_FILENAME).exists()
 
@@ -186,7 +186,7 @@ class TestVptsToCsv:
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
         custom_folder = tmp_path / "SUBFOLDER"
-        vpts_to_csv(df_vpts, str(custom_folder / "vpts.csv"), descriptor=True)
+        vpts_to_csv(df_vpts, str(custom_folder / "vpts.csv"))
         assert custom_folder.exists()
 
 

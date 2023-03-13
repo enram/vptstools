@@ -4,6 +4,7 @@ from click.testing import CliRunner
 
 from vptstools.scripts.vph5_to_vpts import cli
 
+# TODO - update unit tests for CLI version
 
 def test_help():
     runner = CliRunner()

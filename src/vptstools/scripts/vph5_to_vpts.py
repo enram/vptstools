@@ -82,7 +82,7 @@ def cli(look_back, aws_profile):
     click.echo("Finished creating daily vpts files.")
 
     # Run vpts monthly conversion for each radar-day with modified files
-    # TODO - abstract monthly procedure to separate functionality?
+    # TODO - abstract monthly procedure to separate functionality
     months_to_create_vpts = days_to_create_vpts
     months_to_create_vpts["directory"] = months_to_create_vpts["directory"].apply(lambda x: x[:-1])  # remove day
     months_to_create_vpts = months_to_create_vpts.groupby("directory").size().reset_index()
