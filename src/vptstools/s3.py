@@ -10,7 +10,7 @@ import pandas as pd
 
 @dataclass(frozen=True)
 class OdimFilePath:
-    """ODIM file path with translation to different s3 key paths
+    """ODIM file path with translation from/to different s3 key paths
 
     Parameters
     ----------
@@ -57,18 +57,18 @@ class OdimFilePath:
         return cls(h5_file_path.split("/")[0], *cls.parse_file_name(str(h5_file_path)), h5_file_path.split("/")[1])
 
     @staticmethod
-    def parse_file_name(name):
-        """Parse an hdf5 file name radar_code, year, month, day, hour, minute.
+    def parse_file_name(file_name):
+        """Parse an hdf5 file name radar_code, data_type, year, month, day, hour, minute and file_name.
 
         Parameters
         ----------
-        name : str
+        file_name : str
             File name to be parsed. An eventual parent path and
             extension will be removed
 
         Returns
         -------
-        radar_code, data_type, year, month, day, hour, minute
+        radar_code, data_type, year, month, day, hour, minute, file_name
 
         Notes
         -----
@@ -84,9 +84,9 @@ class OdimFilePath:
         name_regex = re.compile(
             r'.*([a-z]{2})([a-z]{3})_([a-z]*)_(\d\d\d\d)(\d\d)(\d\d)T?'
             r'(\d\d)(\d\d)(?:Z|00)?.*\.h5')
-        match = re.match(name_regex, name)
+        match = re.match(name_regex, file_name)
         if match:
-            file_name = Path(name).name
+            file_name = Path(file_name).name
             country, radar, data_type, year, \
                 month, day, hour, minute = match.groups()
             radar_code = country + radar
@@ -138,7 +138,7 @@ def extract_daily_group_from_s3_inventory(file_path):
 
     The coverage file counts the number of files available
     per group (e.g. daily files per radar). This function is passed
-    to the Pandas Groupby to translate the file path to a
+    to the Pandas ``groupby`` to translate the file path to a
     countable set (e.g. source, radar-code, year month and day for
     daily files per radar).
 
@@ -160,9 +160,10 @@ def list_manifest_file_keys(s3_manifest_url, storage_options=None):
     ----------
     s3_manifest_url : str
         s3 URL to manifest file
-    storage_options : str
-        path of the manifest file in s3 (relative to main
-        level in s3 bucket)
+    storage_options : dict, optional
+        Additional parameters passed to the read_csv to access the
+        s3 manifest files, eg. custom AWS profile options
+        ({"profile": "inbo-prd"})
     """
     if not storage_options:
         storage_options = {}
@@ -187,7 +188,20 @@ def _last_modified_from_manifest_subfile(df, look_back="2day"):
 
 
 def _radar_day_counts_from_manifest_subfile(df, group_callable=extract_daily_group_from_s3_inventory):
-    """Convert"""
+    """Count files according to groups as defined by callable
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame need to contain a 'file' column used to count and is passed to callable
+    group_callable : callable
+        Function to translate the file name into individual groups
+
+    Returns
+    -------
+    df : pandas DataFrame
+        DataFrame containing the counts per group
+    """
     return df.set_index("file").groupby(group_callable).size()
 
 
@@ -236,6 +250,8 @@ def handle_manifest(manifest_url, look_back="2day", storage_options=None):
         df = df[df["suffix"] == "h5"]
         df["source"] = df["file_items"].str.get(0)
         df = df.drop(columns=["file_items", "suffix"])
+
+        print(df["modified"])
 
         # Extract IDs latest N days modified files
         df_last_n_days.append(_last_modified_from_manifest_subfile(df, look_back))

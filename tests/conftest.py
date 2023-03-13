@@ -1,8 +1,11 @@
 import os
 import datetime
+from unittest.mock import MagicMock
 from pathlib import Path
 
 import pytest
+import boto3
+from moto import mock_s3
 
 from vptstools.vpts import BirdProfile
 
@@ -75,5 +78,48 @@ def vp_metadata_only():
         variables={}  # empty variables
     )
 
+
+@pytest.fixture(scope="function")
+def aws_credentials():
+    """Mocked AWS Credentials for moto."""
+    os.environ["AWS_ACCESS_KEY_ID"] = "testing"
+    os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
+    os.environ["AWS_SECURITY_TOKEN"] = "testing"
+    os.environ["AWS_SESSION_TOKEN"] = "testing"
+    os.environ["AWS_DEFAULT_REGION"] = "eu-west-1"
+
+
+@pytest.fixture
+def path_inventory():
+    """Return the folder containing minimal unit test files"""
+    return SAMPlE_DATA_DIR / "inventory"
+
+
+@pytest.fixture(scope="function")
+def s3_inventory(aws_credentials, path_inventory):
+    """Mocked AWS S3 inventory bucket with a manifest json example file included
+
+    The example inventory file contains the following hdf5 files:
+    source - radar_code - date - count
+    baltrad - fiuta  - 2021 04 23 - 1
+    baltrad - fiuta  - 2021 04 24 - 1
+    baltrad - nosta - 2023 03 11 - 4
+    baltrad - nosta - 2023 03 12 - 1
+    ecog-04003 - plpoz - 2016 09 23 - 2
+    """
+    manifest = path_inventory / "dummy_manifest.json"
+    inventory = path_inventory / "dummy_inventory.csv.gz"
+
+    with mock_s3():
+        s3 = boto3.client("s3")
+        s3.create_bucket(Bucket="aloft-inventory",
+                         CreateBucketConfiguration={"LocationConstraint": "eu-west-1"})
+        with open(manifest, "rb") as manifest_file:
+            s3.upload_fileobj(manifest_file, "aloft-inventory",
+                              f"aloft/aloft-hdf5-files-inventory/2023-03-12T01-00Z/manifest.json")
+        with open(inventory, "rb") as inventory_file:
+            s3.upload_fileobj(inventory_file, "aloft-inventory",
+                              "aloft/aloft-hdf5-files-inventory/data/dummy_inventory.csv.gz")
+        yield s3
 
 

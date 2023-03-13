@@ -1,7 +1,9 @@
+from unittest.mock import patch
+
 import pytest
 import pandas as pd
 
-from vptstools.s3 import (OdimFilePath,
+from vptstools.s3 import (OdimFilePath, handle_manifest,
                           extract_daily_group_from_s3_inventory,
                           _last_modified_from_manifest_subfile) # noqa
 
@@ -144,19 +146,67 @@ class TestOdimFilePath:
         assert _last_modified_from_manifest_subfile(df_, "10days").shape[0] == 10
         assert _last_modified_from_manifest_subfile(df_, "30days").shape[0] == 10
 
-    def test_list_manifest_file_keys(self):
-        """"""
-        # TODO - mock AWS call
-        assert True
 
-    def test_handle_manifest(self):
-        """"""
-        # TODO - mock AWS call
-        assert True
+class TestHandleManifest:
+    """S3 manifest/inventory is translated into coverage and
+    overview of days to update daily/monthly files
+    """
 
-    def test_monthly(self):
-        """"""
-        # make sure Nans are nog parsed and kept as str
-        assert True
+    # Resulting coverage file for the prepared unit test example inventory (tests/data/dummy_inventor.csv.gz)
+    df_result = pd.DataFrame({'directory': [('baltrad', 'hdf5', 'fiuta', '2021', '04', '23'),
+                                            ('baltrad', 'hdf5', 'fiuta', '2021', '04', '24'),
+                                            ('baltrad', 'hdf5', 'nosta', '2023', '03', '11'),
+                                            ('baltrad', 'hdf5', 'nosta', '2023', '03', '12'),
+                                            ('ecog-04003', 'hdf5', 'plpoz', '2016', '09', '23')],
+                              'file_count': [1, 1, 4, 1, 2]})
+
+    def test_list_manifest_file_keys(self, s3_inventory):
+        """Individual inventory items are correctly parsed from manifest file"""
+        from vptstools.s3 import list_manifest_file_keys
+        inventory_files = list(
+            list_manifest_file_keys("aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-03-12T01-00Z/manifest.json")
+        )
+        assert len(inventory_files) == 1
+        assert inventory_files[0]["key"] == "aloft/aloft-hdf5-files-inventory/data/" \
+                                            "dummy_inventory.csv.gz"
+
+    def test_handle_manifest_all(self, s3_inventory):
+        """e2e test for the manifest/inventory handling functionality - all included"""
+        # All inventory items within time window
+        with patch('pandas.Timestamp.now',
+                   return_value=pd.Timestamp("2023-02-01 00:00:00", tz="UTC")):
+            df_cov, days_to_create_vpts = handle_manifest(
+                "s3://aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-03-12T01-00Z/manifest.json",
+                look_back="60days")  # large enough number to get all inventory 'modified' items
+            # When date-modified implies full scan, df_cov and days_to_create_vpts are the same
+            pd.testing.assert_frame_equal(self.df_result, df_cov)
+            pd.testing.assert_frame_equal(df_cov, days_to_create_vpts)
+
+    def test_handle_manifest_subset(self, s3_inventory):
+        """e2e test for the manifest/inventory handling functionality - subset within time window"""
+        df_result = self.df_result.iloc[[1, 2, 4], :].reset_index(drop=True)
+
+        # Subset of inventory items within time-window
+        with patch('pandas.Timestamp.now',
+                   return_value=pd.Timestamp("2023-02-01 00:00:00", tz="UTC")):
+            df_cov, days_to_create_vpts = handle_manifest(
+                "s3://aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-03-12T01-00Z/manifest.json",
+                look_back="5days")  # only subset of files is within the time window of  days
+            # Coverage returns the full inventory overview
+            pd.testing.assert_frame_equal(self.df_result, df_cov)
+            # Days to update only keeps modified files within time frame
+            pd.testing.assert_frame_equal(df_result, days_to_create_vpts)
+
+
+
+def test_daily(self):
+    """"""
+    # make sure Nans are nog parsed and kept as str
+    assert True
+
+def test_monthly(self):
+    """"""
+    # make sure Nans are nog parsed and kept as str
+    assert True
 
 # TODO - test for file types array(['h5', 'csv', 'checksum', 'json', '', 'gz', 'txt'], dtype=object)
