@@ -116,7 +116,7 @@ class BirdProfile:
         Parameters
         ----------
         vpts_csv_version : AbstractVptsCsv
-            Ruleset with the VPTS-CSV ruleset to use, e.g. v1
+            Ruleset with the VPTS-CSV ruleset to use, e.g. v1.0
 
         Notes
         -----

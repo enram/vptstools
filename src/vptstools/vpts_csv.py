@@ -137,7 +137,7 @@ def get_vpts_version(version: str):
     Parameters
     ----------
     version : str
-        e.g. v1, v2,...
+        e.g. v1.0, v2.0,...
 
     Returns
     -------

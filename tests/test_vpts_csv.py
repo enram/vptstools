@@ -15,7 +15,7 @@ tests should be VptsCsv independent.
 """
 
 
-@pytest.mark.parametrize("vpts_version", ["v1"])
+@pytest.mark.parametrize("vpts_version", ["v1.0"])
 class TestVptsVersionClass:
     """Test VPTS specification mapping classes
     """
@@ -54,9 +54,9 @@ class TestVptsVersionMapper:
 
     def test_version_mapper(self):
         """User defined version is mapped to correct class"""
-        assert isinstance(get_vpts_version("v1"), VptsCsvV1)
+        assert isinstance(get_vpts_version("v1.0"), VptsCsvV1)
 
     def test_version_non_existent(self):
         """Raise error when none-supported version is requested"""
         with pytest.raises(VptsCsvVersionError):
-            get_vpts_version("v2")
+            get_vpts_version("v8555")
