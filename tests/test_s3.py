@@ -181,6 +181,7 @@ class TestHandleManifest:
             # When date-modified implies full scan, df_cov and days_to_create_vpts are the same
             pd.testing.assert_frame_equal(self.df_result, df_cov)
             pd.testing.assert_frame_equal(df_cov, days_to_create_vpts)
+            assert set(days_to_create_vpts.columns) == set(['directory', 'file_count']) == set(df_cov.columns)
 
     def test_handle_manifest_subset(self, s3_inventory):
         """e2e test for the manifest/inventory handling functionality - subset within time window"""
@@ -196,6 +197,22 @@ class TestHandleManifest:
             pd.testing.assert_frame_equal(self.df_result, df_cov)
             # Days to update only keeps modified files within time frame
             pd.testing.assert_frame_equal(df_result, days_to_create_vpts)
+            assert set(days_to_create_vpts.columns) == set(['directory', 'file_count']) == set(df_cov.columns)
+
+    def test_handle_manifest_none(self, s3_inventory):
+        """e2e test for the manifest/inventory handling functionality - no data within"""
+
+        # Subset of inventory items within time-window
+        with patch('pandas.Timestamp.now',
+                   return_value=pd.Timestamp("2023-03-01 00:00:00", tz="UTC")):
+            df_cov, days_to_create_vpts = handle_manifest(
+                "s3://aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-03-12T01-00Z/manifest.json",
+                look_back="1days")  # only subset of files is within the time window of  days
+            # Coverage returns the full inventory overview
+            pd.testing.assert_frame_equal(self.df_result, df_cov)
+            # days_to_create_vpts returns empty DataFrame
+            assert days_to_create_vpts.empty
+            assert set(days_to_create_vpts.columns) == set(['directory', 'file_count']) == set(df_cov.columns)
 
     def test_handle_inventory_alternative_suffix(self):
         """Only h5 files are included in the inventory handling, other extensions ignored"""
