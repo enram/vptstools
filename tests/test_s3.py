@@ -135,6 +135,8 @@ class TestOdimFilePath:
         # create a dataframe with a record for each of the last 10 days
         df_ = pd.DataFrame(
             {"modified": pd.date_range(pd.Timestamp.now() - pd.Timedelta("10days"), periods=10, tz="utc")})
+        print("indata", df_)
+        print(_last_modified_from_manifest_subfile(df_, "2days"))
         assert _last_modified_from_manifest_subfile(df_, "2days").shape[0] == 2
         assert _last_modified_from_manifest_subfile(df_, "5days").shape[0] == 5
         assert _last_modified_from_manifest_subfile(df_, "10days").shape[0] == 10
@@ -148,6 +150,11 @@ class TestOdimFilePath:
     def test_handle_manifest(self):
         """"""
         # TODO - mock AWS call
+        assert True
+
+    def test_monthly(self):
+        """"""
+        # make sure Nans are nog parsed and kept as str
         assert True
 
 # TODO - test for file types array(['h5', 'csv', 'checksum', 'json', '', 'gz', 'txt'], dtype=object)
