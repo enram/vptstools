@@ -35,3 +35,14 @@ def test_error_no_source(tmp_path):
     result = runner.invoke(cli, [f"{tmp_path}/*"])
     #assert result.exit_code == 2
     #assert "No source data file found" in result.output
+
+
+def test_daily():
+    """"""
+    # make sure Nans are nog parsed and kept as str
+    assert True
+
+def test_monthly():
+    """"""
+    # make sure Nans are nog parsed and kept as str
+    assert True

@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pytest
 import pandas as pd
 
-from vptstools.s3 import (OdimFilePath, handle_manifest,
+from vptstools.s3 import (OdimFilePath, handle_manifest, _handle_inventory,  # noqa
                           extract_daily_group_from_s3_inventory,
                           _last_modified_from_manifest_subfile) # noqa
 
@@ -197,16 +197,28 @@ class TestHandleManifest:
             # Days to update only keeps modified files within time frame
             pd.testing.assert_frame_equal(df_result, days_to_create_vpts)
 
+    def test_handle_inventory_alternative_suffix(self):
+        """Only h5 files are included in the inventory handling, other extensions ignored"""
+        df_inventory = pd.DataFrame(
+            [{'repo': 'aloft',
+              'file': 'baltrad/coverage.csv',
+              'size': 1,
+              'modified': pd.Timestamp('2023-01-31 00:00:00+0000', tz='UTC')},
+             {'repo': 'aloft',
+              'file': 'baltrad/inventory.csv.gz',
+              'size': 1,
+              'modified': pd.Timestamp('2023-01-31 00:00:00+0000', tz='UTC')},
+             {'repo': 'aloft',
+              'file': 'baltrad/manifest.json',
+              'size': 1,
+              'modified': pd.Timestamp('2023-01-31 00:00:00+0000', tz='UTC')},
+             {'repo': 'aloft',
+              'file': 'baltrad/14azd6.checksum',
+              'size': 1,
+              'modified': pd.Timestamp('2023-01-31 00:00:00+0000', tz='UTC')},
+             ]
+        )
 
-
-def test_daily(self):
-    """"""
-    # make sure Nans are nog parsed and kept as str
-    assert True
-
-def test_monthly(self):
-    """"""
-    # make sure Nans are nog parsed and kept as str
-    assert True
-
-# TODO - test for file types array(['h5', 'csv', 'checksum', 'json', '', 'gz', 'txt'], dtype=object)
+        df_cov, days_to_create_vpts = _handle_inventory(df_inventory, look_back="50days")
+        assert df_cov.empty
+        assert days_to_create_vpts.empty

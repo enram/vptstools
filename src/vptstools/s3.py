@@ -205,6 +205,44 @@ def _radar_day_counts_from_manifest_subfile(df, group_callable=extract_daily_gro
     return df.set_index("file").groupby(group_callable).size()
 
 
+def _handle_inventory(df, look_back, group_func=extract_daily_group_from_s3_inventory):
+    """Extract modified days and coverage from a single inventory df
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Pandas DataFrame of a parsed inventory file with the columns
+        "repo" (str), "file" (str), "size" (int) and "modified" (datetime)
+    look_back : str
+        pandas Timedelta description, e.g. 2days
+    group_func : callable
+        Function used to create countable groups
+
+    Returns
+    -------
+    df_last_n_days : pandas.DataFrame
+        pandas.DataFrame with the 'directory' info (source, radar_code,
+        year, month, day) and the number of new files within the
+        look back period.
+    df_coverage : pandas.DataFrame
+        pandas.DataFrame with the 'directory' info (source, radar_code,
+        year, month, day) and the number of files in the s3 bucket for each group.
+
+    """
+    # Filter for h5 files and extract source
+    df["file_items"] = df["file"].str.split("/")
+    df["suffix"] = df["file_items"].str.get(-1).str.split(".").str.get(-1)
+    df = df[df["suffix"] == "h5"]
+    df["source"] = df["file_items"].str.get(0)
+    df = df.drop(columns=["file_items", "suffix"])
+
+    # Extract IDs latest N days modified files
+    df_last_n_days = _last_modified_from_manifest_subfile(df, look_back)
+    # Count occurrences per radar-day -> coverage input
+    df_coverage = _radar_day_counts_from_manifest_subfile(df, group_func)
+    return df_coverage, df_last_n_days
+
+
 def handle_manifest(manifest_url, look_back="2day", storage_options=None):
     """Extract modified days and coverage from a manifest file
 
@@ -225,7 +263,7 @@ def handle_manifest(manifest_url, look_back="2day", storage_options=None):
     df_cov : pandas.DataFrame
         DataFrame with the 'directory' info (source, radar_code,
         year, month, day) and the number of files in the s3 bucket.
-    days_to_create_vpts : pandas.DataFrame
+    df_days_to_create_vpts : pandas.DataFrame
         DataFrame with the 'directory' info (source, radar_code,
         year, month, day) and the number of new files within the
         look back period.
@@ -242,22 +280,16 @@ def handle_manifest(manifest_url, look_back="2day", storage_options=None):
         # Read the manifest referenced file
         parsed_url = urllib.parse.urlparse(manifest_url)
         df = pd.read_csv(f"s3://{parsed_url.netloc}/{obj['key']}", engine="pyarrow",
-                         names=["repo", "file", "size", "modified"], storage_options=storage_options)
+                         names=["repo", "file", "size", "modified"],
+                         storage_options=storage_options)
 
-        # Filter for h5 files and extract source
-        df["file_items"] = df["file"].str.split("/")
-        df["suffix"] = df["file_items"].str.get(-1).str.split(".").str.get(-1)
-        df = df[df["suffix"] == "h5"]
-        df["source"] = df["file_items"].str.get(0)
-        df = df.drop(columns=["file_items", "suffix"])
-
-        print(df["modified"])
-
+        # Extract counts per group and groups within defined time window
+        df_co, df_last = _handle_inventory(df, look_back,
+                                           group_func=extract_daily_group_from_s3_inventory)
         # Extract IDs latest N days modified files
-        df_last_n_days.append(_last_modified_from_manifest_subfile(df, look_back))
-
+        df_last_n_days.append(df_last)
         # Count occurrences per radar-day -> coverage input
-        df_coverage.append(_radar_day_counts_from_manifest_subfile(df, extract_daily_group_from_s3_inventory))
+        df_coverage.append(df_co)
 
     # Create coverage file DataFrame
     df_cov = pd.concat(df_coverage)
@@ -266,11 +298,11 @@ def handle_manifest(manifest_url, look_back="2day", storage_options=None):
 
     # Create modified days DataFrame
     df_mod = pd.concat(df_last_n_days)
-    days_to_create_vpts = df_mod.set_index("file").groupby(
+    df_days_to_create_vpts = df_mod.set_index("file").groupby(
             extract_daily_group_from_s3_inventory).size().reset_index()
-    days_to_create_vpts = days_to_create_vpts.rename(
+    df_days_to_create_vpts = df_days_to_create_vpts.rename(
         columns={"index": "directory", "file": "directory",  # mapping depends on content; both included
                  0: "file_count"}
     )
 
-    return df_cov, days_to_create_vpts
+    return df_cov, df_days_to_create_vpts
