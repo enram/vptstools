@@ -31,7 +31,7 @@ def cli(look_back, aws_profile):
         storage_options = dict()
     # Load the s3 manifest of today
     click.echo(f"Load the s3 manifest of {date.today()}.")
-    manifest_parent_key = date.today().strftime(f"%Y-%m-%dT{MANIFEST_HOUR_OF_DAY}Z")
+    manifest_parent_key = (date.today() - pd.Timedelta("1day")).strftime(f"%Y-%m-%dT{MANIFEST_HOUR_OF_DAY}Z")
     s3_url = f"{MANIFEST_URL}/{manifest_parent_key}/manifest.json"  # define manifest of today
 
     click.echo(f"Extract coverage and days to recreate from manifest {s3_url}.")
@@ -96,9 +96,12 @@ def cli(look_back, aws_profile):
         file_list = inbo_s3.ls(f"{S3_BUCKET}/{odim_path.s3_path_setup('daily')}")
         files_to_concat = sorted([daily_vpts for daily_vpts in file_list
                                   if daily_vpts.find(f"{odim_path.year}{odim_path.month}") >= 0])
-        df_month = pd.concat([pd.read_csv(f"s3://{file_path}", dtype=str) for file_path in files_to_concat])
+        # do not parse Nan values, but keep all data as string
+        df_month = pd.concat([pd.read_csv(f"s3://{file_path}", dtype=str,
+                                          keep_default_na=False, na_values=None) for file_path in files_to_concat])
         df_month.to_csv(f"s3://{S3_BUCKET}/{odim_path.s3_file_path_monthly_vpts}",
                         index=False, storage_options=storage_options)
+
     click.echo("Finished creating monthly vpts files.")
     click.echo("Finished vpts update procedure.")
 
