@@ -134,9 +134,11 @@ class TestOdimFilePath:
         """Manifest records are correctly filtered on modified date"""
         # create a dataframe with a record for each of the last 10 days
         df_ = pd.DataFrame(
-            {"modified": pd.date_range(pd.Timestamp.now() - pd.Timedelta("10days"), periods=10, tz="utc")})
-        print("indata", df_)
-        print(_last_modified_from_manifest_subfile(df_, "2days"))
+            {"modified": pd.date_range(pd.Timestamp.now(tz="utc") -
+                                       pd.Timedelta("10days"), periods=10, tz="utc") +
+                                       pd.Timedelta("2hours")
+             }
+        )
         assert _last_modified_from_manifest_subfile(df_, "2days").shape[0] == 2
         assert _last_modified_from_manifest_subfile(df_, "5days").shape[0] == 5
         assert _last_modified_from_manifest_subfile(df_, "10days").shape[0] == 10
