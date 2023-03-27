@@ -16,7 +16,7 @@ MANIFEST_HOUR_OF_DAY = "01-00"
 
 
 @click.command()
-@click.option("--days-to-look-back", "look_back", default=2)  # VOEG --modified-days-ago;; | int or 'all'
+@click.option("--modified-days-ago", "look_back", default=2)  # VOEG --modified-days-ago;; | int or 'all'
 @click.option("--aws-profile", "aws_profile", default=None)
 def cli(look_back, aws_profile):
     """Convert h5 vp files to daily/monthly vpts files on s3 bucket
