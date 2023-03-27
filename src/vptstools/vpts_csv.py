@@ -37,13 +37,13 @@ def datetime_to_proper8601(timestamp):
 
 
 def int_to_nodata(value, nodata_values, nodata=""):
-    """Convert to integer or nodata value if enlisted
+    """Convert str to either integer or the corresponding nodata value if enlisted
 
     Parameters
     ----------
-    value : str | int | float
+    value : str
         Single data value
-    nodata_values : list
+    nodata_values : list of str
         List of values in which case the data point need to be converted to ``nodata``
     nodata : str | float, default ""
         Data value to use when incoming value is one of the ``nodata_values``
@@ -54,14 +54,18 @@ def int_to_nodata(value, nodata_values, nodata=""):
 
     Examples
     --------
-    >>> int_to_nodata('0', [0, 'NULL'], nodata="")
+    >>> int_to_nodata("0", ["0", 'NULL'], nodata="")
     ''
-    >>> int_to_nodata('12', [0, 'NULL'], nodata="")
+    >>> int_to_nodata("12", ["0", 'NULL'], nodata="")
     12
-    >>> int_to_nodata('NULL', [0, 'NULL'], nodata="")
+    >>> int_to_nodata('NULL', ["0", 'NULL'], nodata="")
     ''
     ""
     """
+    if not isinstance(value, str):
+        raise TypeError("Conversion with no-data check only supports str values.")
+    if np.any([not isinstance(item, str) for item in nodata_values]):
+        raise TypeError("Make sure to define the nodata_values as str.")
     if value in nodata_values:
         return nodata
     else:
@@ -277,7 +281,7 @@ class VptsCsvV1(AbstractVptsCsv):
             n_dbz_all=bird_profile.variables["n_dbz_all"],
             rcs=bird_profile.how["rcs_bird"],
             sd_vvp_threshold=bird_profile.how["sd_vvp_thresh"],
-            vcp=int_to_nodata(bird_profile.how["vcp"], ["NULL", 0], self.nodata),
+            vcp=int_to_nodata(str(bird_profile.how["vcp"]), ["NULL", "0"], self.nodata),
             radar_latitude=np.round(bird_profile.where["lat"], 6),
             radar_longitude=np.round(bird_profile.where["lon"], 6),
             radar_height=int(bird_profile.where["height"]),
