@@ -17,13 +17,22 @@ MANIFEST_HOUR_OF_DAY = "01-00"
 
 
 @click.command()
-@click.option("--modified-days-ago", "modified_days_ago", default=2, type=int,
-              help="All bucket files with a modified date between now and N modified_days_ago "
-                   "will be taken into account for the recreation of daily/monthly files. If 0,"
-                   "all nucket files will be taken into account for the recreation.")
-@click.option("--aws-profile", "aws_profile", default=None,
-              help="Optionally, define the AWS profile used to run the command for "
-                   "interaction with the AWS s3 bucket.")
+@click.option(
+    "--modified-days-ago",
+    "modified_days_ago",
+    default=2,
+    type=int,
+    help="All bucket files with a modified date between now and N modified_days_ago "
+    "will be taken into account for the recreation of daily/monthly files. If 0,"
+    "all nucket files will be taken into account for the recreation.",
+)
+@click.option(
+    "--aws-profile",
+    "aws_profile",
+    default=None,
+    help="Optionally, define the AWS profile used to run the command for "
+    "interaction with the AWS s3 bucket.",
+)
 def cli(modified_days_ago, aws_profile):
     """Convert and aggregate h5 vp files to daily/monthly vpts files on s3 bucket
 
@@ -38,23 +47,31 @@ def cli(modified_days_ago, aws_profile):
     # Load the s3 manifest of today
     click.echo(f"Load the s3 manifest of {date.today()}.")
 
-    manifest_parent_key = (pd.Timestamp.now(tz="utc").date() - pd.Timedelta("1day")).strftime(
-        f"%Y-%m-%dT{MANIFEST_HOUR_OF_DAY}Z")
+    manifest_parent_key = (
+        pd.Timestamp.now(tz="utc").date() - pd.Timedelta("1day")
+    ).strftime(f"%Y-%m-%dT{MANIFEST_HOUR_OF_DAY}Z")
     s3_url = f"{MANIFEST_URL}/{manifest_parent_key}/manifest.json"  # define manifest of today
 
     click.echo(f"Extract coverage and days to recreate from manifest {s3_url}.")
     if modified_days_ago == 0:
         modified_days_ago = (pd.Timestamp.now(tz="utc") - S3_BUCKET_CREATION).days + 1
-        click.echo(f"Recreate the full set of bucket files (files modified since {modified_days_ago}days). "
-                   f"This will take a while!")
+        click.echo(
+            f"Recreate the full set of bucket files (files modified since {modified_days_ago}days). "
+            f"This will take a while!"
+        )
 
-    df_cov, days_to_create_vpts = handle_manifest(s3_url, modified_days_ago=f"{modified_days_ago}day",
-                                                  storage_options=storage_options)
+    df_cov, days_to_create_vpts = handle_manifest(
+        s3_url,
+        modified_days_ago=f"{modified_days_ago}day",
+        storage_options=storage_options,
+    )
 
     # Save coverage file to s3 bucket
     click.echo("Save coverage file to s3.")
     df_cov["directory"] = df_cov["directory"].str.join("/")
-    df_cov.to_csv(f"s3://{S3_BUCKET}/coverage.csv", index=False, storage_options=storage_options)
+    df_cov.to_csv(
+        f"s3://{S3_BUCKET}/coverage.csv", index=False, storage_options=storage_options
+    )
 
     # Run vpts daily conversion for each radar-day with modified files
     inbo_s3 = s3fs.S3FileSystem(**storage_options)
@@ -85,8 +102,10 @@ def cli(modified_days_ago, aws_profile):
         vpts_to_csv(df_vpts, temp_folder_path / odim_path.daily_vpts_file_name)
 
         # - copy vpts file to s3
-        inbo_s3.put(str(temp_folder_path / odim_path.daily_vpts_file_name),
-                    f"{S3_BUCKET}/{odim_path.s3_file_path_daily_vpts}")
+        inbo_s3.put(
+            str(temp_folder_path / odim_path.daily_vpts_file_name),
+            f"{S3_BUCKET}/{odim_path.s3_file_path_daily_vpts}",
+        )
 
         # - remove tempdir with local files
         shutil.rmtree(temp_folder_path)
@@ -96,8 +115,12 @@ def cli(modified_days_ago, aws_profile):
     # Run vpts monthly conversion for each radar-day with modified files
     # TODO - abstract monthly procedure to separate functionality
     months_to_create_vpts = days_to_create_vpts
-    months_to_create_vpts["directory"] = months_to_create_vpts["directory"].apply(lambda x: x[:-1])  # remove day
-    months_to_create_vpts = months_to_create_vpts.groupby("directory").size().reset_index()
+    months_to_create_vpts["directory"] = months_to_create_vpts["directory"].apply(
+        lambda x: x[:-1]
+    )  # remove day
+    months_to_create_vpts = (
+        months_to_create_vpts.groupby("directory").size().reset_index()
+    )
 
     click.echo(f"Create {months_to_create_vpts.shape[0]} monthly vpts files.")
     for j, monthly_vpts in enumerate(months_to_create_vpts["directory"]):
@@ -106,13 +129,30 @@ def cli(modified_days_ago, aws_profile):
 
         click.echo(f"Create monthly vpts file {odim_path.s3_file_path_monthly_vpts}.")
         file_list = inbo_s3.ls(f"{S3_BUCKET}/{odim_path.s3_path_setup('daily')}")
-        files_to_concat = sorted([daily_vpts for daily_vpts in file_list
-                                  if daily_vpts.find(f"{odim_path.year}{odim_path.month}") >= 0])
+        files_to_concat = sorted(
+            [
+                daily_vpts
+                for daily_vpts in file_list
+                if daily_vpts.find(f"{odim_path.year}{odim_path.month}") >= 0
+            ]
+        )
         # do not parse Nan values, but keep all data as string
-        df_month = pd.concat([pd.read_csv(f"s3://{file_path}", dtype=str,
-                                          keep_default_na=False, na_values=None) for file_path in files_to_concat])
-        df_month.to_csv(f"s3://{S3_BUCKET}/{odim_path.s3_file_path_monthly_vpts}",
-                        index=False, storage_options=storage_options)
+        df_month = pd.concat(
+            [
+                pd.read_csv(
+                    f"s3://{file_path}",
+                    dtype=str,
+                    keep_default_na=False,
+                    na_values=None,
+                )
+                for file_path in files_to_concat
+            ]
+        )
+        df_month.to_csv(
+            f"s3://{S3_BUCKET}/{odim_path.s3_file_path_monthly_vpts}",
+            index=False,
+            storage_options=storage_options,
+        )
 
     click.echo("Finished creating monthly vpts files.")
     click.echo("Finished vpts update procedure.")

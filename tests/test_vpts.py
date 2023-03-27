@@ -6,11 +6,21 @@ import pytest
 import numpy as np
 
 from vptstools.odimh5 import ODIMReader, InvalidSourceODIM
-from vptstools.vpts import (vpts, vp, vpts_to_csv, BirdProfile,
-                            validate_vpts, DESCRIPTOR_FILENAME,
-                            _convert_to_source)  #noqa
-from vptstools.vpts_csv import (int_to_nodata, datetime_to_proper8601,
-                                get_vpts_version, AbstractVptsCsv)
+from vptstools.vpts import (
+    vpts,
+    vp,
+    vpts_to_csv,
+    BirdProfile,
+    validate_vpts,
+    DESCRIPTOR_FILENAME,
+    _convert_to_source,
+)  # noqa
+from vptstools.vpts_csv import (
+    int_to_nodata,
+    datetime_to_proper8601,
+    get_vpts_version,
+    AbstractVptsCsv,
+)
 from vptstools.s3 import OdimFilePath
 
 import pandas as pd
@@ -37,7 +47,6 @@ def _convert_to_source_s3(file_path):
 
 @pytest.mark.parametrize("vpts_version", ["v1.0"])
 class TestVpts:
-
     def test_frictionless_schema_vp(self, vpts_version, tmp_path, path_with_vp):
         """Output after conversion corresponds to the frictionless schema"""
         file_path = next(path_with_vp.rglob("*.h5"))
@@ -59,7 +68,9 @@ class TestVpts:
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
         # check for str in data itself is read of 'object' on Pandas level
-        assert all([isinstance(value, str) for value in df_vpts.iloc[0, :].to_dict().values()])
+        assert all(
+            [isinstance(value, str) for value in df_vpts.iloc[0, :].to_dict().values()]
+        )
 
     def test_column_order(self, vpts_version, path_with_vp):
         """vpts column names are present and have correct sequence of VPTS CSV standard"""
@@ -87,8 +98,12 @@ class TestVpts:
 
         # Resorting does not change dataframe (already sorted)
         df_pre = df_vpts[list(vpts_spec.sort.keys())]
-        df_post = df_vpts[list(vpts_spec.sort.keys())].astype(vpts_spec.sort).sort_values(
-            by=list(vpts_spec.sort.keys())).astype(str)
+        df_post = (
+            df_vpts[list(vpts_spec.sort.keys())]
+            .astype(vpts_spec.sort)
+            .sort_values(by=list(vpts_spec.sort.keys()))
+            .astype(str)
+        )
         pd.testing.assert_frame_equal(df_pre, df_post)
 
     def test_nodata(self, vpts_version, path_with_vp):
@@ -98,7 +113,9 @@ class TestVpts:
         with ODIMReader(file_path) as odim_vp:
             bird_profile = BirdProfile.from_odim(odim_vp, file_path.name)
             # raw data as saved in the hdf5 file
-            dd_raw = np.array(odim_vp.hdf5["dataset1"]["data2"]["data"]).flatten()  # data2 -> dd
+            dd_raw = np.array(
+                odim_vp.hdf5["dataset1"]["data2"]["data"]
+            ).flatten()  # data2 -> dd
             dd_nodata = odim_vp.hdf5["dataset1"]["data2"]["what"].attrs["nodata"]
         # values after conversion
         dd_vpts = bird_profile.to_vp(vpts_spec)["dd"]
@@ -112,7 +129,9 @@ class TestVpts:
         with ODIMReader(file_path) as odim_vp:
             bird_profile = BirdProfile.from_odim(odim_vp, file_path.name)
             # raw data as saved in the hdf5 file
-            ff_raw = np.array(odim_vp.hdf5["dataset1"]["data1"]["data"]).flatten()  # data1 -> ff
+            ff_raw = np.array(
+                odim_vp.hdf5["dataset1"]["data1"]["data"]
+            ).flatten()  # data1 -> ff
             ff_undetect = odim_vp.hdf5["dataset1"]["data1"]["what"].attrs["undetect"]
         # values after conversion
         ff_vpts = bird_profile.to_vp(vpts_spec)["ff"]
@@ -139,11 +158,15 @@ class TestVpts:
             return dict(
                 radar=bird_profile.identifiers["NOD"],
                 datetime=datetime_to_proper8601(bird_profile.datetime),
-                vcp=int_to_nodata(str(vp_metadata_only.how["vcp"]), ["NULL", "0"],
-                                  vpts_csv_version.nodata),
+                vcp=int_to_nodata(
+                    str(vp_metadata_only.how["vcp"]),
+                    ["NULL", "0"],
+                    vpts_csv_version.nodata,
+                ),
                 height=bird_profile.levels,
-                source_file=bird_profile.source_file
+                source_file=bird_profile.source_file,
             )
+
         monkeypatch.setattr(vpts_csv_version, "mapping", _mock_mapping)
 
         # bird profile (vp_metadata_only fixture) containing 0 values (OdimReader reads as int)
@@ -159,14 +182,17 @@ class TestVpts:
         # bird profile (vp_metadata_only fixture) containing expected int value as str
         vp_metadata_only.how["vcp"] = 12
         df = vp_metadata_only.to_vp(vpts_csv_version)
-        assert df["vcp"].unique() == np.array(['12'])
+        assert df["vcp"].unique() == np.array(["12"])
 
     def test_vp_no_source_file(self, vpts_version, path_with_vp):
         """The file name itself is used when no source_file reference is provided"""
         file_path = sorted(path_with_vp.rglob("*.h5"))[0]
         df_vp = vp(file_path, vpts_version)
-        assert set(df_vp["source_file"].unique()) == set( [file_path.name])
-        assert df_vp.reset_index(drop=True)["source_file"][0] == "bejab_vp_20221111T233000Z_0x9.h5"
+        assert set(df_vp["source_file"].unique()) == set([file_path.name])
+        assert (
+            df_vp.reset_index(drop=True)["source_file"][0]
+            == "bejab_vp_20221111T233000Z_0x9.h5"
+        )
 
     def test_vp_custom_callable_file(self, vpts_version, path_with_vp):
         """The source file reference can be overwritten by a custom callable using the
@@ -184,8 +210,13 @@ class TestVpts:
         """The file name itself is used when no source_file reference is provided"""
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
-        assert set(df_vpts["source_file"].unique()) == set(file_path.name for file_path in file_paths)
-        assert df_vpts.reset_index(drop=True)["source_file"][0] == "bejab_vp_20221111T233000Z_0x9.h5"
+        assert set(df_vpts["source_file"].unique()) == set(
+            file_path.name for file_path in file_paths
+        )
+        assert (
+            df_vpts.reset_index(drop=True)["source_file"][0]
+            == "bejab_vp_20221111T233000Z_0x9.h5"
+        )
 
     def test_vpts_convert_to_source(self, vpts_version):
         """Default helper function for filepath to file name returns name of path"""
@@ -212,8 +243,10 @@ class TestVpts:
     def test_abstractmethoddefaults(self, vpts_version):
         """Test properties of abstract base class level"""
         AbstractVptsCsv.__abstractmethods__ = set()
+
         class Dummy(AbstractVptsCsv):
             """Dummn subclass"""
+
         vpts_dummy = Dummy()
         assert vpts_dummy.nodata == ""
         assert vpts_dummy.undetect == "NaN"
@@ -223,7 +256,6 @@ class TestVpts:
 
 @pytest.mark.parametrize("vpts_version", ["v1.0"])
 class TestVptsToCsv:
-
     def test_path_created(self, vpts_version, path_with_vp, tmp_path):
         """Routine creates parent folders if not existing"""
         file_paths = sorted(path_with_vp.rglob("*.h5"))
@@ -252,7 +284,6 @@ class TestVptsToCsv:
 
 
 class TestBirdProfile:
-
     def test_from_odim(self, path_with_vp):
         """odim format is correctly mapped"""
         assert True  # TODO
@@ -260,15 +291,19 @@ class TestBirdProfile:
     def test_sortable(self, vp_metadata_only):
         """vp can be sorted on datetime"""
         vp_dict = dataclasses.asdict(vp_metadata_only)
-        vp_dict["datetime"] = datetime.datetime(2030, 11, 14, 19, 5, tzinfo=datetime.timezone.utc)
+        vp_dict["datetime"] = datetime.datetime(
+            2030, 11, 14, 19, 5, tzinfo=datetime.timezone.utc
+        )
         vp_dict["variables"] = dict()
         vp_metadata_only_later = BirdProfile(*vp_dict.values())
         assert vp_metadata_only < vp_metadata_only_later
 
     def test_str(self, vp_metadata_only):
         """"""
-        assert str(vp_metadata_only), f"Bird profile: {vp_metadata_only.datetime:%Y-%m-%d %H:%M} " \
-                                      f"- {vp_metadata_only.identifiers}"
+        assert str(vp_metadata_only), (
+            f"Bird profile: {vp_metadata_only.datetime:%Y-%m-%d %H:%M} "
+            f"- {vp_metadata_only.identifiers}"
+        )
 
     def test_source_file(self, vp_metadata_only):
         """BirdProfile can be created with a source_file reference.
@@ -276,7 +311,9 @@ class TestBirdProfile:
         No checks on the format are done (checks are only linked to a certain vpts-csv version when converting to vp).
         """
         vp_dict = dataclasses.asdict(vp_metadata_only)
-        source_file = "s3://noaa-nexrad-level2/2016/09/01/KBGM/KBGM20160901_000212_V06.h5"
+        source_file = (
+            "s3://noaa-nexrad-level2/2016/09/01/KBGM/KBGM20160901_000212_V06.h5"
+        )
         vp_dict["source_file"] = source_file
         vp_with_source_file = BirdProfile(*vp_dict.values())
         assert vp_with_source_file.source_file == source_file
@@ -295,16 +332,14 @@ class TestBirdProfile:
         assert isinstance(vp_with_source_file.source_file, str)
 
     def test_source_file_no_str(self, vp_metadata_only):
-        """A TypeError is raised when the input source_file is not a str representation
-        """
+        """A TypeError is raised when the input source_file is not a str representation"""
         vp_dict = dataclasses.asdict(vp_metadata_only)
         with pytest.raises(TypeError):
             vp_dict["source_file"] = Path("./test.h5")
             BirdProfile(*vp_dict.values())
 
     def test_source_file_from_odim(self, path_with_vp):
-        """BirdProfile from ODIM with a user-defined source_file uses the custom path (without check)
-        """
+        """BirdProfile from ODIM with a user-defined source_file uses the custom path (without check)"""
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         source_file = "s3://custom_path/file.h5"
         with ODIMReader(file_paths[0]) as odim_vp:
@@ -325,5 +360,3 @@ class TestBirdProfile:
         with ODIMReader(current_path) as odim_vp:
             bird_profile = BirdProfile.from_odim(odim_vp)
         assert bird_profile.source_file == str(current_path.name)
-
-

@@ -9,6 +9,7 @@ import pytz
 
 class InvalidSourceODIM(Exception):
     """Wrong ODIM file"""
+
     pass
 
 
@@ -49,8 +50,7 @@ class ODIMReader(object):
     def _extract_root_attributes_dict(self, group: str) -> dict:
         attr = self.hdf5[group].attrs
         return {
-            key: value.decode("utf-8")
-            if isinstance(value, bytes) else value
+            key: value.decode("utf-8") if isinstance(value, bytes) else value
             for key, value in attr.items()
         }
 

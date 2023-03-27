@@ -6,6 +6,7 @@ import numpy as np
 
 class VptsCsvVersionError(Exception):
     """Raised when non supported VPTS version is asked"""
+
     pass
 
 
@@ -33,7 +34,7 @@ def datetime_to_proper8601(timestamp):
     >>> datetime_to_proper8601(datetime(2021, 1, 1, 4, 0))
     '2021-01-01T04:00:00Z'
     """
-    return timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')
+    return timestamp.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def int_to_nodata(value, nodata_values, nodata=""):
@@ -286,5 +287,7 @@ class VptsCsvV1(AbstractVptsCsv):
             radar_longitude=np.round(bird_profile.where["lon"], 6),
             radar_height=int(bird_profile.where["height"]),
             radar_wavelength=np.round(bird_profile.how["wavelength"], 6),
-            source_file=check_source_file(bird_profile.source_file, self.source_file_regex)
+            source_file=check_source_file(
+                bird_profile.source_file, self.source_file_regex
+            ),
         )

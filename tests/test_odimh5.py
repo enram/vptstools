@@ -94,9 +94,14 @@ def test_how(file_path_pvol):
     """metadata 'what' attributes are extracted correctly"""
     with ODIMReader(file_path_pvol) as odim:
         assert odim.how == {
-            'beamwidth': 1.0, 'endepochs': 1487030428, 'highprf': 600, 'lowprf': 0,
-            'software': 'RAINBOW 5.42.9', 'startepochs': 1487030681,
-            'system': 'GEMA500', 'wavelength': 5.25
+            "beamwidth": 1.0,
+            "endepochs": 1487030428,
+            "highprf": 600,
+            "lowprf": 0,
+            "software": "RAINBOW 5.42.9",
+            "startepochs": 1487030681,
+            "system": "GEMA500",
+            "wavelength": 5.25,
         }
 
 
@@ -104,16 +109,18 @@ def test_what(file_path_pvol):
     """metadata 'what' attributes are extracted correctly"""
     with ODIMReader(file_path_pvol) as odim:
         assert odim.what == {
-            'date': '20170214', 'object': 'PVOL',
-            'source': 'WMO:06477,RAD:BX41,PLC:Wideumont,NOD:bewid,CTY:605,CMT:VolumeScanZ',
-            'time': '000016', 'version': 'H5rad 2.2'
+            "date": "20170214",
+            "object": "PVOL",
+            "source": "WMO:06477,RAD:BX41,PLC:Wideumont,NOD:bewid,CTY:605,CMT:VolumeScanZ",
+            "time": "000016",
+            "version": "H5rad 2.2",
         }
 
 
 def test_where(file_path_pvol):
     """metadata 'what' attributes are extracted correctly"""
     with ODIMReader(file_path_pvol) as odim:
-        assert odim.where == {'height': 590.0, 'lat': 49.9143, 'lon': 5.5056}
+        assert odim.where == {"height": 590.0, "lat": 49.9143, "lon": 5.5056}
 
 
 def test_check_vp_odim_failure(path_with_wrong_h5):

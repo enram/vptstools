@@ -92,7 +92,9 @@ def cli():
     click.echo("Initialization complete, we can loop on files on the SFTP server")
     for entry in sftp.listdir_iter():
         if "_vp_" in entry.filename:  # PVOLs and other files are ignored
-            click.echo(f"{entry.filename} is a VP file, we need to consider it... ", end="")
+            click.echo(
+                f"{entry.filename} is a VP file, we need to consider it... ", end=""
+            )
 
             radar_code, year, month_str, day_str = extract_metadata_from_filename(
                 entry.filename
