@@ -77,6 +77,7 @@ extensions = [
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
+
 # Enable markdown
 extensions.append("myst_parser")
 
@@ -105,7 +106,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "vptstools"
-copyright = "2022, enram"
+copyright = "2023, enram"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
