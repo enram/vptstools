@@ -136,3 +136,17 @@ class ODIMReader(object):
 
     def close(self) -> None:
         self.hdf5.close()
+
+
+def check_vp_odim(source_odim: ODIMReader) -> None:
+    """Verify ODIM file is an hdf5 ODIM format containing 'VP' data."""
+    if not {"what", "how", "where"}.issubset(source_odim.hdf5.keys()):
+        raise InvalidSourceODIM(
+            "No hdf5 ODIM format: File does not contain what/how/where "
+            "group information."
+        )
+    if source_odim.root_object_str != "VP":
+        raise InvalidSourceODIM(
+            f"Incorrect what.object value: expected VP, "
+            f"found {source_odim.root_object_str}"
+        )

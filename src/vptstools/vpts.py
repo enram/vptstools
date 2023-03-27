@@ -11,7 +11,7 @@ import tempfile
 import pandas as pd
 from frictionless import validate
 
-from vptstools.odimh5 import ODIMReader, InvalidSourceODIM
+from vptstools.odimh5 import ODIMReader, check_vp_odim
 from vptstools.vpts_csv import get_vpts_version
 
 NODATA = ""
@@ -20,20 +20,6 @@ UNDETECT = "NaN"
 DESCRIPTOR_FILENAME = "vpts.resource.json"
 CSV_ENCODING = "utf8"  # !! Don't change, only utf-8 is accepted in frictionless resources
 CSV_FIELD_DELIMITER = ","
-
-
-def check_vp_odim(source_odim: ODIMReader) -> None:
-    """Verify ODIM file is an hdf5 ODIM format containing 'VP' data."""
-    if not {"what", "how", "where"}.issubset(source_odim.hdf5.keys()):
-        raise InvalidSourceODIM(
-            "No hdf5 ODIM format: File does not contain what/how/where "
-            "group information."
-        )
-    if source_odim.root_object_str != "VP":
-        raise InvalidSourceODIM(
-            f"Incorrect what.object value: expected VP, "
-            f"found {source_odim.root_object_str}"
-        )
 
 
 def _odim_get_variables(dataset, variable_mapping: dict, quantity: str) -> List[Any]:
@@ -57,7 +43,6 @@ def _odim_get_variables(dataset, variable_mapping: dict, quantity: str) -> List[
     In order to handle the 'nodata' and 'undetect', a list overcomes casting as is done
     when using numpy in this case (and the non exsitence of Nan for integer in numpy).
     """
-    # TODO - check with Adriaan what to do with the gain/offset
     data_group = variable_mapping[quantity]
 
     gain = dataset[data_group]["what"].attrs["gain"]
@@ -205,6 +190,7 @@ def vp(file_path, vpts_csv_version="v1.0", source_file=""):
         source_file = source_file(file_path)
 
     with ODIMReader(file_path) as odim_vp:
+        check_vp_odim(odim_vp)
         vp = BirdProfile.from_odim(odim_vp, source_file)
     return vp.to_vp(get_vpts_version(vpts_csv_version))
 
