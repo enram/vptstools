@@ -10,7 +10,7 @@ import pandas as pd
 from vptstools.vpts import vpts, vpts_to_csv
 from vptstools.s3 import handle_manifest, OdimFilePath
 
-S3_BUCKET = "aloft"
+S3_BUCKET = "aloft"  # TODO - use config instead of hardcoded value
 S3_BUCKET_CREATION = pd.Timestamp("2022-08-02 00:00:00", tz="UTC")
 MANIFEST_URL = f"s3://aloft-inventory/{S3_BUCKET}/{S3_BUCKET}-hdf5-files-inventory"
 MANIFEST_HOUR_OF_DAY = "01-00"
