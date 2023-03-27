@@ -22,7 +22,7 @@ def path_with_vp():
 
 @pytest.fixture
 def path_with_wrong_h5():
-    """Return the folder containing wrong - not ODIM -  hdf5 file"""
+    """Return the folder containing wrong - not ODIM - hdf5 file"""
     return SAMPlE_DATA_DIR / "vp_no_odim_h5"
 
 
@@ -33,8 +33,8 @@ def path_with_pvol():
 
 
 @pytest.fixture
-def path_with_sample_odimh5():
-    """Return the folder containing minimal unit test files of ODIM5"""
+def file_path_pvol():
+    """Return minimal unit test file of pvol ODIM5"""
     return SAMPlE_DATA_DIR / "odimh5" / "bewid_pvol_20170214T0000Z_0x1.h5"
 
 
@@ -47,7 +47,7 @@ def vp_metadata_only():
         what={'date': b'20221114', 'object': b'VP', 'source': b'WMO:14024,RAD:SI41,PLC:Lisca,NOD:silis',
               'time': b'190500', 'version': b'H5rad 2.4'},
         where={'height': 950.0, 'interval': 200.0, 'lat': 46.06776997447014,
-               'levels': 25, 'lon': 15.28489999473095, 'maxheight': 5000.0,'minheight': 0.0},
+               'levels': 25, 'lon': 15.28489999473095, 'maxheight': 5000.0, 'minheight': 0.0},
         how={'beamwidth': 1.200000029057264, 'clutterMap': b'', 'comment': b'', 'dealiased': 1, 'enddate': b'20221114',
              'endtime': b'190959',
              'filename_pvol': b'/opt/opera/projects/vol2bird_scripts/data/'
@@ -100,26 +100,34 @@ def s3_inventory(aws_credentials, path_inventory):
     """Mocked AWS S3 inventory bucket with a manifest json example file included
 
     The example inventory file contains the following hdf5 files:
-    source - radar_code - date - count
-    baltrad - fiuta  - 2021 04 23 - 1
-    baltrad - fiuta  - 2021 04 24 - 1
-    baltrad - nosta - 2023 03 11 - 4
-    baltrad - nosta - 2023 03 12 - 1
-    ecog-04003 - plpoz - 2016 09 23 - 2
+    source - radar_code - date - count   -> last modified
+    baltrad - fiuta  - 2021 04 23 - 1    -> 2023-01-01
+    baltrad - fiuta  - 2021 04 24 - 1    -> 2023-01-28
+    baltrad - nosta - 2023 03 11 - 4     -> 2023-01-31
+    baltrad - nosta - 2023 03 12 - 1     -> 2023-01-01
+    ecog-04003 - plpoz - 2016 09 23 - 2  -> 2023-01-28
     """
     manifest = path_inventory / "dummy_manifest.json"
     inventory = path_inventory / "dummy_inventory.csv.gz"
 
     with mock_s3():
         s3 = boto3.client("s3")
+        # Add S3 inventory setup
         s3.create_bucket(Bucket="aloft-inventory",
                          CreateBucketConfiguration={"LocationConstraint": "eu-west-1"})
         with open(manifest, "rb") as manifest_file:
             s3.upload_fileobj(manifest_file, "aloft-inventory",
-                              f"aloft/aloft-hdf5-files-inventory/2023-03-12T01-00Z/manifest.json")
+                              f"aloft/aloft-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json")
         with open(inventory, "rb") as inventory_file:
             s3.upload_fileobj(inventory_file, "aloft-inventory",
                               "aloft/aloft-hdf5-files-inventory/data/dummy_inventory.csv.gz")
+
+        # Add example data to aloft mocked s3 bucket
+        s3.create_bucket(Bucket="aloft",
+                                   CreateBucketConfiguration={"LocationConstraint": "eu-west-1"})
+        for h5file in (path_inventory / "vp").glob("*.h5"):
+            with open(h5file, "rb") as h5f:
+                s3.upload_fileobj(h5f, "aloft", f"baltrad/hdf5/nosta/2023/03/11/{h5file.name}")
         yield s3
 
 
