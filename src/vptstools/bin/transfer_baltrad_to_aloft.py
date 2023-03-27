@@ -12,9 +12,7 @@ from configparser import ConfigParser
 import boto3
 import paramiko
 
-from vptstools.scripts.constants import CONFIG_FILE
-
-# TODO - convert to click-command line utility
+CONFIG_FILE = "config.ini"
 
 def s3_key_exists(key: str, bucket: str, s3_client) -> bool:
     results = s3_client.list_objects(Bucket=bucket, Prefix=key)
