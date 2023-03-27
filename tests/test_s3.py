@@ -1,10 +1,12 @@
+import os
+import configparser
 from unittest.mock import patch
 
 import pytest
 import pandas as pd
 
 from vptstools.s3 import (OdimFilePath, handle_manifest, _handle_inventory,  # noqa
-                          extract_daily_group_from_inventory,
+                          extract_daily_group_from_inventory, list_manifest_file_keys,
                           _last_modified_from_inventory) # noqa
 
 
@@ -29,6 +31,11 @@ class TestOdimFilePath:
         """File path components are correctly extracted from file path"""
         serialized = OdimFilePath.parse_file_name(file_path)
         assert serialized == components
+
+    def test_parse_file_name_invalid(self):
+        """File path components are correctly extracted from file path"""
+        with pytest.raises(ValueError):
+            OdimFilePath.parse_file_name("not a valid file name")
 
     @pytest.mark.parametrize(
         # radar_code, data_type, year, month, day, hour, minute, file_name
@@ -103,14 +110,15 @@ class TestOdimFilePath:
          ("fiuta_vp_20211114T214500Z_0xb.h5", ("fi", "uta")),
          ("seang_vp_20170120T2115Z_0xf3fc7b_148494821853.h5", ("se", "ang")),
          ("searl_vp_20161231T2030Z_0x5_148321870475.h5", ("se", "arl")),
-         ("plrze_vp_20201027T172000Z_0x9.h5", ("pl", "ze")),
+         ("plrze_vp_20201027T172000Z_0x9.h5", ("pl", "rze")),
          ],
     )
     def test_radar_code(self, file_path, components):
         """Radar and country are correctly creating the radar_code"""
         odim_path = OdimFilePath.from_file_name(file_path,
                                                 source="baltrad")
-        assert odim_path.country, odim_path.radar == components
+        assert odim_path.country == components[0]
+        assert odim_path.radar == components[1]
 
     @pytest.mark.parametrize(
         # radar_code, data_type, year, month, day, hour, minute, file_name
@@ -162,9 +170,29 @@ class TestHandleManifest:
 
     def test_list_manifest_file_keys(self, s3_inventory):
         """Individual inventory items are correctly parsed from manifest file"""
-        from vptstools.s3 import list_manifest_file_keys
         inventory_files = list(
             list_manifest_file_keys("aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-03-12T01-00Z/manifest.json")
+        )
+        assert len(inventory_files) == 1
+        assert inventory_files[0]["key"] == "aloft/aloft-hdf5-files-inventory/data/" \
+                                            "dummy_inventory.csv.gz"
+
+    def test_list_manifest_file_keys_with_profile(self, s3_inventory, tmp_path):
+        """Individual inventory items are correctly parsed from manifest file"""
+        # register and define custom AWS profile
+        custom_crd = tmp_path / "credentials"
+        os.environ["AWS_SHARED_CREDENTIALS_FILE"] = str(custom_crd)
+        with open(custom_crd, "w") as cred:
+            config = configparser.ConfigParser()
+            config["my-aws-profile"] = {}
+            config["my-aws-profile"]["aws_access_key_id"] = "DUMMY"
+            config["my-aws-profile"]["aws_secret_access_key"] = "DUMMY"
+            config.write(cred)
+
+        # run inventory with alternative profile
+        inventory_files = list(
+            list_manifest_file_keys("aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-03-12T01-00Z/manifest.json",
+                                    storage_options={"profile": "my-aws-profile"})
         )
         assert len(inventory_files) == 1
         assert inventory_files[0]["key"] == "aloft/aloft-hdf5-files-inventory/data/" \
@@ -176,7 +204,7 @@ class TestHandleManifest:
         with patch('pandas.Timestamp.now',
                    return_value=pd.Timestamp("2023-02-01 00:00:00", tz="UTC")):
             df_cov, days_to_create_vpts = handle_manifest(
-                "s3://aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-03-12T01-00Z/manifest.json",
+                "s3://aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
                 look_back="60days")  # large enough number to get all inventory 'modified' items
             # When date-modified implies full scan, df_cov and days_to_create_vpts are the same
             pd.testing.assert_frame_equal(self.df_result, df_cov)
@@ -191,7 +219,7 @@ class TestHandleManifest:
         with patch('pandas.Timestamp.now',
                    return_value=pd.Timestamp("2023-02-01 00:00:00", tz="UTC")):
             df_cov, days_to_create_vpts = handle_manifest(
-                "s3://aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-03-12T01-00Z/manifest.json",
+                "s3://aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
                 look_back="5days")  # only subset of files is within the time window of  days
             # Coverage returns the full inventory overview
             pd.testing.assert_frame_equal(self.df_result, df_cov)
@@ -206,7 +234,7 @@ class TestHandleManifest:
         with patch('pandas.Timestamp.now',
                    return_value=pd.Timestamp("2023-03-01 00:00:00", tz="UTC")):
             df_cov, days_to_create_vpts = handle_manifest(
-                "s3://aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-03-12T01-00Z/manifest.json",
+                "s3://aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
                 look_back="1days")  # only subset of files is within the time window of  days
             # Coverage returns the full inventory overview
             pd.testing.assert_frame_equal(self.df_result, df_cov)
