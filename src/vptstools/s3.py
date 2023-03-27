@@ -174,17 +174,17 @@ def extract_daily_group_from_inventory(file_path):
             path_info.year, path_info.month, path_info.day)
 
 
-def _last_modified_from_inventory(df, look_back="2day"):
+def _last_modified_from_inventory(df, modified_days_ago="2day"):
     """Filter manifest files on last modified
 
     Parameters
     ----------
     df : pandas.DataFrame
         s3 csv-based inventory read by pandas
-    look_back : str , default '2day'
+    modified_days_ago : str , default '2day'
         Pandas Timedelta valid string
     """
-    return df[df["modified"] > (pd.Timestamp.now(tz="utc") - pd.Timedelta(look_back))]
+    return df[df["modified"] > (pd.Timestamp.now(tz="utc") - pd.Timedelta(modified_days_ago))]
 
 
 def _radar_day_counts_from_inventory(df, group_callable=extract_daily_group_from_inventory):
@@ -205,7 +205,7 @@ def _radar_day_counts_from_inventory(df, group_callable=extract_daily_group_from
     return df.set_index("file").groupby(group_callable).size()
 
 
-def _handle_inventory(df, look_back, group_func=extract_daily_group_from_inventory):
+def _handle_inventory(df, modified_days_ago, group_func=extract_daily_group_from_inventory):
     """Extract modified days and coverage from a single inventory df
 
     Parameters
@@ -213,7 +213,7 @@ def _handle_inventory(df, look_back, group_func=extract_daily_group_from_invento
     df : pandas.DataFrame
         Pandas DataFrame of a parsed inventory file with the columns
         "repo" (str), "file" (str), "size" (int) and "modified" (datetime)
-    look_back : str
+    modified_days_ago : str
         pandas Timedelta description, e.g. 2days
     group_func : callable
         Function used to create countable groups
@@ -237,20 +237,20 @@ def _handle_inventory(df, look_back, group_func=extract_daily_group_from_invento
     df = df.drop(columns=["file_items", "suffix"])
 
     # Extract IDs latest N days modified files
-    df_last_n_days = _last_modified_from_inventory(df, look_back)
+    df_last_n_days = _last_modified_from_inventory(df, modified_days_ago)
     # Count occurrences per radar-day -> coverage input
     df_coverage = _radar_day_counts_from_inventory(df, group_func)
     return df_coverage, df_last_n_days
 
 
-def handle_manifest(manifest_url, look_back="2day", storage_options=None):
+def handle_manifest(manifest_url, modified_days_ago="2day", storage_options=None):
     """Extract modified days and coverage from a manifest file
 
     Parameters
     ----------
     manifest_url : str
         URL of the s3 inventory manifest file to use; s3://...
-    look_back : str, default '2day'
+    modified_days_ago : str, default '2day'
         Time period to check for 'modified date' to extract
         the subset of files that should trigger a rerun.
     storage_options : dict, optional
@@ -284,7 +284,7 @@ def handle_manifest(manifest_url, look_back="2day", storage_options=None):
                          storage_options=storage_options)
 
         # Extract counts per group and groups within defined time window
-        df_co, df_last = _handle_inventory(df, look_back,
+        df_co, df_last = _handle_inventory(df, modified_days_ago,
                                            group_func=extract_daily_group_from_inventory)
         # Extract IDs latest N days modified files
         df_last_n_days.append(df_last)

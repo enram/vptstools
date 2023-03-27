@@ -11,19 +11,25 @@ from vptstools.vpts import vpts, vpts_to_csv
 from vptstools.s3 import handle_manifest, OdimFilePath
 
 S3_BUCKET = "aloft"
+S3_BUCKET_CREATION = pd.Timestamp("2022-08-02 00:00:00", tz="UTC")
 MANIFEST_URL = f"s3://aloft-inventory/{S3_BUCKET}/{S3_BUCKET}-hdf5-files-inventory"
 MANIFEST_HOUR_OF_DAY = "01-00"
 
 
 @click.command()
-@click.option("--modified-days-ago", "look_back", default=2)  # VOEG --modified-days-ago;; | int or 'all'
-@click.option("--aws-profile", "aws_profile", default=None)
-def cli(look_back, aws_profile):
-    """Convert h5 vp files to daily/monthly vpts files on s3 bucket
+@click.option("--modified-days-ago", "modified_days_ago", default=2, type=int,
+              help="All bucket files with a modified date between now and N modified_days_ago "
+                   "will be taken into account for the recreation of daily/monthly files. If 0,"
+                   "all nucket files will be taken into account for the recreation.")
+@click.option("--aws-profile", "aws_profile", default=None,
+              help="Optionally, define the AWS profile used to run the command for "
+                   "interaction with the AWS s3 bucket.")
+def cli(modified_days_ago, aws_profile):
+    """Convert and aggregate h5 vp files to daily/monthly vpts files on s3 bucket
 
-    Check the latest added h5 files on the s3 bucket using the s3 inventory,
-    convert all ODIM hdf5 profiles files for the days with updated files to
-    a single vpts-csv file and upload the vpts-csv file to s3.
+    Check the latest modified h5 files on the s3 bucket using an s3 inventory,
+    convert all ODIM hdf5 profiles files for the days with modified files to
+    the vpts-csv standard and upload the vpts-csv daily/monthly files to s3.
     """
     if aws_profile:
         storage_options = {"profile": aws_profile}
@@ -31,11 +37,18 @@ def cli(look_back, aws_profile):
         storage_options = dict()
     # Load the s3 manifest of today
     click.echo(f"Load the s3 manifest of {date.today()}.")
-    manifest_parent_key = (date.today() - pd.Timedelta("1day")).strftime(f"%Y-%m-%dT{MANIFEST_HOUR_OF_DAY}Z")
+
+    manifest_parent_key = (pd.Timestamp.now(tz="utc").date() - pd.Timedelta("1day")).strftime(
+        f"%Y-%m-%dT{MANIFEST_HOUR_OF_DAY}Z")
     s3_url = f"{MANIFEST_URL}/{manifest_parent_key}/manifest.json"  # define manifest of today
 
     click.echo(f"Extract coverage and days to recreate from manifest {s3_url}.")
-    df_cov, days_to_create_vpts = handle_manifest(s3_url, look_back=f"{look_back}day",
+    if modified_days_ago == 0:
+        modified_days_ago = (pd.Timestamp.now(tz="utc") - S3_BUCKET_CREATION).days + 1
+        click.echo(f"Recreate the full set of bucket files (files modified since {modified_days_ago}days). "
+                   f"This will take a while!")
+
+    df_cov, days_to_create_vpts = handle_manifest(s3_url, modified_days_ago=f"{modified_days_ago}day",
                                                   storage_options=storage_options)
 
     # Save coverage file to s3 bucket
@@ -54,7 +67,6 @@ def cli(look_back, aws_profile):
         odim_path = OdimFilePath(source, radar_code, "vp", year, month, day)
         odim5_files = inbo_s3.ls(f"{S3_BUCKET}/{odim_path.s3_folder_path_h5}")
         click.echo(f"Create daily vpts file {odim_path.s3_file_path_daily_vpts}.")
-
         # - create tempdir
         temp_folder_path = Path(tempfile.mkdtemp())
 
