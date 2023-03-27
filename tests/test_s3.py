@@ -171,7 +171,7 @@ class TestHandleManifest:
     def test_list_manifest_file_keys(self, s3_inventory):
         """Individual inventory items are correctly parsed from manifest file"""
         inventory_files = list(
-            list_manifest_file_keys("aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-03-12T01-00Z/manifest.json")
+            list_manifest_file_keys("aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json")
         )
         assert len(inventory_files) == 1
         assert inventory_files[0]["key"] == "aloft/aloft-hdf5-files-inventory/data/" \
@@ -191,7 +191,7 @@ class TestHandleManifest:
 
         # run inventory with alternative profile
         inventory_files = list(
-            list_manifest_file_keys("aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-03-12T01-00Z/manifest.json",
+            list_manifest_file_keys("aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
                                     storage_options={"profile": "my-aws-profile"})
         )
         assert len(inventory_files) == 1
@@ -205,7 +205,7 @@ class TestHandleManifest:
                    return_value=pd.Timestamp("2023-02-01 00:00:00", tz="UTC")):
             df_cov, days_to_create_vpts = handle_manifest(
                 "s3://aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
-                look_back="60days")  # large enough number to get all inventory 'modified' items
+                modified_days_ago="60days")  # large enough number to get all inventory 'modified' items
             # When date-modified implies full scan, df_cov and days_to_create_vpts are the same
             pd.testing.assert_frame_equal(self.df_result, df_cov)
             pd.testing.assert_frame_equal(df_cov, days_to_create_vpts)
@@ -220,7 +220,7 @@ class TestHandleManifest:
                    return_value=pd.Timestamp("2023-02-01 00:00:00", tz="UTC")):
             df_cov, days_to_create_vpts = handle_manifest(
                 "s3://aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
-                look_back="5days")  # only subset of files is within the time window of  days
+                modified_days_ago="5days")  # only subset of files is within the time window of  days
             # Coverage returns the full inventory overview
             pd.testing.assert_frame_equal(self.df_result, df_cov)
             # Days to update only keeps modified files within time frame
@@ -235,7 +235,7 @@ class TestHandleManifest:
                    return_value=pd.Timestamp("2023-03-01 00:00:00", tz="UTC")):
             df_cov, days_to_create_vpts = handle_manifest(
                 "s3://aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
-                look_back="1days")  # only subset of files is within the time window of  days
+                modified_days_ago="1days")  # only subset of files is within the time window of  days
             # Coverage returns the full inventory overview
             pd.testing.assert_frame_equal(self.df_result, df_cov)
             # days_to_create_vpts returns empty DataFrame
@@ -264,6 +264,6 @@ class TestHandleManifest:
              ]
         )
 
-        df_cov, days_to_create_vpts = _handle_inventory(df_inventory, look_back="50days")
+        df_cov, days_to_create_vpts = _handle_inventory(df_inventory, modified_days_ago="50days")
         assert df_cov.empty
         assert days_to_create_vpts.empty
