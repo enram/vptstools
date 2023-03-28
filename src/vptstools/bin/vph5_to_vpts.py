@@ -22,9 +22,8 @@ MANIFEST_HOUR_OF_DAY = "01-00"
     "modified_days_ago",
     default=2,
     type=int,
-    help="All bucket files with a modified date between now and N modified_days_ago "
-    "will be taken into account for the recreation of daily/monthly files. If 0,"
-    "all nucket files will be taken into account for the recreation.",
+    help="All bucket files with a modified date between now and N modified-days-ago will be taken into account for "
+         "the recreation of daily/monthly files. If 0, all bucket files will be taken into account for the recreation",
 )
 @click.option(
     "--aws-profile",
