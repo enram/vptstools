@@ -5,7 +5,7 @@ import numpy as np
 
 
 class VptsCsvVersionError(Exception):
-    """Raised when non supported VPTS version is asked"""
+    """Raised when non supported VPTS CSV version is asked"""
 
     pass
 
@@ -128,9 +128,9 @@ def check_source_file(source_file, regex):
 
 
 """
-VPTS-CSV version abstract version and individual version mapping implementations
+VPTS CSV version abstract version and individual version mapping implementations
 
-To create a new version of the VPTS-CSV implementation, create a new class `VptsCsvVX` inherited from the 
+To create a new version of the VPTS CSV implementation, create a new class `VptsCsvVX` inherited from the 
 `AbstractVptsCsv` class and provide the `abstractmethod`. See the `mapping` method for the conversion 
 functionality. Make sure to add the mapping to the `_get_vpts_version` function
 """
@@ -150,7 +150,7 @@ def get_vpts_version(version: str):
 
     Raises
     ------
-    VptsCsvVersionError : Version of the VPTS-CSV is not supported by an implementation
+    VptsCsvVersionError : Version of the VPTS CSV is not supported by an implementation
     """
     if version == "v1.0":
         return VptsCsvV1()
@@ -194,7 +194,7 @@ class AbstractVptsCsv(ABC):
 
     @abstractmethod
     def mapping(self, bird_profile) -> dict:
-        """Translation from bird-profile to vpts CSV data standard.
+        """Translation from ODIM bird profile to VPTS CSV data format.
 
         Data columns can be derived from the different attributes of the
         bird profile:
@@ -254,7 +254,7 @@ class VptsCsvV1(AbstractVptsCsv):
         return dict(radar=str, datetime=str, height=int, source_file=str)
 
     def mapping(self, bird_profile):
-        """Translation from bird-profile to vpts CSV data standard.
+        """Translation from ODIM bird profile to VPTS CSV data format.
 
         Notes
         -----

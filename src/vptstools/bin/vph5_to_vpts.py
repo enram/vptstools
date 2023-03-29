@@ -96,7 +96,7 @@ def cli(modified_days_ago, aws_profile):
         # - run vpts on all locally downloaded files
         df_vpts = vpts(h5_file_local_paths)
 
-        # - save vpts-csv file locally
+        # - save vpts file locally
         vpts_to_csv(df_vpts, temp_folder_path / odim_path.daily_vpts_file_name)
 
         # - copy vpts file to S3

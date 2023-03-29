@@ -111,7 +111,7 @@ class OdimFilePath:
 
     @property
     def daily_vpts_file_name(self):
-        """Name of the corresponding daily vpts-csv file"""
+        """Name of the corresponding daily vpts file"""
         return f"{self.radar_code}_vpts_{self.year}{self.month}{self.day}.csv"
 
     def s3_path_setup(self, file_output):

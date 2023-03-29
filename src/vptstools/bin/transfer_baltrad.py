@@ -1,6 +1,6 @@
 # Simple Python script that:
 # - Connects via SFTP to the BALTRAD server
-# - For each VP file (pvol gets ignored), download the file from the server and upload it to the "aloft" S3 bucket
+# - For each vp file (pvol gets ignored), download the file from the server and upload it to the "aloft" S3 bucket
 
 # Designed to be executed daily via a simple cronjob (files disappear after a few days on the BALTRAD server)
 # Use a simple config file named config.ini. Create one by copying config.template.ini and filling in the values.
@@ -93,7 +93,7 @@ def cli():
     for entry in sftp.listdir_iter():
         if "_vp_" in entry.filename:  # PVOLs and other files are ignored
             click.echo(
-                f"{entry.filename} is a VP file, we need to consider it... ", end=""
+                f"{entry.filename} is a vp file, we need to consider it... ", end=""
             )
 
             radar_code, year, month_str, day_str = extract_metadata_from_filename(
