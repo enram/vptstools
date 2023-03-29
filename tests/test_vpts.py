@@ -202,7 +202,7 @@ class TestVpts:
         df_vp = vp(file_path, vpts_version, _convert_to_source_dummy)
         assert (df_vp["source_file"] == "DUMMY VALUE").all()
 
-        # Use a conversion to s3 function
+        # Use a conversion to S3 function
         df_vp = vp(file_path, vpts_version, _convert_to_source_s3)
         assert df_vp["source_file"].str.startswith("s3://aloft/baltrad").all()
 
@@ -231,7 +231,7 @@ class TestVpts:
         df_vpts = vpts(file_paths, vpts_version, _convert_to_source_dummy)
         assert (df_vpts["source_file"] == "DUMMY VALUE").all()
 
-        # Use a conversion to s3 function
+        # Use a conversion to S3 function
         df_vpts = vpts(file_paths, vpts_version, _convert_to_source_s3)
         assert df_vpts["source_file"].str.startswith("s3://aloft/baltrad").all()
 

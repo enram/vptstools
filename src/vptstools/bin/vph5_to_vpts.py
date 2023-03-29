@@ -42,8 +42,8 @@ def cli(modified_days_ago, aws_profile):
         storage_options = {"profile": aws_profile}
     else:
         storage_options = dict()
-    # Load the s3 manifest of today
-    click.echo(f"Load the s3 manifest of {date.today()}.")
+    # Load the S3 manifest of today
+    click.echo(f"Load the S3 manifest of {date.today()}.")
 
     manifest_parent_key = (
         pd.Timestamp.now(tz="utc").date() - pd.Timedelta("1day")
@@ -64,8 +64,8 @@ def cli(modified_days_ago, aws_profile):
         storage_options=storage_options,
     )
 
-    # Save coverage file to s3 bucket
-    click.echo("Save coverage file to s3.")
+    # Save coverage file to S3 bucket
+    click.echo("Save coverage file to S3.")
     df_cov["directory"] = df_cov["directory"].str.join("/")
     df_cov.to_csv(
         f"s3://{S3_BUCKET}/coverage.csv", index=False, storage_options=storage_options
@@ -99,7 +99,7 @@ def cli(modified_days_ago, aws_profile):
         # - save vpts-csv file locally
         vpts_to_csv(df_vpts, temp_folder_path / odim_path.daily_vpts_file_name)
 
-        # - copy vpts file to s3
+        # - copy vpts file to S3
         inbo_s3.put(
             str(temp_folder_path / odim_path.daily_vpts_file_name),
             f"{S3_BUCKET}/{odim_path.s3_file_path_daily_vpts}",

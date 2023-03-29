@@ -10,7 +10,7 @@ import pandas as pd
 
 @dataclass(frozen=True)
 class OdimFilePath:
-    """ODIM file path with translation from/to different s3 key paths
+    """ODIM file path with translation from/to different S3 key paths
 
     Parameters
     ----------
@@ -54,7 +54,7 @@ class OdimFilePath:
 
     @classmethod
     def from_inventory(cls, h5_file_path):
-        """Initialize class from s3 inventory which contains source and file_type"""
+        """Initialize class from S3 inventory which contains source and file_type"""
         return cls(
             h5_file_path.split("/")[0],
             *cls.parse_file_name(str(h5_file_path)),
@@ -115,7 +115,7 @@ class OdimFilePath:
         return f"{self.radar_code}_vpts_{self.year}{self.month}{self.day}.csv"
 
     def s3_path_setup(self, file_output):
-        """Common setup of the s3 bucket logic"""
+        """Common setup of the S3 bucket logic"""
         return f"{self.source}/{file_output}/{self.radar_code}/{self.year}"
 
     def s3_url_h5(self, bucket="aloft"):
@@ -124,17 +124,17 @@ class OdimFilePath:
 
     @property
     def s3_folder_path_h5(self):
-        """s3 key with the folder containing the h5 file"""
+        """S3 key with the folder containing the h5 file"""
         return f"{self.s3_path_setup('hdf5')}/{self.month}/{self.day}"
 
     @property
     def s3_file_path_daily_vpts(self):
-        """s3 key of the daily vpts file corresponding to the h5 file"""
+        """S3 key of the daily vpts file corresponding to the h5 file"""
         return f"{self.s3_path_setup('daily')}/{self.daily_vpts_file_name}"
 
     @property
     def s3_file_path_monthly_vpts(self):
-        """s3 key of the monthly concatenated vpts file corresponding to the h5 file"""
+        """S3 key of the monthly concatenated vpts file corresponding to the h5 file"""
         return f"{self.s3_path_setup('monthly')}/{self.radar_code}_vpts_{self.year}{self.month}.csv.gz"
 
 
@@ -144,10 +144,10 @@ def list_manifest_file_keys(s3_manifest_url, storage_options=None):
     Parameters
     ----------
     s3_manifest_url : str
-        s3 URL to manifest file
+        S3 URL to manifest file
     storage_options : dict, optional
         Additional parameters passed to the read_csv to access the
-        s3 manifest files, eg. custom AWS profile options
+        S3 manifest files, eg. custom AWS profile options
         ({"profile": "inbo-prd"})
     """
     if not storage_options:
@@ -191,7 +191,7 @@ def _last_modified_from_inventory(df, modified_days_ago="2day"):
     Parameters
     ----------
     df : pandas.DataFrame
-        s3 csv-based inventory read by pandas
+        S3 csv-based inventory read by pandas
     modified_days_ago : str , default '2day'
         Pandas Timedelta valid string
     """
@@ -243,7 +243,7 @@ def _handle_inventory(
         look back period.
     df_coverage : pandas.DataFrame
         pandas.DataFrame with the 'directory' info (source, radar_code,
-        year, month, day) and the number of files in the s3 bucket for each group.
+        year, month, day) and the number of files in the S3 bucket for each group.
 
     """
     # Filter for h5 files and extract source
@@ -266,20 +266,20 @@ def handle_manifest(manifest_url, modified_days_ago="2day", storage_options=None
     Parameters
     ----------
     manifest_url : str
-        URL of the s3 inventory manifest file to use; s3://...
+        URL of the S3 inventory manifest file to use; s3://...
     modified_days_ago : str, default '2day'
         Time period to check for 'modified date' to extract
         the subset of files that should trigger a rerun.
     storage_options : dict, optional
         Additional parameters passed to the read_csv to access the
-        s3 manifest files, eg. custom AWS profile options
+        S3 manifest files, eg. custom AWS profile options
         ({"profile": "inbo-prd"})
 
     Returns
     -------
     df_cov : pandas.DataFrame
         DataFrame with the 'directory' info (source, radar_code,
-        year, month, day) and the number of files in the s3 bucket.
+        year, month, day) and the number of files in the S3 bucket.
     df_days_to_create_vpts : pandas.DataFrame
         DataFrame with the 'directory' info (source, radar_code,
         year, month, day) and the number of new files within the
@@ -288,7 +288,7 @@ def handle_manifest(manifest_url, modified_days_ago="2day", storage_options=None
     Notes
     -----
     Check https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-inventory.html
-    for more information on s3 bucket inventory and manifest files.
+    for more information on S3 bucket inventory and manifest files.
     """
     # TODO - add additional checks on input
     df_last_n_days = []
