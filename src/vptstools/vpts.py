@@ -111,7 +111,7 @@ class BirdProfile:
         Parameters
         ----------
         vpts_csv_version : AbstractVptsCsv
-            Ruleset with the VPTS-CSV ruleset to use, e.g. v1.0
+            Ruleset with the VPTS CSV ruleset to use, e.g. v1.0
 
         Notes
         -----
@@ -185,7 +185,7 @@ def vp(file_path, vpts_csv_version="v1.0", source_file=""):
     file_path : Path
         File Path of ODIM h5
     vpts_csv_version : str, default ""
-        Ruleset with the VPTS-CSV ruleset to use, e.g. v1.0
+        Ruleset with the VPTS CSV ruleset to use, e.g. v1.0
     source_file : str | callable
         URL or path to the source file from which the data were derived or
         a callable that converts the file_path to the source_file
@@ -223,7 +223,7 @@ def vpts(file_paths, vpts_csv_version="v1.0", source_file=None):
     file_paths : Iterable of file paths
         Iterable of ODIM h5 file paths
     vpts_csv_version : str
-        Ruleset with the VPTS-CSV ruleset to use, e.g. v1.0
+        Ruleset with the VPTS CSV ruleset to use, e.g. v1.0
     source_file : callable, optional
         A callable that converts the file_path to the source_file. When None,
         the file name itself (without parent folder reference) is used.
@@ -275,7 +275,7 @@ def vpts_to_csv(df, file_path):
     df : pandas.DataFrame
         DataFrame with vp or vpts data
     file_path : Path | str
-        File path to store the VPTS CSV file
+        File path to store the vpts file
     """
     # check for str input of Path
     if not isinstance(file_path, Path):

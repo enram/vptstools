@@ -22,29 +22,28 @@ MANIFEST_HOUR_OF_DAY = "01-00"
     "modified_days_ago",
     default=2,
     type=int,
-    help="All bucket files with a modified date between now and N modified-days-ago will be taken into account for "
-         "the recreation of daily/monthly files. If 0, all bucket files will be taken into account for the recreation",
+    help="Range of h5 vp files to include, i.e. files modified between now and N"
+         "modified-days-ago. If 0, all h5 files in the bucket will be included.",
 )
 @click.option(
     "--aws-profile",
     "aws_profile",
     default=None,
-    help="Optionally, define the AWS profile used to run the command for "
-    "interaction with the AWS s3 bucket.",
+    help="(Optionally) AWS profile used to interact with the S3 bucket.",
 )
 def cli(modified_days_ago, aws_profile):
-    """Convert and aggregate h5 vp files to daily/monthly vpts files on s3 bucket
+    """Convert and aggregate h5 vp files to daily/monthly vpts files on S3 bucket
 
-    Check the latest modified h5 files on the s3 bucket using an s3 inventory,
-    convert all ODIM hdf5 profiles files for the days with modified files to
-    the vpts-csv standard and upload the vpts-csv daily/monthly files to s3.
+    Check the latest modified h5 vp files on the S3 bucket using an S3 inventory,
+    convert those files from ODIM bird profile to the VPTS CSV format and
+    upload the generated daily/monthly vpts files to S3.
     """
     if aws_profile:
         storage_options = {"profile": aws_profile}
     else:
         storage_options = dict()
-    # Load the s3 manifest of today
-    click.echo(f"Load the s3 manifest of {date.today()}.")
+    # Load the S3 manifest of today
+    click.echo(f"Load the S3 manifest of {date.today()}.")
 
     manifest_parent_key = (
         pd.Timestamp.now(tz="utc").date() - pd.Timedelta("1day")
@@ -65,8 +64,8 @@ def cli(modified_days_ago, aws_profile):
         storage_options=storage_options,
     )
 
-    # Save coverage file to s3 bucket
-    click.echo("Save coverage file to s3.")
+    # Save coverage file to S3 bucket
+    click.echo("Save coverage file to S3.")
     df_cov["directory"] = df_cov["directory"].str.join("/")
     df_cov.to_csv(
         f"s3://{S3_BUCKET}/coverage.csv", index=False, storage_options=storage_options
@@ -97,10 +96,10 @@ def cli(modified_days_ago, aws_profile):
         # - run vpts on all locally downloaded files
         df_vpts = vpts(h5_file_local_paths)
 
-        # - save vpts-csv file locally
+        # - save vpts file locally
         vpts_to_csv(df_vpts, temp_folder_path / odim_path.daily_vpts_file_name)
 
-        # - copy vpts file to s3
+        # - copy vpts file to S3
         inbo_s3.put(
             str(temp_folder_path / odim_path.daily_vpts_file_name),
             f"{S3_BUCKET}/{odim_path.s3_file_path_daily_vpts}",

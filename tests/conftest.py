@@ -183,7 +183,7 @@ def s3_inventory(aws_credentials, path_inventory):
                 "aloft/aloft-hdf5-files-inventory/data/dummy_inventory.csv.gz",
             )
 
-        # Add example data to aloft mocked s3 bucket
+        # Add example data to aloft mocked S3 bucket
         s3.create_bucket(
             Bucket="aloft",
             CreateBucketConfiguration={"LocationConstraint": "eu-west-1"},
