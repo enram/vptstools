@@ -4,7 +4,7 @@
 [![PyPI-Server](https://img.shields.io/pypi/v/vptstools.svg)](https://pypi.org/project/vptstools/)
 [![.github/workflows/run_tests.yaml](https://github.com/enram/vptstools/actions/workflows/run_tests.yaml/badge.svg)](https://github.com/enram/vptstools/actions/workflows/run_tests.yaml)
 
-Python tools to work with vertical profile time series.
+vptstools is a Python library to transfer and convert vpts data. VPTS (vertical profile time series) express the density, speed and direction of biological signals such as birds, bats and insects within a weather radar volume, grouped into altitude layers (height) and measured over time (datetime).
 
 ## Installation
 
@@ -14,7 +14,7 @@ Python 3.9+ is required.
 pip install vptstools
 ```
 
-In case you also need the tools/services to run data transfers (SFTP, S3), make sure to install the additional dependencies:
+If you need the tools/services to transfer data (SFTP, S3) install these additional dependencies:
 
 ```
 pip install vptstools[transfer]
@@ -22,7 +22,7 @@ pip install vptstools[transfer]
 
 ## CLI endpoints
 
-Included modules/commands are:
+In addition to using functions in Python scripts, two vptstools functions can be called from the command line:
 
 ### transfer_baltrad
 
@@ -75,7 +75,7 @@ tox -e clean     # Remove old distribution files and temporary build artifacts (
 tox -e linkcheck # Check for broken links in the documentation
 
 tox -e publish   # Publish the package you have been developing to a package index server. By default, it uses testpypi. If you really want to publish your package to be publicly accessible in PyPI, use the `-- --repository pypi` option.
-tox -av          # to list all the tasks available
+tox -av          # List all available tasks
 ```
 
 <!-- pyscaffold-notes -->
