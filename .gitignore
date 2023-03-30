@@ -138,3 +138,6 @@ dmypy.json
 data/
 draft/
 config.ini
+
+# Mac OS
+.DS_Store
