@@ -10,7 +10,7 @@ import pandas as pd
 
 @dataclass(frozen=True)
 class OdimFilePath:
-    """ODIM file path with translation from/to different s3 key paths
+    """ODIM file path with translation from/to different S3 key paths
 
     Parameters
     ----------
@@ -35,6 +35,7 @@ class OdimFilePath:
     file_type: str = "", optional
         File type from which the other properties were derived, e.g. hdf5
     """
+
     source: str
     radar_code: str
     data_type: str
@@ -53,8 +54,12 @@ class OdimFilePath:
 
     @classmethod
     def from_inventory(cls, h5_file_path):
-        """Initialize class from s3 inventory which contains source and file_type"""
-        return cls(h5_file_path.split("/")[0], *cls.parse_file_name(str(h5_file_path)), h5_file_path.split("/")[1])
+        """Initialize class from S3 inventory which contains source and file_type"""
+        return cls(
+            h5_file_path.split("/")[0],
+            *cls.parse_file_name(str(h5_file_path)),
+            h5_file_path.split("/")[1],
+        )
 
     @staticmethod
     def parse_file_name(file_name):
@@ -82,13 +87,13 @@ class OdimFilePath:
         """
 
         name_regex = re.compile(
-            r'.*([a-z]{2})([a-z]{3})_([a-z]*)_(\d\d\d\d)(\d\d)(\d\d)T?'
-            r'(\d\d)(\d\d)(?:Z|00)?.*\.h5')
+            r".*([a-z]{2})([a-z]{3})_([a-z]*)_(\d\d\d\d)(\d\d)(\d\d)T?"
+            r"(\d\d)(\d\d)(?:Z|00)?.*\.h5"
+        )
         match = re.match(name_regex, file_name)
         if match:
             file_name = Path(file_name).name
-            country, radar, data_type, year, \
-                month, day, hour, minute = match.groups()
+            country, radar, data_type, year, month, day, hour, minute = match.groups()
             radar_code = country + radar
             return radar_code, data_type, year, month, day, hour, minute, file_name
         else:
@@ -106,11 +111,11 @@ class OdimFilePath:
 
     @property
     def daily_vpts_file_name(self):
-        """Name of the corresponding daily vpts-csv file"""
+        """Name of the corresponding daily vpts file"""
         return f"{self.radar_code}_vpts_{self.year}{self.month}{self.day}.csv"
 
     def s3_path_setup(self, file_output):
-        """Common setup of the s3 bucket logic"""
+        """Common setup of the S3 bucket logic"""
         return f"{self.source}/{file_output}/{self.radar_code}/{self.year}"
 
     def s3_url_h5(self, bucket="aloft"):
@@ -119,17 +124,17 @@ class OdimFilePath:
 
     @property
     def s3_folder_path_h5(self):
-        """s3 key with the folder containing the h5 file"""
+        """S3 key with the folder containing the h5 file"""
         return f"{self.s3_path_setup('hdf5')}/{self.month}/{self.day}"
 
     @property
     def s3_file_path_daily_vpts(self):
-        """s3 key of the daily vpts file corresponding to the h5 file"""
+        """S3 key of the daily vpts file corresponding to the h5 file"""
         return f"{self.s3_path_setup('daily')}/{self.daily_vpts_file_name}"
 
     @property
     def s3_file_path_monthly_vpts(self):
-        """s3 key of the monthly concatenated vpts file corresponding to the h5 file"""
+        """S3 key of the monthly concatenated vpts file corresponding to the h5 file"""
         return f"{self.s3_path_setup('monthly')}/{self.radar_code}_vpts_{self.year}{self.month}.csv.gz"
 
 
@@ -139,10 +144,10 @@ def list_manifest_file_keys(s3_manifest_url, storage_options=None):
     Parameters
     ----------
     s3_manifest_url : str
-        s3 URL to manifest file
+        S3 URL to manifest file
     storage_options : dict, optional
         Additional parameters passed to the read_csv to access the
-        s3 manifest files, eg. custom AWS profile options
+        S3 manifest files, eg. custom AWS profile options
         ({"profile": "inbo-prd"})
     """
     if not storage_options:
@@ -150,7 +155,7 @@ def list_manifest_file_keys(s3_manifest_url, storage_options=None):
     s3fs_s3 = s3fs.S3FileSystem(**storage_options)
     with s3fs_s3.open(s3_manifest_url) as manifest:
         manifest_json = json.load(manifest)
-        for obj in manifest_json['files']:
+        for obj in manifest_json["files"]:
             yield obj
 
 
@@ -170,24 +175,34 @@ def extract_daily_group_from_inventory(file_path):
         into account and a folder-path is ignored.
     """
     path_info = OdimFilePath.from_inventory(file_path)
-    return (path_info.source, path_info.file_type, path_info.radar_code,
-            path_info.year, path_info.month, path_info.day)
+    return (
+        path_info.source,
+        path_info.file_type,
+        path_info.radar_code,
+        path_info.year,
+        path_info.month,
+        path_info.day,
+    )
 
 
-def _last_modified_from_inventory(df, look_back="2day"):
+def _last_modified_from_inventory(df, modified_days_ago="2day"):
     """Filter manifest files on last modified
 
     Parameters
     ----------
     df : pandas.DataFrame
-        s3 csv-based inventory read by pandas
-    look_back : str , default '2day'
+        S3 csv-based inventory read by pandas
+    modified_days_ago : str , default '2day'
         Pandas Timedelta valid string
     """
-    return df[df["modified"] > (pd.Timestamp.now(tz="utc") - pd.Timedelta(look_back))]
+    return df[
+        df["modified"] > (pd.Timestamp.now(tz="utc") - pd.Timedelta(modified_days_ago))
+    ]
 
 
-def _radar_day_counts_from_inventory(df, group_callable=extract_daily_group_from_inventory):
+def _radar_day_counts_from_inventory(
+    df, group_callable=extract_daily_group_from_inventory
+):
     """Count files according to groups as defined by callable
 
     Parameters
@@ -205,7 +220,9 @@ def _radar_day_counts_from_inventory(df, group_callable=extract_daily_group_from
     return df.set_index("file").groupby(group_callable).size()
 
 
-def _handle_inventory(df, look_back, group_func=extract_daily_group_from_inventory):
+def _handle_inventory(
+    df, modified_days_ago, group_func=extract_daily_group_from_inventory
+):
     """Extract modified days and coverage from a single inventory df
 
     Parameters
@@ -213,7 +230,7 @@ def _handle_inventory(df, look_back, group_func=extract_daily_group_from_invento
     df : pandas.DataFrame
         Pandas DataFrame of a parsed inventory file with the columns
         "repo" (str), "file" (str), "size" (int) and "modified" (datetime)
-    look_back : str
+    modified_days_ago : str
         pandas Timedelta description, e.g. 2days
     group_func : callable
         Function used to create countable groups
@@ -226,7 +243,7 @@ def _handle_inventory(df, look_back, group_func=extract_daily_group_from_invento
         look back period.
     df_coverage : pandas.DataFrame
         pandas.DataFrame with the 'directory' info (source, radar_code,
-        year, month, day) and the number of files in the s3 bucket for each group.
+        year, month, day) and the number of files in the S3 bucket for each group.
 
     """
     # Filter for h5 files and extract source
@@ -237,32 +254,32 @@ def _handle_inventory(df, look_back, group_func=extract_daily_group_from_invento
     df = df.drop(columns=["file_items", "suffix"])
 
     # Extract IDs latest N days modified files
-    df_last_n_days = _last_modified_from_inventory(df, look_back)
+    df_last_n_days = _last_modified_from_inventory(df, modified_days_ago)
     # Count occurrences per radar-day -> coverage input
     df_coverage = _radar_day_counts_from_inventory(df, group_func)
     return df_coverage, df_last_n_days
 
 
-def handle_manifest(manifest_url, look_back="2day", storage_options=None):
+def handle_manifest(manifest_url, modified_days_ago="2day", storage_options=None):
     """Extract modified days and coverage from a manifest file
 
     Parameters
     ----------
     manifest_url : str
-        URL of the s3 inventory manifest file to use; s3://...
-    look_back : str, default '2day'
+        URL of the S3 inventory manifest file to use; s3://...
+    modified_days_ago : str, default '2day'
         Time period to check for 'modified date' to extract
         the subset of files that should trigger a rerun.
     storage_options : dict, optional
         Additional parameters passed to the read_csv to access the
-        s3 manifest files, eg. custom AWS profile options
+        S3 manifest files, eg. custom AWS profile options
         ({"profile": "inbo-prd"})
 
     Returns
     -------
     df_cov : pandas.DataFrame
         DataFrame with the 'directory' info (source, radar_code,
-        year, month, day) and the number of files in the s3 bucket.
+        year, month, day) and the number of files in the S3 bucket.
     df_days_to_create_vpts : pandas.DataFrame
         DataFrame with the 'directory' info (source, radar_code,
         year, month, day) and the number of new files within the
@@ -271,7 +288,7 @@ def handle_manifest(manifest_url, look_back="2day", storage_options=None):
     Notes
     -----
     Check https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-inventory.html
-    for more information on s3 bucket inventory and manifest files.
+    for more information on S3 bucket inventory and manifest files.
     """
     # TODO - add additional checks on input
     df_last_n_days = []
@@ -279,13 +296,17 @@ def handle_manifest(manifest_url, look_back="2day", storage_options=None):
     for j, obj in enumerate(list_manifest_file_keys(manifest_url, storage_options)):
         # Read the manifest referenced file
         parsed_url = urllib.parse.urlparse(manifest_url)
-        df = pd.read_csv(f"s3://{parsed_url.netloc}/{obj['key']}", engine="pyarrow",
-                         names=["repo", "file", "size", "modified"],
-                         storage_options=storage_options)
+        df = pd.read_csv(
+            f"s3://{parsed_url.netloc}/{obj['key']}",
+            engine="pyarrow",
+            names=["repo", "file", "size", "modified"],
+            storage_options=storage_options,
+        )
 
         # Extract counts per group and groups within defined time window
-        df_co, df_last = _handle_inventory(df, look_back,
-                                           group_func=extract_daily_group_from_inventory)
+        df_co, df_last = _handle_inventory(
+            df, modified_days_ago, group_func=extract_daily_group_from_inventory
+        )
         # Extract IDs latest N days modified files
         df_last_n_days.append(df_last)
         # Count occurrences per radar-day -> coverage input
@@ -298,11 +319,18 @@ def handle_manifest(manifest_url, look_back="2day", storage_options=None):
 
     # Create modified days DataFrame
     df_mod = pd.concat(df_last_n_days)
-    df_days_to_create_vpts = df_mod.set_index("file").groupby(
-            extract_daily_group_from_inventory).size().reset_index()
+    df_days_to_create_vpts = (
+        df_mod.set_index("file")
+        .groupby(extract_daily_group_from_inventory)
+        .size()
+        .reset_index()
+    )
     df_days_to_create_vpts = df_days_to_create_vpts.rename(
-        columns={"index": "directory", "file": "directory",  # mapping depends on content; both included
-                 0: "file_count"}
+        columns={
+            "index": "directory",
+            "file": "directory",  # mapping depends on content; both included
+            0: "file_count",
+        }
     )
 
     return df_cov, df_days_to_create_vpts

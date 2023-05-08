@@ -5,7 +5,8 @@ import numpy as np
 
 
 class VptsCsvVersionError(Exception):
-    """Raised when non supported VPTS version is asked"""
+    """Raised when non supported VPTS CSV version is asked"""
+
     pass
 
 
@@ -33,17 +34,17 @@ def datetime_to_proper8601(timestamp):
     >>> datetime_to_proper8601(datetime(2021, 1, 1, 4, 0))
     '2021-01-01T04:00:00Z'
     """
-    return timestamp.strftime('%Y-%m-%dT%H:%M:%SZ')
+    return timestamp.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def int_to_nodata(value, nodata_values, nodata=""):
-    """Convert to integer or nodata value if enlisted
+    """Convert str to either integer or the corresponding nodata value if enlisted
 
     Parameters
     ----------
-    value : str | int | float
+    value : str
         Single data value
-    nodata_values : list
+    nodata_values : list of str
         List of values in which case the data point need to be converted to ``nodata``
     nodata : str | float, default ""
         Data value to use when incoming value is one of the ``nodata_values``
@@ -54,14 +55,18 @@ def int_to_nodata(value, nodata_values, nodata=""):
 
     Examples
     --------
-    >>> int_to_nodata('0', [0, 'NULL'], nodata="")
+    >>> int_to_nodata("0", ["0", 'NULL'], nodata="")
     ''
-    >>> int_to_nodata('12', [0, 'NULL'], nodata="")
+    >>> int_to_nodata("12", ["0", 'NULL'], nodata="")
     12
-    >>> int_to_nodata('NULL', [0, 'NULL'], nodata="")
+    >>> int_to_nodata('NULL', ["0", 'NULL'], nodata="")
     ''
     ""
     """
+    if not isinstance(value, str):
+        raise TypeError("Conversion with no-data check only supports str values.")
+    if np.any([not isinstance(item, str) for item in nodata_values]):
+        raise TypeError("Make sure to define the nodata_values as str.")
     if value in nodata_values:
         return nodata
     else:
@@ -123,9 +128,9 @@ def check_source_file(source_file, regex):
 
 
 """
-VPTS-CSV version abstract version and individual version mapping implementations
+VPTS CSV version abstract version and individual version mapping implementations
 
-To create a new version of the VPTS-CSV implementation, create a new class `VptsCsvVX` inherited from the 
+To create a new version of the VPTS CSV implementation, create a new class `VptsCsvVX` inherited from the 
 `AbstractVptsCsv` class and provide the `abstractmethod`. See the `mapping` method for the conversion 
 functionality. Make sure to add the mapping to the `_get_vpts_version` function
 """
@@ -145,7 +150,7 @@ def get_vpts_version(version: str):
 
     Raises
     ------
-    VptsCsvVersionError : Version of the VPTS-CSV is not supported by an implementation
+    VptsCsvVersionError : Version of the VPTS CSV is not supported by an implementation
     """
     if version == "v1.0":
         return VptsCsvV1()
@@ -189,7 +194,7 @@ class AbstractVptsCsv(ABC):
 
     @abstractmethod
     def mapping(self, bird_profile) -> dict:
-        """Translation from bird-profile to vpts CSV data standard.
+        """Translation from ODIM bird profile to VPTS CSV data format.
 
         Data columns can be derived from the different attributes of the
         bird profile:
@@ -249,7 +254,7 @@ class VptsCsvV1(AbstractVptsCsv):
         return dict(radar=str, datetime=str, height=int, source_file=str)
 
     def mapping(self, bird_profile):
-        """Translation from bird-profile to vpts CSV data standard.
+        """Translation from ODIM bird profile to VPTS CSV data format.
 
         Notes
         -----
@@ -277,10 +282,12 @@ class VptsCsvV1(AbstractVptsCsv):
             n_dbz_all=bird_profile.variables["n_dbz_all"],
             rcs=bird_profile.how["rcs_bird"],
             sd_vvp_threshold=bird_profile.how["sd_vvp_thresh"],
-            vcp=int_to_nodata(bird_profile.how["vcp"], ["NULL", 0], self.nodata),
+            vcp=int_to_nodata(str(bird_profile.how["vcp"]), ["NULL", "0"], self.nodata),
             radar_latitude=np.round(bird_profile.where["lat"], 6),
             radar_longitude=np.round(bird_profile.where["lon"], 6),
             radar_height=int(bird_profile.where["height"]),
             radar_wavelength=np.round(bird_profile.how["wavelength"], 6),
-            source_file=check_source_file(bird_profile.source_file, self.source_file_regex)
+            source_file=check_source_file(
+                bird_profile.source_file, self.source_file_regex
+            ),
         )

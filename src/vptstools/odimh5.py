@@ -9,6 +9,7 @@ import pytz
 
 class InvalidSourceODIM(Exception):
     """Wrong ODIM file"""
+
     pass
 
 
@@ -49,8 +50,7 @@ class ODIMReader(object):
     def _extract_root_attributes_dict(self, group: str) -> dict:
         attr = self.hdf5[group].attrs
         return {
-            key: value.decode("utf-8")
-            if isinstance(value, bytes) else value
+            key: value.decode("utf-8") if isinstance(value, bytes) else value
             for key, value in attr.items()
         }
 
@@ -136,3 +136,17 @@ class ODIMReader(object):
 
     def close(self) -> None:
         self.hdf5.close()
+
+
+def check_vp_odim(source_odim: ODIMReader) -> None:
+    """Verify ODIM file is an hdf5 ODIM format containing 'VP' data."""
+    if not {"what", "how", "where"}.issubset(source_odim.hdf5.keys()):
+        raise InvalidSourceODIM(
+            "No hdf5 ODIM format: File does not contain what/how/where "
+            "group information."
+        )
+    if source_odim.root_object_str != "VP":
+        raise InvalidSourceODIM(
+            f"Incorrect what.object value: expected VP, "
+            f"found {source_odim.root_object_str}"
+        )

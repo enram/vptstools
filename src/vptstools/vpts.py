@@ -11,29 +11,17 @@ import tempfile
 import pandas as pd
 from frictionless import validate
 
-from vptstools.odimh5 import ODIMReader, InvalidSourceODIM
+from vptstools.odimh5 import ODIMReader, check_vp_odim
 from vptstools.vpts_csv import get_vpts_version
 
 NODATA = ""
 UNDETECT = "NaN"
 
 DESCRIPTOR_FILENAME = "vpts.resource.json"
-CSV_ENCODING = "utf8"  # !! Don't change, only utf-8 is accepted in frictionless resources
+CSV_ENCODING = (
+    "utf8"  # !! Don't change, only utf-8 is accepted in frictionless resources
+)
 CSV_FIELD_DELIMITER = ","
-
-
-def check_vp_odim(source_odim: ODIMReader) -> None:
-    """Verify ODIM file is an hdf5 ODIM format containing 'VP' data."""
-    if not {"what", "how", "where"}.issubset(source_odim.hdf5.keys()):
-        raise InvalidSourceODIM(
-            "No hdf5 ODIM format: File does not contain what/how/where "
-            "group information."
-        )
-    if source_odim.root_object_str != "VP":
-        raise InvalidSourceODIM(
-            f"Incorrect what.object value: expected VP, "
-            f"found {source_odim.root_object_str}"
-        )
 
 
 def _odim_get_variables(dataset, variable_mapping: dict, quantity: str) -> List[Any]:
@@ -57,7 +45,6 @@ def _odim_get_variables(dataset, variable_mapping: dict, quantity: str) -> List[
     In order to handle the 'nodata' and 'undetect', a list overcomes casting as is done
     when using numpy in this case (and the non exsitence of Nan for integer in numpy).
     """
-    # TODO - check with Adriaan what to do with the gain/offset
     data_group = variable_mapping[quantity]
 
     gain = dataset[data_group]["what"].attrs["gain"]
@@ -68,7 +55,12 @@ def _odim_get_variables(dataset, variable_mapping: dict, quantity: str) -> List[
 
     # Apply offset/gain while preserving the original variable datatype
     variable_dtype = dataset[data_group]["data"].dtype
-    values = (dataset[data_group]["data"] * gain + offset).astype(variable_dtype).flatten().tolist()
+    values = (
+        (dataset[data_group]["data"] * gain + offset)
+        .astype(variable_dtype)
+        .flatten()
+        .tolist()
+    )
     # use regular list here to have mixed dtypes for the data versus nodata/undetect
     values = [NODATA if value == nodata_val else value for value in values]
     values = [UNDETECT if value == undetect_val else value for value in values]
@@ -88,6 +80,7 @@ class BirdProfile:
     (no data simplification/loss at this stage). Use the `from_odim` method
     as a convenient instantiation.
     """
+
     identifiers: dict  # {'WMO':'06477', 'NOD':'bewid', 'RAD':'BX41', 'PLC':'Wideumont'}
     datetime: datetime
     what: dict
@@ -99,7 +92,9 @@ class BirdProfile:
 
     def __post_init__(self):
         if not isinstance(self.source_file, str):
-            raise TypeError("Source_file need to be a str representation of a file path.")
+            raise TypeError(
+                "Source_file need to be a str representation of a file path."
+            )
 
     def __lt__(self, other):  # Allows sorting by datetime
         return self.datetime < other.datetime
@@ -116,7 +111,7 @@ class BirdProfile:
         Parameters
         ----------
         vpts_csv_version : AbstractVptsCsv
-            Ruleset with the VPTS-CSV ruleset to use, e.g. v1.0
+            Ruleset with the VPTS CSV ruleset to use, e.g. v1.0
 
         Notes
         -----
@@ -127,10 +122,16 @@ class BirdProfile:
         """
         df = pd.DataFrame(vpts_csv_version.mapping(self), dtype=str)
 
-        df = df.replace({UNDETECT: vpts_csv_version.undetect, NODATA: vpts_csv_version.nodata})
+        df = df.replace(
+            {UNDETECT: vpts_csv_version.undetect, NODATA: vpts_csv_version.nodata}
+        )
 
         # sort the data according to sorting rule
-        df = df.astype(vpts_csv_version.sort).sort_values(by=list(vpts_csv_version.sort.keys())).astype(str)
+        df = (
+            df.astype(vpts_csv_version.sort)
+            .sort_values(by=list(vpts_csv_version.sort.keys()))
+            .astype(str)
+        )
 
         return df
 
@@ -148,18 +149,17 @@ class BirdProfile:
         dataset1 = source_odim.hdf5["dataset1"]
         variable_mapping = {
             value[f"/dataset1/{key}"]["what"].attrs["quantity"].decode("utf8"): key
-            for key, value in dataset1.items() if key != "what"
-            }
+            for key, value in dataset1.items()
+            if key != "what"
+        }
         height_values = _odim_get_variables(dataset1, variable_mapping, quantity="HGHT")
 
         variable_mapping.pop("HGHT")
         variables = dict()
         for variable in variable_mapping.keys():
             variables[variable] = _odim_get_variables(
-                dataset1,
-                variable_mapping,
-                quantity=variable
-                )
+                dataset1, variable_mapping, quantity=variable
+            )
 
         # Resolve hdf5 file full path if no source_file is provided by the user
         if not source_file:
@@ -173,7 +173,7 @@ class BirdProfile:
             how=dict(source_odim.how),
             levels=[int(height) for height in height_values],
             variables=variables,
-            source_file=str(source_file)
+            source_file=str(source_file),
         )
 
 
@@ -185,7 +185,7 @@ def vp(file_path, vpts_csv_version="v1.0", source_file=""):
     file_path : Path
         File Path of ODIM h5
     vpts_csv_version : str, default ""
-        Ruleset with the VPTS-CSV ruleset to use, e.g. v1.0
+        Ruleset with the VPTS CSV ruleset to use, e.g. v1.0
     source_file : str | callable
         URL or path to the source file from which the data were derived or
         a callable that converts the file_path to the source_file
@@ -205,6 +205,7 @@ def vp(file_path, vpts_csv_version="v1.0", source_file=""):
         source_file = source_file(file_path)
 
     with ODIMReader(file_path) as odim_vp:
+        check_vp_odim(odim_vp)
         vp = BirdProfile.from_odim(odim_vp, source_file)
     return vp.to_vp(get_vpts_version(vpts_csv_version))
 
@@ -222,7 +223,7 @@ def vpts(file_paths, vpts_csv_version="v1.0", source_file=None):
     file_paths : Iterable of file paths
         Iterable of ODIM h5 file paths
     vpts_csv_version : str
-        Ruleset with the VPTS-CSV ruleset to use, e.g. v1.0
+        Ruleset with the VPTS CSV ruleset to use, e.g. v1.0
     source_file : callable, optional
         A callable that converts the file_path to the source_file. When None,
         the file name itself (without parent folder reference) is used.
@@ -247,14 +248,22 @@ def vpts(file_paths, vpts_csv_version="v1.0", source_file=None):
         source_file = _convert_to_source
 
     with multiprocessing.Pool(processes=(multiprocessing.cpu_count() - 1)) as pool:
-        data = pool.map(functools.partial(vp, vpts_csv_version=vpts_csv_version,
-                                          source_file=source_file), file_paths)
+        data = pool.map(
+            functools.partial(
+                vp, vpts_csv_version=vpts_csv_version, source_file=source_file
+            ),
+            file_paths,
+        )
 
     vpts_ = pd.concat(data)
 
     # Convert according to defined rule set
     vpts_csv = get_vpts_version(vpts_csv_version)
-    vpts_ = vpts_.astype(vpts_csv.sort).sort_values(by=list(vpts_csv.sort.keys())).astype(str)
+    vpts_ = (
+        vpts_.astype(vpts_csv.sort)
+        .sort_values(by=list(vpts_csv.sort.keys()))
+        .astype(str)
+    )
     return vpts_
 
 
@@ -266,7 +275,7 @@ def vpts_to_csv(df, file_path):
     df : pandas.DataFrame
         DataFrame with vp or vpts data
     file_path : Path | str
-        File path to store the VPTS CSV file
+        File path to store the vpts file
     """
     # check for str input of Path
     if not isinstance(file_path, Path):
@@ -274,8 +283,7 @@ def vpts_to_csv(df, file_path):
 
     # create directory if not yet existing
     file_path.parent.mkdir(parents=True, exist_ok=True)
-    df.to_csv(file_path, sep=CSV_FIELD_DELIMITER,
-              encoding=CSV_ENCODING, index=False)
+    df.to_csv(file_path, sep=CSV_FIELD_DELIMITER, encoding=CSV_ENCODING, index=False)
 
 
 def validate_vpts(df, schema_version="v1.0"):
@@ -318,7 +326,7 @@ def _write_resource_descriptor(vpts_file_path: Path, schema_version="v1.0"):
         "mediatype": "text/csv",
         "encoding": CSV_ENCODING,
         "dialect": {"delimiter": CSV_FIELD_DELIMITER},
-        "schema": f"https://raw.githubusercontent.com/enram/vpts-csv/{schema_version}/vpts-csv-table-schema.json"
+        "schema": f"https://raw.githubusercontent.com/enram/vpts-csv/{schema_version}/vpts-csv-table-schema.json",
     }
     vpts_file_path.parent.mkdir(parents=True, exist_ok=True)
 
