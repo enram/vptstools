@@ -304,8 +304,6 @@ def handle_manifest(manifest_url, modified_days_ago="2day", storage_options=None
                          storage_options=storage_options,
                          chunksize=10000) as reader:
             for chunk in reader:
-                print(chunk.shape)
-
 
         # df = pd.read_csv(
         #     f"s3://{parsed_url.netloc}/{obj['key']}",
