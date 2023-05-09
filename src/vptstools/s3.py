@@ -296,21 +296,31 @@ def handle_manifest(manifest_url, modified_days_ago="2day", storage_options=None
     for j, obj in enumerate(list_manifest_file_keys(manifest_url, storage_options)):
         # Read the manifest referenced file
         parsed_url = urllib.parse.urlparse(manifest_url)
-        df = pd.read_csv(
-            f"s3://{parsed_url.netloc}/{obj['key']}",
-            engine="pyarrow",
-            names=["repo", "file", "size", "modified"],
-            storage_options=storage_options,
-        )
 
-        # Extract counts per group and groups within defined time window
-        df_co, df_last = _handle_inventory(
-            df, modified_days_ago, group_func=extract_daily_group_from_inventory
-        )
-        # Extract IDs latest N days modified files
-        df_last_n_days.append(df_last)
-        # Count occurrences per radar-day -> coverage input
-        df_coverage.append(df_co)
+        with pd.read_csv(f"s3://{parsed_url.netloc}/{obj['key']}",
+                         engine="pyarrow",
+                         names=["repo", "file", "size", "modified"],
+                         storage_options=storage_options,
+                         chunksize=10000) as reader:
+            for chunk in reader:
+                print(chunk.shape)
+
+
+        # df = pd.read_csv(
+        #     f"s3://{parsed_url.netloc}/{obj['key']}",
+        #     engine="pyarrow",
+        #     names=["repo", "file", "size", "modified"],
+        #     storage_options=storage_options,
+        # )
+
+                # Extract counts per group and groups within defined time window
+                df_co, df_last = _handle_inventory(
+                    chunk, modified_days_ago, group_func=extract_daily_group_from_inventory
+                )
+                # Extract IDs latest N days modified files
+                df_last_n_days.append(df_last)
+                # Count occurrences per radar-day -> coverage input
+                df_coverage.append(df_co)
 
     # Create coverage file DataFrame
     df_cov = pd.concat(df_coverage)
