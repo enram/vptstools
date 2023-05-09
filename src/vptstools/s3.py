@@ -298,7 +298,7 @@ def handle_manifest(manifest_url, modified_days_ago="2day", storage_options=None
         parsed_url = urllib.parse.urlparse(manifest_url)
 
         with pd.read_csv(f"s3://{parsed_url.netloc}/{obj['key']}",
-                         engine="pyarrow",
+                         engine="c",
                          names=["repo", "file", "size", "modified"],
                          storage_options=storage_options,
                          chunksize=10000) as reader:
