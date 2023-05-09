@@ -78,6 +78,14 @@ tox -e publish   # Publish the package you have been developing to a package ind
 tox -av          # List all available tasks
 ```
 
+To create a pinned `requirements.txt` set of dependencies, [pip-tools](https://github.com/jazzband/pip-tools) is used:
+
+```commandline
+pip-compile --extra transfer --resolver=backtracking`
+```
+
+
+
 <!-- pyscaffold-notes -->
 ## Notes
 
