@@ -247,7 +247,7 @@ def _handle_inventory(
 
     """
     # Filter for h5 files and extract source
-    df["modified"] = pd.to_datetime(df["modified"], format="%Y-%m-%dT%H:%M:%S")
+    df["modified"] = pd.to_datetime(df["modified"], format="%Y-%m-%dT%H:%M:%S.%fZ", utc=True)
     df["file_items"] = df["file"].str.split("/")
     df["suffix"] = df["file_items"].str.get(-1).str.split(".").str.get(-1)
     df = df[df["suffix"] == "h5"]
