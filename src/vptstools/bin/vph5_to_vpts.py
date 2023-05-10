@@ -84,7 +84,7 @@ def cli(modified_days_ago, aws_profile):
         source, _, radar_code, year, month, day = daily_vpts
         odim_path = OdimFilePath(source, radar_code, "vp", year, month, day)
         odim5_files = inbo_s3.ls(f"{S3_BUCKET}/{odim_path.s3_folder_path_h5}")
-        click.echo(f"Create daily vpts file {odim_path.s3_xfile_path_daily_vpts}.")
+        click.echo(f"Create daily vpts file {odim_path.s3_file_path_daily_vpts}.")
         # - create tempdir
         temp_folder_path = Path(tempfile.mkdtemp())
 

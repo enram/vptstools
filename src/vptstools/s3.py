@@ -302,7 +302,7 @@ def handle_manifest(manifest_url, modified_days_ago="2day", storage_options=None
                          engine="c",
                          names=["repo", "file", "size", "modified"],
                          storage_options=storage_options,
-                         chunksize=10000) as reader:
+                         chunksize=50000) as reader:
             for chunk in reader:
 
         # df = pd.read_csv(
