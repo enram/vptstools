@@ -247,7 +247,8 @@ def vpts(file_paths, vpts_csv_version="v1.0", source_file=None):
     if not source_file:
         source_file = _convert_to_source
 
-    with multiprocessing.Pool(processes=(multiprocessing.cpu_count() - 1)) as pool:
+    cpu_count = max(multiprocessing.cpu_count() - 1, 1)
+    with multiprocessing.Pool(processes=cpu_count) as pool:
         data = pool.map(
             functools.partial(
                 vp, vpts_csv_version=vpts_csv_version, source_file=source_file
