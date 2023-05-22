@@ -10,10 +10,6 @@ on:
     tags: ['v[0-9]*', '[0-9]+.[0-9]+*']  # Match tags that resemble a version
   pull_request:  # Run in every PR
   workflow_dispatch:  # Allow manually triggering the workflow
-  schedule:
-    # Run roughly every 15 days at 00:00 UTC
-    # (useful to check if updates on dependencies break the package)
-    - cron: '0 0 1,16 * *'
 
 concurrency:
   group: >-
@@ -50,7 +46,6 @@ jobs:
     strategy:
       matrix:
         python:
-        - "3.9"
         - "3.10"
         platform:
         - ubuntu-latest
