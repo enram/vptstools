@@ -194,9 +194,12 @@ def vp(file_path, vpts_csv_version="v1.0", source_file=""):
     --------
     >>> file_path = Path("bejab_vp_20221111T233000Z_0x9.h5")
     >>> vp(file_path)
-    >>> vp(file_path, source_file="s3://aloft/baltrad/hdf5/2022/11/11/bejab_vp_20221111T233000Z_0x9.h5")
+    >>> vp(file_path,
+    ...    source_file="s3://aloft/baltrad/hdf5/2022/11/11/" \
+    ...                 "bejab_vp_20221111T233000Z_0x9.h5")
 
-    Use file name itself as source_file representation in vp file using a custom callable function
+    Use file name itself as source_file representation in vp file using a custom
+    callable function
 
     >>> vp(file_path, source_file=lambda x: Path(x).name)
     """
@@ -230,14 +233,16 @@ def vpts(file_paths, vpts_csv_version="v1.0", source_file=None):
 
     Notes
     -----
-    Due tot the multiprocessing support, the source_file as a callable can not be a anonymous lambda function.
+    Due tot the multiprocessing support, the source_file as a callable can not be
+    a anonymous lambda function.
 
     Examples
     --------
     >>> file_paths = sorted(Path("../data/raw/baltrad/").rglob("*.h5"))
     >>> vpts(file_paths)
 
-    Use file name itself as source_file representation in vp file using a custom callable function
+    Use file name itself as source_file representation in vp file using a
+    custom callable function
 
     >>> def path_to_source(file_path):
     ...     return Path(file_path).name
@@ -327,7 +332,8 @@ def _write_resource_descriptor(vpts_file_path: Path, schema_version="v1.0"):
         "mediatype": "text/csv",
         "encoding": CSV_ENCODING,
         "dialect": {"delimiter": CSV_FIELD_DELIMITER},
-        "schema": f"https://raw.githubusercontent.com/enram/vpts-csv/{schema_version}/vpts-csv-table-schema.json",
+        "schema": f"https://raw.githubusercontent.com/enram/vpts-csv/"
+        f"{schema_version}/vpts-csv-table-schema.json",
     }
     vpts_file_path.parent.mkdir(parents=True, exist_ok=True)
 

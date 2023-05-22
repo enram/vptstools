@@ -63,7 +63,8 @@ class OdimFilePath:
 
     @classmethod
     def from_s3fs_enlisting(cls, h5_file_path):
-        """Initialize class from S3 inventory which contains bucket, source and file_type"""
+        """Initialize class from S3 inventory which contains bucket,
+        source and file_type"""
         return cls(
             h5_file_path.split("/")[1],
             *cls.parse_file_name(str(h5_file_path)),
@@ -72,7 +73,8 @@ class OdimFilePath:
 
     @staticmethod
     def parse_file_name(file_name):
-        """Parse an hdf5 file name radar_code, data_type, year, month, day, hour, minute and file_name.
+        """Parse an hdf5 file name radar_code, data_type, year, month, day, hour,
+        minute and file_name.
 
         Parameters
         ----------
@@ -129,7 +131,10 @@ class OdimFilePath:
 
     def s3_url_h5(self, bucket="aloft"):
         """Full S3 URL for the stored h5 file"""
-        return f"s3://{bucket}/{self.s3_path_setup('hdf5')}/{self.month}/{self.day}/{self.file_name}"
+        return (
+            f"s3://{bucket}/{self.s3_path_setup('hdf5')}/"
+            f"{self.month}/{self.day}/{self.file_name}"
+        )
 
     @property
     def s3_folder_path_h5(self):
@@ -144,7 +149,10 @@ class OdimFilePath:
     @property
     def s3_file_path_monthly_vpts(self):
         """S3 key of the monthly concatenated vpts file corresponding to the h5 file"""
-        return f"{self.s3_path_setup('monthly')}/{self.radar_code}_vpts_{self.year}{self.month}.csv.gz"
+        return (
+            f"{self.s3_path_setup('monthly')}/"
+            f"{self.radar_code}_vpts_{self.year}{self.month}.csv.gz"
+        )
 
 
 def list_manifest_file_keys(s3_manifest_url, storage_options=None):
@@ -256,7 +264,9 @@ def _handle_inventory(
 
     """
     # Filter for h5 files and extract source
-    df["modified"] = pd.to_datetime(df["modified"], format="%Y-%m-%dT%H:%M:%S.%fZ", utc=True)
+    df["modified"] = pd.to_datetime(
+        df["modified"], format="%Y-%m-%dT%H:%M:%S.%fZ", utc=True
+    )
     df["file_items"] = df["file"].str.split("/")
     df["suffix"] = df["file_items"].str.get(-1).str.split(".").str.get(-1)
     df = df[df["suffix"] == "h5"]
@@ -307,15 +317,19 @@ def handle_manifest(manifest_url, modified_days_ago="2day", storage_options=None
         # Read the manifest referenced file
         parsed_url = urllib.parse.urlparse(manifest_url)
 
-        with pd.read_csv(f"s3://{parsed_url.netloc}/{obj['key']}",
-                         engine="c",
-                         names=["repo", "file", "size", "modified"],
-                         storage_options=storage_options,
-                         chunksize=50000) as reader:
+        with pd.read_csv(
+            f"s3://{parsed_url.netloc}/{obj['key']}",
+            engine="c",
+            names=["repo", "file", "size", "modified"],
+            storage_options=storage_options,
+            chunksize=50000,
+        ) as reader:
             for chunk in reader:
                 # Extract counts per group and groups within defined time window
                 df_co, df_last = _handle_inventory(
-                    chunk, modified_days_ago, group_func=extract_daily_group_from_inventory
+                    chunk,
+                    modified_days_ago,
+                    group_func=extract_daily_group_from_inventory,
                 )
                 # Extract IDs latest N days modified files
                 df_last_n_days.append(df_last)

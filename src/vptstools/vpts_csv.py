@@ -114,7 +114,9 @@ def check_source_file(source_file, regex):
 
     Examples
     --------
-    >>> check_source_file("s3://alof/baltrad/2023/01/01/bejab_vp_20230101T000500Z_0x9.h5", r".*h5")
+    >>> check_source_file("s3://alof/baltrad/2023/01/01/"
+    ...                   "bejab_vp_20230101T000500Z_0x9.h5",
+    ...                   r".*h5")
     's3://alof/baltrad/2023/01/01/bejab_vp_20230101T000500Z_0x9.h5'
     """
     sf_regex = re.compile(regex)
@@ -130,9 +132,10 @@ def check_source_file(source_file, regex):
 """
 VPTS CSV version abstract version and individual version mapping implementations
 
-To create a new version of the VPTS CSV implementation, create a new class `VptsCsvVX` inherited from the 
-`AbstractVptsCsv` class and provide the `abstractmethod`. See the `mapping` method for the conversion 
-functionality. Make sure to add the mapping to the `_get_vpts_version` function
+To create a new version of the VPTS CSV implementation, create a new class `VptsCsvVX`
+inherited from the `AbstractVptsCsv` class and provide the `abstractmethod`. See the
+`mapping` method  for the conversion  functionality. Make sure to add the mapping
+to the `_get_vpts_version` function
 """
 
 
@@ -235,7 +238,6 @@ class AbstractVptsCsv(ABC):
 
 
 class VptsCsvV1(AbstractVptsCsv):
-
     source_file_regex = r"^(?=^[^.\/~])(^((?!\.{2}).)*$).*$"
 
     @property

@@ -89,8 +89,8 @@ def patch_aiobotocore() -> None:
         """
 
         def patched_convert_to_response_dict(
-                http_response: botocore.awsrequest.AWSResponse,
-                operation_model: botocore.model.OperationModel,
+            http_response: botocore.awsrequest.AWSResponse,
+            operation_model: botocore.model.OperationModel,
         ) -> Any:
             return original(MockAWSResponse(http_response), operation_model)
 
@@ -99,6 +99,8 @@ def patch_aiobotocore() -> None:
     aiobotocore.endpoint.convert_to_response_dict = factory(
         aiobotocore.endpoint.convert_to_response_dict
     )
+
+
 # ----------------------------------------------------------------------------------------------------------------------
 
 

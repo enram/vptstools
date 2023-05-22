@@ -28,7 +28,6 @@ def test_e2e_cli(s3_inventory, path_inventory, tmp_path):
         "pandas.Timestamp.now",
         return_value=pd.Timestamp("2023-02-02 00:00:00", tz="UTC"),
     ):
-
         # Run CLI command `vph5_to_vpts` with limited modified period check to 3 days
         runner = CliRunner()
         result = runner.invoke(cli, ["--modified-days-ago", 3])
@@ -78,7 +77,6 @@ def test_e2e_cli_all(s3_inventory, path_inventory, tmp_path):
         "pandas.Timestamp.now",
         return_value=pd.Timestamp("2023-02-02 00:00:00", tz="UTC"),
     ):
-
         # Run CLI command `vph5_to_vpts` with limited modified period check to 3 days
         runner = CliRunner()
         result = runner.invoke(cli, ["--modified-days-ago", 0])
