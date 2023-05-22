@@ -61,6 +61,15 @@ class OdimFilePath:
             h5_file_path.split("/")[1],
         )
 
+    @classmethod
+    def from_s3fs_enlisting(cls, h5_file_path):
+        """Initialize class from S3 inventory which contains bucket, source and file_type"""
+        return cls(
+            h5_file_path.split("/")[1],
+            *cls.parse_file_name(str(h5_file_path)),
+            h5_file_path.split("/")[1],
+        )
+
     @staticmethod
     def parse_file_name(file_name):
         """Parse an hdf5 file name radar_code, data_type, year, month, day, hour, minute and file_name.
