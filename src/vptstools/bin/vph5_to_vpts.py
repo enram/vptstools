@@ -71,9 +71,6 @@ def cli(modified_days_ago, aws_profile):
         f"s3://{S3_BUCKET}/coverage.csv", index=False, storage_options=storage_options
     )
 
-    # CUSTOM - Limit to Belgian stations
-    days_to_create_vpts[days_to_create_vpts["directory"].apply(lambda x: x[2] in ["bejab", "bewid"])]
-
     # Run vpts daily conversion for each radar-day with modified files
     inbo_s3 = s3fs.S3FileSystem(**storage_options)
 

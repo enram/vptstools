@@ -304,14 +304,6 @@ def handle_manifest(manifest_url, modified_days_ago="2day", storage_options=None
                          storage_options=storage_options,
                          chunksize=50000) as reader:
             for chunk in reader:
-
-        # df = pd.read_csv(
-        #     f"s3://{parsed_url.netloc}/{obj['key']}",
-        #     engine="pyarrow",
-        #     names=["repo", "file", "size", "modified"],
-        #     storage_options=storage_options,
-        # )
-
                 # Extract counts per group and groups within defined time window
                 df_co, df_last = _handle_inventory(
                     chunk, modified_days_ago, group_func=extract_daily_group_from_inventory
