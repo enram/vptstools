@@ -1,9 +1,12 @@
 # Simple Python script that:
 # - Connects via SFTP to the BALTRAD server
-# - For each vp file (pvol gets ignored), download the file from the server and upload it to the "aloft" S3 bucket
+# - For each vp file (pvol gets ignored), download the file from the server and
+#   upload it to the "aloft" S3 bucket
 
-# Designed to be executed daily via a simple cronjob (files disappear after a few days on the BALTRAD server)
-# Use a simple config file named config.ini. Create one by copying config.template.ini and filling in the values.
+# Designed to be executed daily via a simple cronjob (files disappear after a few
+# days on the BALTRAD server)
+# Use a simple config file named config.ini. Create one by copying config.template.ini
+# and filling in the values.
 # If file already exists at destination => do nothing
 import os
 import tempfile
@@ -37,9 +40,11 @@ def s3_key_exists(key: str, bucket: str, s3_client) -> bool:
 
 
 def extract_metadata_from_filename(filename: str) -> tuple:
-    """Extract the metadata from the filename (format such as 'fropo_vp_20220809T051000Z_0xb')
+    """Extract the metadata from the filename (format
+    such as 'fropo_vp_20220809T051000Z_0xb')
 
-    All returned values are strings, month and days are 0-prefixed if they are single-digit.
+    All returned values are strings, month and days are 0-prefixed if
+    they are single-digit.
 
     Parameters
     ----------
@@ -99,10 +104,14 @@ def cli():
             radar_code, year, month_str, day_str = extract_metadata_from_filename(
                 entry.filename
             )
-            destination_key = f"baltrad/hdf5/{radar_code}/{year}/{month_str}/{day_str}/{entry.filename}"
+            destination_key = (
+                f"baltrad/hdf5/{radar_code}/{year}/"
+                f"{month_str}/{day_str}/{entry.filename}"
+            )
             if not s3_key_exists(destination_key, destination_bucket, s3_client):
                 click.echo(
-                    f"{destination_key} does not exist at {destination_bucket}, transfer it...",
+                    f"{destination_key} does not exist at {destination_bucket}, "
+                    f"transfer it...",
                     end="",
                 )
                 with tempfile.TemporaryDirectory() as tmpdirname:

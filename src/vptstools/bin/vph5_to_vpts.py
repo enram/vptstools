@@ -23,7 +23,7 @@ MANIFEST_HOUR_OF_DAY = "01-00"
     default=2,
     type=int,
     help="Range of h5 vp files to include, i.e. files modified between now and N"
-         "modified-days-ago. If 0, all h5 files in the bucket will be included.",
+    "modified-days-ago. If 0, all h5 files in the bucket will be included.",
 )
 @click.option(
     "--aws-profile",
@@ -40,21 +40,26 @@ def cli(modified_days_ago, aws_profile):
     """
     if aws_profile:
         storage_options = {"profile": aws_profile}
+        boto3_options = {"profile_name": aws_profile}
     else:
         storage_options = dict()
+        boto3_options = dict()
+
     # Load the S3 manifest of today
     click.echo(f"Load the S3 manifest of {date.today()}.")
 
     manifest_parent_key = (
         pd.Timestamp.now(tz="utc").date() - pd.Timedelta("1day")
     ).strftime(f"%Y-%m-%dT{MANIFEST_HOUR_OF_DAY}Z")
-    s3_url = f"{MANIFEST_URL}/{manifest_parent_key}/manifest.json"  # define manifest of today
+    # define manifest of today
+    s3_url = f"{MANIFEST_URL}/{manifest_parent_key}/manifest.json"
 
     click.echo(f"Extract coverage and days to recreate from manifest {s3_url}.")
     if modified_days_ago == 0:
         modified_days_ago = (pd.Timestamp.now(tz="utc") - S3_BUCKET_CREATION).days + 1
         click.echo(
-            f"Recreate the full set of bucket files (files modified since {modified_days_ago}days). "
+            f"Recreate the full set of bucket files (files "
+            f"modified since {modified_days_ago}days). "
             f"This will take a while!"
         )
 
@@ -73,10 +78,14 @@ def cli(modified_days_ago, aws_profile):
 
     # Run vpts daily conversion for each radar-day with modified files
     inbo_s3 = s3fs.S3FileSystem(**storage_options)
+    # PATCH TO OVERCOME RECURSIVE s3fs in wrapped context
+    import boto3
+
+    session = boto3.Session(**boto3_options)
+    s3_client = session.client("s3")
 
     click.echo(f"Create {days_to_create_vpts.shape[0]} daily vpts files.")
     for j, daily_vpts in enumerate(days_to_create_vpts["directory"]):
-
         # Enlist files of the day to rerun (all the given day)
         source, _, radar_code, year, month, day = daily_vpts
         odim_path = OdimFilePath(source, radar_code, "vp", year, month, day)
@@ -88,9 +97,15 @@ def cli(modified_days_ago, aws_profile):
         # - download the files of the day
         h5_file_local_paths = []
         for i, file_key in enumerate(odim5_files):
-            h5_path = OdimFilePath.from_inventory(file_key)
+            h5_path = OdimFilePath.from_s3fs_enlisting(file_key)
             h5_local_path = str(temp_folder_path / h5_path.file_name)
-            inbo_s3.download(file_key, h5_local_path)
+            # inbo_s3.get_file(file_key, h5_local_path)
+            # s3f3 failes in wrapped moto environment; fall back to boto3
+            s3_client.download_file(
+                S3_BUCKET,
+                f"{h5_path.s3_folder_path_h5}/{h5_path.file_name}",
+                h5_local_path,
+            )
             h5_file_local_paths.append(h5_local_path)
 
         # - run vpts on all locally downloaded files
