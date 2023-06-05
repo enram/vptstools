@@ -1,18 +1,27 @@
+import os
 import tempfile
 import shutil
 from pathlib import Path
 from datetime import date
 
 import click
+from dotenv import load_dotenv
 import s3fs
 import pandas as pd
 
 from vptstools.vpts import vpts, vpts_to_csv
 from vptstools.s3 import handle_manifest, OdimFilePath
 
-S3_BUCKET = "aloft"  # TODO - use config instead of hardcoded value
+# Load environmental variables from file in dev
+# (load_dotenv doesn't override existing environment variables)
+load_dotenv()
+
+S3_BUCKET = os.environ.get("DESTINATION_BUCKET", "aloft")
+INVENTORY_BUCKET = os.environ.get("INVENTORY_BUCKET", "aloft-inventory")
+aws_sns_topic = os.environ.get("SNS_TOPIC")
+
+MANIFEST_URL = f"s3://{INVENTORY_BUCKET}/{S3_BUCKET}/{S3_BUCKET}-hdf5-files-inventory"
 S3_BUCKET_CREATION = pd.Timestamp("2022-08-02 00:00:00", tz="UTC")
-MANIFEST_URL = f"s3://aloft-inventory/{S3_BUCKET}/{S3_BUCKET}-hdf5-files-inventory"
 MANIFEST_HOUR_OF_DAY = "01-00"
 
 

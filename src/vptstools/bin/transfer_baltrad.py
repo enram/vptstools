@@ -2,21 +2,22 @@
 # - Connects via SFTP to the BALTRAD server
 # - For each vp file (pvol gets ignored), download the file from the server and
 #   upload it to the "aloft" S3 bucket
+# If file already exists at destination => do nothing
 
 # Designed to be executed daily via a simple cronjob (files disappear after a few
 # days on the BALTRAD server)
-# Use a simple config file named config.ini. Create one by copying config.template.ini
-# and filling in the values.
-# If file already exists at destination => do nothing
+
+# Configuration is loaded from environmental variables
 import os
 import tempfile
-from configparser import ConfigParser
 
 import boto3
 import click
+from dotenv import load_dotenv
 import paramiko
 
-CONFIG_FILE = "config.ini"
+# Load environmental variables from file in dev (load_dotenv doesn't override existing environment variables)
+load_dotenv()
 
 
 def s3_key_exists(key: str, bucket: str, s3_client) -> bool:
@@ -64,16 +65,14 @@ def extract_metadata_from_filename(filename: str) -> tuple:
 
 @click.command()
 def cli():
-    click.echo("1. Read configuration from file")
-    config = ConfigParser()
-    config.read(CONFIG_FILE)
-    baltrad_server_host = config.get("baltrad_server", "host")
-    baltrad_server_port = config.getint("baltrad_server", "port")
-    baltrad_server_username = config.get("baltrad_server", "username")
-    baltrad_server_password = config.get("baltrad_server", "password")
-    baltrad_server_datadir = config.get("baltrad_server", "datadir")
-
-    destination_bucket = config.get("destination_bucket", "name")
+    click.echo("1. Read configuration from environmental variables")
+    baltrad_server_host = os.environ.get("FTP_HOST")
+    baltrad_server_port = int(os.environ.get("FTP_PORT"))
+    baltrad_server_username = os.environ.get("FTP_USERNAME")
+    baltrad_server_password = os.environ.get("FTP_PWD")
+    baltrad_server_datadir = os.environ.get("FTP_DATADIR", "data")
+    destination_bucket = os.environ.get("DESTINATION_BUCKET", "aloft")
+    aws_sns_topic = os.environ.get("SNS_TOPIC")
 
     click.echo("2. Establish SFTP connection")
     paramiko.util.log_to_file("paramiko.log")
