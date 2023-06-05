@@ -48,22 +48,16 @@ report_sns = partial(report_exception_to_sns,
     help="Range of h5 vp files to include, i.e. files modified between now and N"
     "modified-days-ago. If 0, all h5 files in the bucket will be included.",
 )
-@click.option(
-    "--aws-profile",
-    "aws_profile",
-    default=None,
-    help="(Optionally) AWS profile used to interact with the S3 bucket.",
-)
-def cli(modified_days_ago, aws_profile):
+def cli(modified_days_ago):
     """Convert and aggregate h5 vp files to daily/monthly vpts files on S3 bucket
 
     Check the latest modified h5 vp files on the S3 bucket using an S3 inventory,
     convert those files from ODIM bird profile to the VPTS CSV format and
     upload the generated daily/monthly vpts files to S3.
     """
-    if aws_profile:
-        storage_options = {"profile": aws_profile}
-        boto3_options = {"profile_name": aws_profile}
+    if AWS_PROFILE:
+        storage_options = {"profile": AWS_PROFILE}
+        boto3_options = {"profile_name": AWS_PROFILE}
     else:
         storage_options = dict()
         boto3_options = dict()

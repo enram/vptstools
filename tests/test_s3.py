@@ -448,6 +448,8 @@ class TestHandleManifest:
             inventory_files[0]["key"] == "aloft/aloft-hdf5-files-inventory/data/"
             "dummy_inventory.csv.gz"
         )
+        # clean up env variable
+        del os.environ["AWS_SHARED_CREDENTIALS_FILE"]
 
     def test_handle_manifest_all(self, s3_inventory):
         """e2e test for the manifest/inventory handling functionality - all included"""

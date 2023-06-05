@@ -310,6 +310,7 @@ def handle_manifest(manifest_url, modified_days_ago="2day", storage_options=None
     Check https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-inventory.html
     for more information on S3 bucket inventory and manifest files.
     """
+
     # TODO - add additional checks on input
     df_last_n_days = []
     df_coverage = []
