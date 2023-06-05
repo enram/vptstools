@@ -31,7 +31,6 @@ def test_e2e_cli(s3_inventory, path_inventory, tmp_path):
         # Run CLI command `vph5_to_vpts` with limited modified period check to 3 days
         runner = CliRunner()
         result = runner.invoke(cli, ["--modified-days-ago", str(3)])
-        print(result)
 
         # Check individual steps of the CLI command
         assert "Create 1 daily vpts files" in result.output
