@@ -1,9 +1,11 @@
 import os
 import tempfile
+from functools import partial
 import shutil
 from pathlib import Path
 from datetime import date
 
+import boto3
 import click
 from dotenv import load_dotenv
 import s3fs
@@ -11,6 +13,7 @@ import pandas as pd
 
 from vptstools.vpts import vpts, vpts_to_csv
 from vptstools.s3 import handle_manifest, OdimFilePath
+from vptstools.bin.click_exception import catch_all_exceptions, report_exception_to_sns
 
 # Load environmental variables from file in dev
 # (load_dotenv doesn't override existing environment variables)
@@ -18,14 +21,25 @@ load_dotenv()
 
 S3_BUCKET = os.environ.get("DESTINATION_BUCKET", "aloft")
 INVENTORY_BUCKET = os.environ.get("INVENTORY_BUCKET", "aloft-inventory")
-aws_sns_topic = os.environ.get("SNS_TOPIC")
+AWS_SNS_TOPIC = os.environ.get("SNS_TOPIC")
+AWS_PROFILE = os.environ.get("AWS_PROFILE", None)
+AWS_REGION = os.environ.get("AWS_REGION", "eu-west-1")
 
 MANIFEST_URL = f"s3://{INVENTORY_BUCKET}/{S3_BUCKET}/{S3_BUCKET}-hdf5-files-inventory"
 S3_BUCKET_CREATION = pd.Timestamp("2022-08-02 00:00:00", tz="UTC")
 MANIFEST_HOUR_OF_DAY = "01-00"
 
 
-@click.command()
+# Prepare SNS report handler
+report_sns = partial(report_exception_to_sns,
+                     aws_sns_topic=AWS_SNS_TOPIC,
+                     subject="Conversion from hdf5 files to daily/monthly vpts-files failed.",
+                     profile_name=AWS_PROFILE,
+                     region_name=AWS_REGION
+                     )
+
+
+@click.command(cls=catch_all_exceptions(click.Command, handler=report_sns))  # Add SNS-reporting on exception
 @click.option(
     "--modified-days-ago",
     "modified_days_ago",
@@ -88,8 +102,6 @@ def cli(modified_days_ago, aws_profile):
     # Run vpts daily conversion for each radar-day with modified files
     inbo_s3 = s3fs.S3FileSystem(**storage_options)
     # PATCH TO OVERCOME RECURSIVE s3fs in wrapped context
-    import boto3
-
     session = boto3.Session(**boto3_options)
     s3_client = session.client("s3")
 
@@ -182,3 +194,5 @@ def cli(modified_days_ago, aws_profile):
 
 if __name__ == "__main__":
     cli()
+
+
