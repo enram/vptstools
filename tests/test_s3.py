@@ -471,6 +471,7 @@ class TestHandleManifest:
 
     def test_handle_manifest_subset(self, s3_inventory):
         """e2e test for the manifest/inventory handling functionality - subset within time window"""
+
         df_result = self.df_result.iloc[[1, 2, 4], :].reset_index(drop=True)
 
         # Subset of inventory items within time-window
@@ -550,3 +551,4 @@ class TestHandleManifest:
         )
         assert df_cov.empty
         assert days_to_create_vpts.empty
+
