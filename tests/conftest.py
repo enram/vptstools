@@ -14,7 +14,8 @@ import aiohttp.typedefs
 import botocore.awsrequest
 import botocore.model
 
-from moto import mock_s3
+from moto import mock_s3, mock_sns, mock_sqs
+from moto.core import DEFAULT_ACCOUNT_ID
 
 from vptstools.vpts import BirdProfile
 
@@ -23,10 +24,23 @@ CURRENT_DIR = Path(os.path.dirname(__file__))
 SAMPlE_DATA_DIR = CURRENT_DIR / "data"
 
 
+@pytest.fixture(scope="function")
+def aws_credentials():
+    """Mocked AWS Credentials for moto."""
+    os.environ["AWS_ACCESS_KEY_ID"] = "testing"
+    os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
+    os.environ["AWS_SECURITY_TOKEN"] = "testing"
+    os.environ["AWS_SESSION_TOKEN"] = "testing"
+    os.environ["AWS_DEFAULT_REGION"] = "eu-west-1"
+
+
 @pytest.fixture(autouse=True)
-def mock_settings_env_vars():
+def mock_settings_env_vars(aws_credentials):
+    """Define the default environmental variables for the unit tests"""
     env_names_to_remove = {"AWS_PROFILE"}
     modified_environ = {k: v for k, v in os.environ.items() if k not in env_names_to_remove}
+    modified_environ["SNS_TOPIC"] = "arn:aws:sns:eu-west-1:123456789012:dummysnstopic"
+    modified_environ["AWS_REGION"] = "eu-west-1"
     with patch.dict(os.environ, modified_environ, clear=True):
         yield
 
@@ -230,16 +244,6 @@ def vp_metadata_only():
     )
 
 
-@pytest.fixture(scope="function")
-def aws_credentials():
-    """Mocked AWS Credentials for moto."""
-    os.environ["AWS_ACCESS_KEY_ID"] = "testing"
-    os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
-    os.environ["AWS_SECURITY_TOKEN"] = "testing"
-    os.environ["AWS_SESSION_TOKEN"] = "testing"
-    os.environ["AWS_DEFAULT_REGION"] = "eu-west-1"
-
-
 @pytest.fixture
 def path_inventory():
     """Return the folder containing minimal unit test files"""
@@ -292,3 +296,22 @@ def s3_inventory(aws_credentials, path_inventory):
                     h5f, "aloft", f"baltrad/hdf5/nosta/2023/03/11/{h5file.name}"
                 )
         yield s3
+
+
+@pytest.fixture(scope="function")
+def sns(aws_credentials):
+    """"""
+    with mock_sns():
+        with mock_sqs():
+            sns_client = boto3.client("sns")
+            sns_client.create_topic(Name=os.environ["SNS_TOPIC"].split(":")[-1])
+
+            #sqs_conn = boto3.resource("sqs")
+            #sqs_conn.create_queue(QueueName="test-queue")
+
+            sns_client.subscribe(
+                TopicArn=os.environ["SNS_TOPIC"],
+                Protocol="sqs",
+                Endpoint=f"arn:aws:sqs:{os.environ['AWS_REGION']}:{DEFAULT_ACCOUNT_ID}:test-queue",
+            )
+            yield sns_client
