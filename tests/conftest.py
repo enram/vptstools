@@ -2,7 +2,7 @@ import os
 import datetime
 from pathlib import Path
 from typing import Callable, Any
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 import boto3
@@ -21,6 +21,14 @@ from vptstools.vpts import BirdProfile
 
 CURRENT_DIR = Path(os.path.dirname(__file__))
 SAMPlE_DATA_DIR = CURRENT_DIR / "data"
+
+
+@pytest.fixture(autouse=True)
+def mock_settings_env_vars():
+    env_names_to_remove = {"AWS_PROFILE"}
+    modified_environ = {k: v for k, v in os.environ.items() if k not in env_names_to_remove}
+    with patch.dict(os.environ, modified_environ, clear=True):
+        yield
 
 
 ## Patch as described in https://github.com/aio-libs/aiobotocore/issues/755#issuecomment-1424945194 --------------------
