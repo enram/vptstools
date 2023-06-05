@@ -269,8 +269,8 @@ def _handle_inventory(
     )
     df["file_items"] = df["file"].str.split("/")
     df["suffix"] = df["file_items"].str.get(-1).str.split(".").str.get(-1)
-    df = df[df["suffix"] == "h5"]
     df["source"] = df["file_items"].str.get(0)
+    df = df[df["suffix"] == "h5"]
     df = df.drop(columns=["file_items", "suffix"])
 
     # Extract IDs latest N days modified files
