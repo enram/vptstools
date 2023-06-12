@@ -22,6 +22,7 @@ Configuration is loaded from environmental variables:
 import os
 from functools import partial
 import tempfile
+import time
 
 import boto3
 import click
@@ -93,7 +94,7 @@ def extract_metadata_from_filename(filename: str) -> tuple:
 @click.command(cls=catch_all_exceptions(click.Command, handler=report_sns))  # Add SNS-reporting to exception
 def cli():
 
-    click.echo("1. Read configuration from environmental variables")
+    click.echo("Read configuration from environmental variables.")
     baltrad_server_host = os.environ.get("FTP_HOST")
     baltrad_server_port = int(os.environ.get("FTP_PORT"))
     baltrad_server_username = os.environ.get("FTP_USERNAME")
@@ -101,56 +102,56 @@ def cli():
     baltrad_server_datadir = os.environ.get("FTP_DATADIR", "data")
     destination_bucket = DESTINATION_BUCKET
 
-    click.echo("2. Establish SFTP connection")
+    click.echo("Establish SFTP connection.")
     paramiko.util.log_to_file("paramiko.log")
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(
-        paramiko.AutoAddPolicy()
-    )  # necessary to avoid "Server 'hostname' not found in known_hosts error
-    ssh.connect(
-        baltrad_server_host,
-        port=baltrad_server_port,
-        username=baltrad_server_username,
-        password=baltrad_server_password,
-    )
-    sftp = ssh.open_sftp()
-    sftp.chdir(baltrad_server_datadir)
+    with paramiko.SSHClient() as ssh:
+        ssh.set_missing_host_key_policy(
+            paramiko.AutoAddPolicy()
+        )  # necessary to avoid "Server 'hostname' not found in known_hosts error
+        ssh.connect(
+            baltrad_server_host,
+            port=baltrad_server_port,
+            username=baltrad_server_username,
+            password=baltrad_server_password,
+        )
+        with ssh.open_sftp() as sftp:
+            sftp.chdir(baltrad_server_datadir)
 
-    click.echo("3. Initialize S3/Boto3 client")
-    session = boto3.Session(profile_name=AWS_PROFILE)
-    s3_client = session.client("s3")
+            click.echo("Initialize S3/Boto3 client")
+            session = boto3.Session(profile_name=AWS_PROFILE)
+            s3_client = session.client("s3")
+            click.echo("Initialization complete, we can loop on files on the SFTP server")
 
-    click.echo("Initialization complete, we can loop on files on the SFTP server")
-    for entry in sftp.listdir_iter():
-        if "_vp_" in entry.filename:  # PVOLs and other files are ignored
-            click.echo(
-                f"{entry.filename} is a vp file, we need to consider it... "
-            )
-
-            radar_code, year, month_str, day_str = extract_metadata_from_filename(
-                entry.filename
-            )
-            destination_key = (
-                f"baltrad/hdf5/{radar_code}/{year}/"
-                f"{month_str}/{day_str}/{entry.filename}"
-            )
-            if not s3_key_exists(destination_key, destination_bucket, s3_client):
-                click.echo(
-                    f"{destination_key} does not exist at {destination_bucket}, "
-                    f"transfer it..."
-                )
-                with tempfile.TemporaryDirectory() as tmpdirname:
-                    tmp_file_path = os.path.join(tmpdirname, entry.filename)
-                    sftp.get(entry.filename, tmp_file_path)
-                    click.echo("SFTP download completed. ")
-                    s3_client.upload_file(
-                        tmp_file_path, destination_bucket, destination_key
+            for entry in sftp.listdir_attr():
+                if "_vp_" in entry.filename:  # PVOLs and other files are ignored
+                    click.echo(
+                        f"{entry.filename} is a vp file, we need to consider it... "
                     )
-                    click.echo("Upload to S3 completed!")
-            else:
-                click.echo(
-                    f"{destination_key} already exists at {destination_bucket}, skip it."
-                )
+
+                    radar_code, year, month_str, day_str = extract_metadata_from_filename(
+                        entry.filename
+                    )
+                    destination_key = (
+                        f"baltrad/hdf5/{radar_code}/{year}/"
+                        f"{month_str}/{day_str}/{entry.filename}"
+                    )
+                    if not s3_key_exists(destination_key, destination_bucket, s3_client):
+                        click.echo(
+                            f"{destination_key} does not exist at {destination_bucket}, "
+                            f"transfer it..."
+                        )
+                        with tempfile.TemporaryDirectory() as tmpdirname:
+                            tmp_file_path = os.path.join(tmpdirname, entry.filename)
+                            sftp.get(entry.filename, tmp_file_path)
+                            click.echo(f"SFTP download of file {entry.filename} completed.")
+                            s3_client.upload_file(
+                                tmp_file_path, destination_bucket, destination_key
+                            )
+                            click.echo(f"Upload of file {entry.filename} to S3 completed!")
+                    else:
+                        click.echo(
+                            f"{destination_key} already exists at {destination_bucket}, skip it."
+                        )
     click.echo("File transfer from Baltrad finished.")
 
 
