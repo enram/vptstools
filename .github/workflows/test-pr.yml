@@ -1,5 +1,5 @@
+# Run unit tests on multiple Python version during PR
 name: test-pr
-description: Run unit tests on multiple Python version during PR
 
 on:
   pull_request: # Run when pull request

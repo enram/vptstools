@@ -1,5 +1,5 @@
+# Deploy package documentation to github pages on each push to main branch (or triggered manually)
 name: Update documentation pages
-description: Deploy package documentation to github pages on each push to main branch (or triggered manually)
 
 on:
   push:

@@ -1,5 +1,4 @@
-# Reference: https://docs.github.com/en/actions
-
+# Build package, run unit tests and deploy on success
 name: release
 
 on:

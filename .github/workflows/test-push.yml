@@ -1,5 +1,5 @@
+# Run unit tests on Python version used for daily service
 name: test-push
-description: Run unit tests on Python version used for daily service
 
 on:
   push: # Run when pushing code
