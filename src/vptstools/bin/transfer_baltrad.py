@@ -18,7 +18,7 @@ Configuration is loaded from environmental variables:
 - SNS_TOPIC: AWS SNS topic to report when routine fails
 - AWS_PROFILE: AWS profile (mainly for local development)
 """
-
+import datetime
 import os
 from functools import partial
 import tempfile
@@ -93,7 +93,8 @@ def extract_metadata_from_filename(filename: str) -> tuple:
 
 @click.command(cls=catch_all_exceptions(click.Command, handler=report_sns))  # Add SNS-reporting to exception
 def cli():
-
+    cli_start_time = datetime.datetime.now()
+    click.echo(f"Start transfer Baltrad FTP sync at {cli_start_time}")
     click.echo("Read configuration from environmental variables.")
     baltrad_server_host = os.environ.get("FTP_HOST")
     baltrad_server_port = int(os.environ.get("FTP_PORT"))
@@ -161,7 +162,8 @@ def cli():
                         click.echo(
                             f"{destination_key} already exists at {destination_bucket}, skip it."
                         )
-    click.echo("File transfer from Baltrad finished.")
+    cli_duration = datetime.datetime.now() - cli_start_time
+    click.echo(f"File transfer from Baltrad finished, the syncrhonization took {cli_duration}.")
 
 
 if __name__ == "__main__":
