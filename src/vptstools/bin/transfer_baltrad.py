@@ -122,6 +122,9 @@ def cli():
             s3_client = session.client("s3")
             click.echo("Initialization complete, we can loop on files on the SFTP server")
 
+            # listdir_attr is not a generator like listdir_iter which introduced BUG, but as the time between enlisting
+            # and the effective download is now larger, the risk of a removed file in between requires us to
+            # double check on the existence (should be edge case when running daily).
             for entry in sftp.listdir_attr():
                 if "_vp_" in entry.filename:  # PVOLs and other files are ignored
                     click.echo(
@@ -142,12 +145,18 @@ def cli():
                         )
                         with tempfile.TemporaryDirectory() as tmpdirname:
                             tmp_file_path = os.path.join(tmpdirname, entry.filename)
-                            sftp.get(entry.filename, tmp_file_path)
-                            click.echo(f"SFTP download of file {entry.filename} completed.")
-                            s3_client.upload_file(
-                                tmp_file_path, destination_bucket, destination_key
-                            )
-                            click.echo(f"Upload of file {entry.filename} to S3 completed!")
+                            try:
+                                sftp.get(entry.filename, tmp_file_path)
+                                click.echo(f"SFTP download of file {entry.filename} completed.")
+                                s3_client.upload_file(
+                                    tmp_file_path, destination_bucket, destination_key
+                                )
+                                click.echo(f"Upload of file {entry.filename} to S3 completed!")
+                            except FileNotFoundError:
+                                click.echo(
+                                    f"{entry.filename} file could not longer be found on sFTP, skipping file."
+                                )
+
                     else:
                         click.echo(
                             f"{destination_key} already exists at {destination_bucket}, skip it."
