@@ -11,6 +11,9 @@ on:
   pull_request:  # Run in every PR
   workflow_dispatch:  # Allow manually triggering the workflow
 
+permissions:
+  contents: read
+
 concurrency:
   group: >-
     ${{ github.workflow }}-${{ github.ref_type }}-
@@ -28,10 +31,12 @@ jobs:
       - uses: actions/setup-python@v4
         with: {python-version: "3.10"}
       - name: Build package distribution files
-        run: pipx run --spec tox==3.27.1 tox -e clean,build
+        run: >-
+          pipx run --python '${{ steps.setup-python.outputs.python-path }}'
+          tox -e clean,build
       - name: Record the path of wheel distribution
         id: wheel-distribution
-        run: echo "::set-output name=path::$(ls dist/*.whl)"
+        run: echo "path=$(ls dist/*.whl)" >> $GITHUB_OUTPUT
       - name: Store the distribution files for use in other stages
         # `tests` and `publish` will use the same pre-built distributions,
         # so we make sure to release the exact same package that was tested
@@ -47,6 +52,7 @@ jobs:
       matrix:
         python:
         - "3.10"
+        - "3.11"
         platform:
         - ubuntu-latest
         - macos-latest
@@ -62,13 +68,9 @@ jobs:
         with: {name: python-distribution-files, path: dist/}
       - name: Run tests
         run: >-
-          pipx run --spec tox==3.27.1 tox
-          --installpkg '${{ needs.prepare.outputs.wheel-distribution }}'
-          -- -rFEx --durations 10 --color yes
-      - name: Run code formatting
-        run: pipx run --spec tox==3.27.1 tox -e format
-      - name: Run code linting
-        run: pipx run --spec tox==3.27.1 tox -e lint
+          pipx run --python '${{ steps.setup-python.outputs.python-path }}'
+          tox --installpkg '${{ needs.prepare.outputs.wheel-distribution }}'
+          -- -rFEx --durations 10 --color yes  # pytest args
       - name: Generate coverage report
         run: pipx run coverage lcov -o coverage.lcov
       - name: Upload partial coverage report
@@ -108,4 +110,4 @@ jobs:
           TWINE_REPOSITORY: pypi
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-        run: pipx run --spec tox==3.27.1 tox -e publish
+        run: pipx run tox -e publish
