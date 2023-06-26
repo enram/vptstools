@@ -8,12 +8,6 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: >-
-    ${{ github.workflow }}-${{ github.ref_type }}-
-    ${{ github.event.pull_request.number || github.sha }}
-  cancel-in-progress: false
-
 jobs:
   test:
     runs-on: ubuntu-latest
