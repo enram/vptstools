@@ -553,4 +553,3 @@ class TestHandleManifest:
         )
         assert df_cov.empty
         assert days_to_create_vpts.empty
-

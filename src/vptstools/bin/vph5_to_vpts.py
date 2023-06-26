@@ -188,5 +188,3 @@ def cli(modified_days_ago):
 
 if __name__ == "__main__":
     cli()
-
-

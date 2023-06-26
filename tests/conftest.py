@@ -45,7 +45,7 @@ def mock_settings_env_vars(aws_credentials):
         yield
 
 
-## Patch as described in https://github.com/aio-libs/aiobotocore/issues/755#issuecomment-1424945194 --------------------
+# Patch as described in https://github.com/aio-libs/aiobotocore/issues/755#issuecomment-1424945194 --------------------
 class MockAWSResponse(aiobotocore.awsrequest.AioAWSResponse):
     """
     Mocked AWS Response.
@@ -276,7 +276,7 @@ def s3_inventory(aws_credentials, path_inventory):
             s3.upload_fileobj(
                 manifest_file,
                 "aloft-inventory",
-                f"aloft/aloft-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
+                "aloft/aloft-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
             )
         with open(inventory, "rb") as inventory_file:
             s3.upload_fileobj(
@@ -306,8 +306,8 @@ def sns(aws_credentials):
             sns_client = boto3.client("sns")
             sns_client.create_topic(Name=os.environ["SNS_TOPIC"].split(":")[-1])
 
-            #sqs_conn = boto3.resource("sqs")
-            #sqs_conn.create_queue(QueueName="test-queue")
+            # sqs_conn = boto3.resource("sqs")
+            # sqs_conn.create_queue(QueueName="test-queue")
 
             sns_client.subscribe(
                 TopicArn=os.environ["SNS_TOPIC"],

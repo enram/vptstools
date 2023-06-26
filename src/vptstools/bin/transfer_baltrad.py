@@ -22,7 +22,6 @@ import datetime
 import os
 from functools import partial
 import tempfile
-import time
 
 import boto3
 import click

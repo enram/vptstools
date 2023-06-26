@@ -87,7 +87,7 @@ def test_datasets(file_path_pvol):
     assert len(datasets) == 11
     assert "dataset1" in datasets
     assert "dataset11" in datasets
-    assert not "dataset12" in datasets
+    assert "dataset12" not in datasets
 
 
 def test_how(file_path_pvol):

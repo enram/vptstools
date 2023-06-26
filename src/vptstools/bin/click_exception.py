@@ -4,7 +4,7 @@ import boto3
 import click
 
 
-def catch_all_exceptions(cls, handler):
+def catch_all_exceptions(cls, handler):  # noqa
     """Catch exceptions raised by a click CLI command to override exception handler.
 
     Credits to https://stackoverflow.com/questions/52213375/python-click-exception-handling-under-setuptools
