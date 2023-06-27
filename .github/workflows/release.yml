@@ -61,6 +61,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
+        id: cp3x
         with:
           python-version: ${{ matrix.python }}
       - name: Retrieve pre-built distribution files
@@ -68,7 +69,7 @@ jobs:
         with: {name: python-distribution-files, path: dist/}
       - name: Run tests
         run: >-
-          pipx run --python '${{ steps.setup-python.outputs.python-path }}'
+          pipx run --python '${{ steps.cp3x.outputs.python-path }}'
           tox --installpkg '${{ needs.prepare.outputs.wheel-distribution }}'
           -- -rFEx --durations 10 --color yes  # pytest args
       - name: Generate coverage report
