@@ -30,7 +30,7 @@ jobs:
         with: {python-version: "3.10"}
       - name: Build package distribution files
         run: >-
-          pipx run --python '${{ steps.setup-python.outputs.python-path }}'
+          pipx run --python '${{ steps.cp310.outputs.python-path }}'
           tox -e clean,build
       - name: Record the path of wheel distribution
         id: wheel-distribution
