@@ -109,3 +109,35 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
         run: pipx run --spec tox==3.27.1 tox -e publish
+
+  docker:
+      needs: finalize
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3
+        - name: Retrieve pre-built distribution files
+          uses: actions/download-artifact@v2
+          with:
+            name: python-distribution-files
+            path: dist/
+        - name: Set up Docker Buildx
+          uses: docker/setup-buildx-action@v1
+        - name: Configure AWS credentials
+          uses: aws-actions/configure-aws-credentials@v2 # More information on this action can be found below in the 'AWS Credentials' section
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: ${{ secrets.AWS_REGION }}
+        - name: Login to Amazon ECR
+          id: login-ecr
+          uses: aws-actions/amazon-ecr-login@v1
+        - name: Build and push
+          uses: docker/build-push-action@v2
+          with:
+            context: .
+            file: ./Dockerfile
+            platforms: linux/amd64,linux/arm64
+            push: true
+            tags: ${{ steps.login-ecr.outputs.registry }}/inbo-aloft:latest
+            build-args: |
+              WHEEL_FILE=$(ls dist/*.whl)
