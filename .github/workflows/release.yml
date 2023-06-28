@@ -132,6 +132,7 @@ jobs:
       needs: test-pinned
       runs-on: ubuntu-latest
       steps:
+        - uses: actions/checkout@v3
         - name: Retrieve pre-built distribution files
           uses: actions/download-artifact@v3
           with: {name: python-distribution-files, path: dist/}
