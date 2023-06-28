@@ -218,6 +218,7 @@ package:
 Github Actions is used to automatic push releases to pypi by the publish step in `release.yml`. To create a new release:
 
 - `git checkout main`, `git pull origin main`
+- Update the pinned dependencies using `pip-compile --extra=transfer`
 - Update the `CHANGELOG.md` with the changes for this new release
 - `git commit -m 'Update changelog for release  X.X.X' CHANGELOG.rst
 - `git push origin master`

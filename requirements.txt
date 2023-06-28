@@ -4,7 +4,7 @@
 #
 #    pip-compile --extra=transfer
 #
-aiobotocore==2.5.0
+aiobotocore==2.5.1
     # via s3fs
 aiohttp==3.8.4
     # via
@@ -23,7 +23,7 @@ attrs==23.1.0
     #   jsonschema
 bcrypt==4.0.1
     # via paramiko
-botocore==1.29.76
+botocore==1.29.161
     # via aiobotocore
 certifi==2023.5.7
     # via requests
@@ -53,7 +53,7 @@ frozenlist==1.3.3
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2023.5.0
+fsspec==2023.6.0
     # via
     #   s3fs
     #   vptstools (setup.py)
@@ -96,7 +96,7 @@ paramiko==3.2.0
     # via vptstools (setup.py)
 petl==1.7.12
     # via frictionless
-pyarrow==12.0.0
+pyarrow==12.0.1
     # via vptstools (setup.py)
 pycparser==2.21
     # via cffi
@@ -129,7 +129,7 @@ rfc3986==2.0.0
     # via frictionless
 rich==13.3.5
     # via typer
-s3fs[boto3]==2023.5.0
+s3fs[boto3]==2023.6.0
     # via vptstools (setup.py)
 shellingham==1.5.0.post1
     # via typer
