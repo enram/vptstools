@@ -1,5 +1,5 @@
 # Deploy package documentation to github pages on each push to main branch (or triggered manually)
-name: Update documentation pages
+name: documentation
 
 on:
   push:
@@ -9,6 +9,8 @@ on:
 jobs:
   documentation:
     runs-on: ubuntu-latest
+  permissions:
+    contents: write
 
     steps:
     - uses: actions/checkout@v3
