@@ -215,19 +215,29 @@ package:
 
 ### Releases
 
-If you are part of the group of maintainers and have correct user permissions on [PyPI], the following steps can be used to release a new version for `vptstools`:
+Github Actions is used to automatic push releases to pypi by the publish step in `release.yml`. To create a new release:
+
+- `git checkout main`, `git pull origin main`
+- Update the `CHANGELOG.md` with the changes for this new release
+- `git commit -m 'Update changelog for release  X.X.X' CHANGELOG.rst
+- `git push origin master`
+- Add git tags: `git tag vX.X.X` 
+- Push the git tags: `git push --tags`
+- On the [release page](https://github.com/enram/vptstools/releases) draft a new release using the latest git tag
+- Copy past the changes from the changelog in the dialog and publish release
+- Check if Github Actions runs the deployment of docs and pypi
+
+If it would be required ( and if you have correct user permissions on [PyPI]) the last step to publish a new version 
+for `vptstools` to pypi can be done manually as well with the following steps:
 
 1. Make sure all unit tests are successful.
-2. Tag the current commit on the main branch with a release tag, e.g., `v1.2.3`.
-3. Push the new tag to the upstream [repository],
-   e.g., `git push upstream v1.2.3`
-4. Clean up the `dist` and `build` folders with `tox -e clean`
+2. Clean up the `dist` and `build` folders with `tox -e clean`
    (or `rm -rf dist build`)
    to avoid confusion with old builds and Sphinx docs.
-5. Run `tox -e build` and check that the files in `dist` have
+3. Run `tox -e build` and check that the files in `dist` have
    the correct version (no `.dirty` or [git] hash) according to the [git] tag. Also check the sizes of the distributions, if they are too big (e.g., >
    500KB), unwanted clutter may have been accidentally included.
-6. Run `tox -e publish -- --repository pypi` and check that everything was uploaded to [PyPI] correctly.
+4. Run `tox -e publish -- --repository pypi` and check that everything was uploaded to [PyPI] correctly.
 
 
 [black]: https://pypi.org/project/black/
