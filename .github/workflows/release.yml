@@ -129,7 +129,7 @@ jobs:
           pytest -rFEx --durations 10 --color yes  # pytest args
 
   docker:
-      needs: finalize
+      needs: test-pinned
       runs-on: ubuntu-latest
       steps:
         - name: Retrieve pre-built distribution files
