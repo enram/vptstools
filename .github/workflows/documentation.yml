@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  documentton:
+  documentation:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,6 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        python -m pip install tox tox-gh-actions
         pip install -e .[develop,transfer]
     - name: Build documentation
       run: |
