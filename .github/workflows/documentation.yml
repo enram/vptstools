@@ -3,7 +3,7 @@ name: Update documentation pages
 
 on:
   push:
-    branches: [main]
+    branches: [main, SVH-fix-docs]
   workflow_dispatch:
 
 jobs:
