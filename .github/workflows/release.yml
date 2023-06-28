@@ -1,6 +1,5 @@
-# Reference: https://docs.github.com/en/actions
-
-name: tests
+# Build package, run unit tests and deploy on success
+name: release
 
 on:
   push:
@@ -8,8 +7,10 @@ on:
     # relevant branches and tags. Other branches can be checked via PRs.
     branches: [main]
     tags: ['v[0-9]*', '[0-9]+.[0-9]+*']  # Match tags that resemble a version
-  pull_request:  # Run in every PR
   workflow_dispatch:  # Allow manually triggering the workflow
+
+permissions:
+  contents: read
 
 concurrency:
   group: >-
@@ -26,12 +27,15 @@ jobs:
       - uses: actions/checkout@v3
         with: {fetch-depth: 0}  # deep clone for setuptools-scm
       - uses: actions/setup-python@v4
+        id: cp310
         with: {python-version: "3.10"}
       - name: Build package distribution files
-        run: pipx run --spec tox==3.27.1 tox -e clean,build
+        run: >-
+          pipx run --python '${{ steps.cp310.outputs.python-path }}'
+          tox -e clean,build
       - name: Record the path of wheel distribution
         id: wheel-distribution
-        run: echo "::set-output name=path::$(ls dist/*.whl)"
+        run: echo "path=$(ls dist/*.whl)" >> $GITHUB_OUTPUT
       - name: Store the distribution files for use in other stages
         # `tests` and `publish` will use the same pre-built distributions,
         # so we make sure to release the exact same package that was tested
@@ -46,7 +50,9 @@ jobs:
     strategy:
       matrix:
         python:
+        - "3.9"
         - "3.10"
+        - "3.11"
         platform:
         - ubuntu-latest
         - macos-latest
@@ -55,6 +61,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
+        id: cp3x
         with:
           python-version: ${{ matrix.python }}
       - name: Retrieve pre-built distribution files
@@ -62,13 +69,9 @@ jobs:
         with: {name: python-distribution-files, path: dist/}
       - name: Run tests
         run: >-
-          pipx run --spec tox==3.27.1 tox
-          --installpkg '${{ needs.prepare.outputs.wheel-distribution }}'
-          -- -rFEx --durations 10 --color yes
-      - name: Run code formatting
-        run: pipx run --spec tox==3.27.1 tox -e format
-      - name: Run code linting
-        run: pipx run --spec tox==3.27.1 tox -e lint
+          pipx run --python '${{ steps.cp3x.outputs.python-path }}'
+          tox --installpkg '${{ needs.prepare.outputs.wheel-distribution }}' -e py
+          -- -rFEx --durations 10 --color yes  # pytest args
       - name: Generate coverage report
         run: pipx run coverage lcov -o coverage.lcov
       - name: Upload partial coverage report
@@ -89,37 +92,28 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           parallel-finished: true
 
-  publish:
+  pypi-publish:
+    name: Upload release to PyPI
     needs: finalize
     if: ${{ github.event_name == 'push' && contains(github.ref, 'refs/tags/') }}
     runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with: {python-version: "3.10"}
       - name: Retrieve pre-built distribution files
         uses: actions/download-artifact@v3
         with: {name: python-distribution-files, path: dist/}
-      - name: Publish Package
-        env:
-          # TODO: Set your PYPI_TOKEN as a secret using GitHub UI
-          # - https://pypi.org/help/#apitoken
-          # - https://docs.github.com/en/actions/security-guides/encrypted-secrets
-          TWINE_REPOSITORY: pypi
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-        run: pipx run --spec tox==3.27.1 tox -e publish
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
 
   docker:
       needs: finalize
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@v3
         - name: Retrieve pre-built distribution files
-          uses: actions/download-artifact@v2
-          with:
-            name: python-distribution-files
-            path: dist/
+          uses: actions/download-artifact@v3
+          with: {name: python-distribution-files, path: dist/}
         - name: Set up Docker Buildx
           uses: docker/setup-buildx-action@v1
         - name: Configure AWS credentials

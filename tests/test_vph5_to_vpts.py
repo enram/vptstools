@@ -1,4 +1,3 @@
-import os
 import filecmp
 from unittest.mock import patch
 
@@ -30,7 +29,7 @@ def test_e2e_cli(s3_inventory, path_inventory, tmp_path):
     ):
         # Run CLI command `vph5_to_vpts` with limited modified period check to 3 days
         runner = CliRunner()
-        result = runner.invoke(cli, ["--modified-days-ago", 3])
+        result = runner.invoke(cli, ["--modified-days-ago", str(3)])
 
         # Check individual steps of the CLI command
         assert "Create 1 daily vpts files" in result.output
@@ -64,7 +63,7 @@ def test_e2e_cli(s3_inventory, path_inventory, tmp_path):
         )
 
 
-def test_e2e_cli_all(s3_inventory, path_inventory, tmp_path):
+def test_e2e_cli_all(s3_inventory, path_inventory, tmp_path, sns):
     """Run the full sequence with option all to rerun all files in the bucket (zero-value).
 
     The tests uses mocked S3 buckets setup with the data in tests/data/inventory. The mocked
@@ -79,10 +78,11 @@ def test_e2e_cli_all(s3_inventory, path_inventory, tmp_path):
     ):
         # Run CLI command `vph5_to_vpts` with limited modified period check to 3 days
         runner = CliRunner()
-        result = runner.invoke(cli, ["--modified-days-ago", 0])
+        result = runner.invoke(cli, ["--modified-days-ago", str(0)])
 
         # Check individual steps of the CLI command
         assert "Create 5 daily vpts files" in result.output
         assert "Recreate the full set of bucket files" in result.output
         #  test fails/stops after creation of first daily file (only files provided for test)
         assert result.exception is not None
+        # TODO - check if notification is sent to the SNS-TOPIC (currently only sent to mocked endpoint)
