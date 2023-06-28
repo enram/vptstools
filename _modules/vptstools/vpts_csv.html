@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vptstools.vpts_csv &mdash; vptstools 0.0.post1.dev43+g111622c documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            vptstools
+          </a>
+              <div class="version">
+                0.0.post1.dev43+g111622c
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Module Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">vptstools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">vptstools.vpts_csv</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for vptstools.vpts_csv</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="VptsCsvVersionError"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.VptsCsvVersionError">[docs]</a><span class="k">class</span> <span class="nc">VptsCsvVersionError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when non supported VPTS CSV version is asked&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Collection of utility functions to support mapping conversions</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="datetime_to_proper8601"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.datetime_to_proper8601">[docs]</a><span class="k">def</span> <span class="nf">datetime_to_proper8601</span><span class="p">(</span><span class="n">timestamp</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert datetime to ISO8601 standard</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    timestamp : datetime.datetime</span>
+<span class="sd">        datetime to represent to ISO8601 standard.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    See https://stackoverflow.com/questions/19654578/python-utc-datetime-\</span>
+<span class="sd">    objects-iso-format-doesnt-include-z-zulu-or-zero-offset</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from datetime import datetime</span>
+<span class="sd">    &gt;&gt;&gt; datetime_to_proper8601(datetime(2021, 1, 1, 4, 0))</span>
+<span class="sd">    &#39;2021-01-01T04:00:00Z&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="int_to_nodata"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.int_to_nodata">[docs]</a><span class="k">def</span> <span class="nf">int_to_nodata</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">nodata_values</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert str to either integer or the corresponding nodata value if enlisted</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    value : str</span>
+<span class="sd">        Single data value</span>
+<span class="sd">    nodata_values : list of str</span>
+<span class="sd">        List of values in which case the data point need to be converted to ``nodata``</span>
+<span class="sd">    nodata : str | float, default &quot;&quot;</span>
+<span class="sd">        Data value to use when incoming value is one of the ``nodata_values``</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str | int</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; int_to_nodata(&quot;0&quot;, [&quot;0&quot;, &#39;NULL&#39;], nodata=&quot;&quot;)</span>
+<span class="sd">    &#39;&#39;</span>
+<span class="sd">    &gt;&gt;&gt; int_to_nodata(&quot;12&quot;, [&quot;0&quot;, &#39;NULL&#39;], nodata=&quot;&quot;)</span>
+<span class="sd">    12</span>
+<span class="sd">    &gt;&gt;&gt; int_to_nodata(&#39;NULL&#39;, [&quot;0&quot;, &#39;NULL&#39;], nodata=&quot;&quot;)</span>
+<span class="sd">    &#39;&#39;</span>
+<span class="sd">    &quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Conversion with no-data check only supports str values.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">([</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">nodata_values</span><span class="p">]):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Make sure to define the nodata_values as str.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">nodata_values</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">nodata</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="number_to_bool_str"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.number_to_bool_str">[docs]</a><span class="k">def</span> <span class="nf">number_to_bool_str</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert list of boolean values to str versions with capital letters</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    values : list of bool</span>
+<span class="sd">        List of Boolean values</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of str [TRUE, FALSE,...]</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; number_to_bool_str([True, False, False])</span>
+<span class="sd">    [&#39;TRUE&#39;, &#39;FALSE&#39;, &#39;FALSE&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">to_bool</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;TRUE&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;FALSE&quot;</span><span class="p">}</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">to_bool</span><span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="check_source_file"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.check_source_file">[docs]</a><span class="k">def</span> <span class="nf">check_source_file</span><span class="p">(</span><span class="n">source_file</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise Exception when the source_file str is not according to the regex</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source_file : str</span>
+<span class="sd">        URL or path to the source file from which the data were derived.</span>
+<span class="sd">    regex : str</span>
+<span class="sd">        Regular expression to test the source_file against</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    source_file : str</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError : : source_file not according to regex</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; check_source_file(&quot;s3://alof/baltrad/2023/01/01/&quot;</span>
+<span class="sd">    ...                   &quot;bejab_vp_20230101T000500Z_0x9.h5&quot;,</span>
+<span class="sd">    ...                   r&quot;.*h5&quot;)</span>
+<span class="sd">    &#39;s3://alof/baltrad/2023/01/01/bejab_vp_20230101T000500Z_0x9.h5&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sf_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">sf_regex</span><span class="p">,</span> <span class="n">source_file</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">source_file</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Incorrect file description for the source_file. Make sure &quot;</span>
+            <span class="s2">&quot;the file path is not starting with &#39;../&#39; or &#39;/&#39;&quot;</span>
+        <span class="p">)</span></div>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">VPTS CSV version abstract version and individual version mapping implementations</span>
+
+<span class="sd">To create a new version of the VPTS CSV implementation, create a new class `VptsCsvVX`</span>
+<span class="sd">inherited from the `AbstractVptsCsv` class and provide the `abstractmethod`. See the</span>
+<span class="sd">`mapping` method  for the conversion  functionality. Make sure to add the mapping</span>
+<span class="sd">to the `_get_vpts_version` function</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="get_vpts_version"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.get_vpts_version">[docs]</a><span class="k">def</span> <span class="nf">get_vpts_version</span><span class="p">(</span><span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Link version ID (v1, v2,..) with correct AbstractVptsCsv child class</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    version : str</span>
+<span class="sd">        e.g. v1.0, v2.0,...</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    VptsCsvVx : child class of the AbstractVptsCsv</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    VptsCsvVersionError : Version of the VPTS CSV is not supported by an implementation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">version</span> <span class="o">==</span> <span class="s2">&quot;v1.0&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VptsCsvV1</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">VptsCsvVersionError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Version </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2"> not supported.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AbstractVptsCsv"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.AbstractVptsCsv">[docs]</a><span class="k">class</span> <span class="nc">AbstractVptsCsv</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract class to define VPTS CSV conversion rules with a certain version&quot;&quot;&quot;</span>
+
+    <span class="n">source_file_regex</span> <span class="o">=</span> <span class="s2">&quot;.*&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">nodata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;&#39;No data&#39; representation&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">undetect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;&#39;Undetect&#39; representation&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;NaN&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Columns to define row order</span>
+
+<span class="sd">        The dict need to provide the column name in</span>
+<span class="sd">        combination with the data type to use for</span>
+<span class="sd">        the sorting, e.g.::</span>
+
+<span class="sd">            dict(radar=str, datetime=str, height=int, source_file=str)</span>
+
+<span class="sd">        As the data is returned as strings, casting to the data</span>
+<span class="sd">        is done before sorting, after which the casting to str</span>
+<span class="sd">        is applied again.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">()</span>
+
+<div class="viewcode-block" id="AbstractVptsCsv.mapping"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.AbstractVptsCsv.mapping">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bird_profile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Translation from ODIM bird profile to VPTS CSV data format.</span>
+
+<span class="sd">        Data columns can be derived from the different attributes of the</span>
+<span class="sd">        bird profile:</span>
+
+<span class="sd">            - ``identifiers``: radar identification metadata</span>
+<span class="sd">            - ``datetime``: the timestamp</span>
+<span class="sd">            - ``levels``: the heights or levels of the measurement</span>
+<span class="sd">            - ``variables``: the variables in the data (e.g. dd, ff, u,...)</span>
+<span class="sd">            - ``how``: ODIM5 metadata</span>
+<span class="sd">            - ``where``: ODIM5 metadata</span>
+<span class="sd">            - ``what``: ODIM5 metadata</span>
+
+<span class="sd">        An example of the dict to return::</span>
+
+<span class="sd">            dict(</span>
+<span class="sd">                radar=bird_profile.identifiers[&quot;NOD&quot;],</span>
+<span class="sd">                height=bird_profile.levels,</span>
+<span class="sd">                u=bird_profile.variables[&quot;u&quot;],</span>
+<span class="sd">                v=bird_profile.variables[&quot;v&quot;],</span>
+<span class="sd">                vcp=int(bird_profile.how[&quot;vcp&quot;])</span>
+<span class="sd">            )</span>
+
+<span class="sd">        As data is extracted as such additional helper functions can</span>
+<span class="sd">        be added as well, e.g.::</span>
+
+<span class="sd">            ...</span>
+<span class="sd">            datetime=datetime_to_proper8601(bird_profile.datetime),</span>
+<span class="sd">            gap=number_to_bool_str(bird_profile.variables[&quot;gap&quot;]),</span>
+<span class="sd">            radar_latitude=np.round(bird_profile.where[&quot;lat&quot;], 6)</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The order of the variables matter, as this defines the column</span>
+<span class="sd">        order.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="VptsCsvV1"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.VptsCsvV1">[docs]</a><span class="k">class</span> <span class="nc">VptsCsvV1</span><span class="p">(</span><span class="n">AbstractVptsCsv</span><span class="p">):</span>
+    <span class="n">source_file_regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^(?=^[^.\/~])(^((?!\.</span><span class="si">{2}</span><span class="s2">).)*$).*$&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nodata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;&#39;No data&#39; representation&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">undetect</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;&#39;Undetect&#39; representation&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;NaN&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Columns to define row order&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">radar</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">datetime</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+<div class="viewcode-block" id="VptsCsvV1.mapping"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.VptsCsvV1.mapping">[docs]</a>    <span class="k">def</span> <span class="nf">mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bird_profile</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Translation from ODIM bird profile to VPTS CSV data format.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The order of the variables matter, as this defines the column</span>
+<span class="sd">        order.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">radar</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">identifiers</span><span class="p">[</span><span class="s2">&quot;NOD&quot;</span><span class="p">],</span>
+            <span class="n">datetime</span><span class="o">=</span><span class="n">datetime_to_proper8601</span><span class="p">(</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">datetime</span><span class="p">),</span>
+            <span class="n">height</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">levels</span><span class="p">,</span>
+            <span class="n">u</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">],</span>
+            <span class="n">v</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;v&quot;</span><span class="p">],</span>
+            <span class="n">w</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;w&quot;</span><span class="p">],</span>
+            <span class="n">ff</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;ff&quot;</span><span class="p">],</span>
+            <span class="n">dd</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;dd&quot;</span><span class="p">],</span>
+            <span class="n">sd_vvp</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;sd_vvp&quot;</span><span class="p">],</span>
+            <span class="n">gap</span><span class="o">=</span><span class="n">number_to_bool_str</span><span class="p">(</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;gap&quot;</span><span class="p">]),</span>
+            <span class="n">eta</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;eta&quot;</span><span class="p">],</span>
+            <span class="n">dens</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;dens&quot;</span><span class="p">],</span>
+            <span class="n">dbz</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;dbz&quot;</span><span class="p">],</span>
+            <span class="n">dbz_all</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;DBZH&quot;</span><span class="p">],</span>
+            <span class="n">n</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">],</span>
+            <span class="n">n_dbz</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;n_dbz&quot;</span><span class="p">],</span>
+            <span class="n">n_all</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;n_all&quot;</span><span class="p">],</span>
+            <span class="n">n_dbz_all</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;n_dbz_all&quot;</span><span class="p">],</span>
+            <span class="n">rcs</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">how</span><span class="p">[</span><span class="s2">&quot;rcs_bird&quot;</span><span class="p">],</span>
+            <span class="n">sd_vvp_threshold</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">how</span><span class="p">[</span><span class="s2">&quot;sd_vvp_thresh&quot;</span><span class="p">],</span>
+            <span class="n">vcp</span><span class="o">=</span><span class="n">int_to_nodata</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">how</span><span class="p">[</span><span class="s2">&quot;vcp&quot;</span><span class="p">]),</span> <span class="p">[</span><span class="s2">&quot;NULL&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodata</span><span class="p">),</span>
+            <span class="n">radar_latitude</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">where</span><span class="p">[</span><span class="s2">&quot;lat&quot;</span><span class="p">],</span> <span class="mi">6</span><span class="p">),</span>
+            <span class="n">radar_longitude</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">where</span><span class="p">[</span><span class="s2">&quot;lon&quot;</span><span class="p">],</span> <span class="mi">6</span><span class="p">),</span>
+            <span class="n">radar_height</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">where</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]),</span>
+            <span class="n">radar_wavelength</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">how</span><span class="p">[</span><span class="s2">&quot;wavelength&quot;</span><span class="p">],</span> <span class="mi">6</span><span class="p">),</span>
+            <span class="n">source_file</span><span class="o">=</span><span class="n">check_source_file</span><span class="p">(</span>
+                <span class="n">bird_profile</span><span class="o">.</span><span class="n">source_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_file_regex</span>
+            <span class="p">),</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Research Institute for Nature and Forest (INBO).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

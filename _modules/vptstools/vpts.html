@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vptstools.vpts &mdash; vptstools 0.0.post1.dev43+g111622c documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            vptstools
+          </a>
+              <div class="version">
+                0.0.post1.dev43+g111622c
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Module Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">vptstools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">vptstools.vpts</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for vptstools.vpts</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">frictionless</span> <span class="kn">import</span> <span class="n">validate</span>
+
+<span class="kn">from</span> <span class="nn">vptstools.odimh5</span> <span class="kn">import</span> <span class="n">ODIMReader</span><span class="p">,</span> <span class="n">check_vp_odim</span>
+<span class="kn">from</span> <span class="nn">vptstools.vpts_csv</span> <span class="kn">import</span> <span class="n">get_vpts_version</span>
+
+<span class="n">NODATA</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">UNDETECT</span> <span class="o">=</span> <span class="s2">&quot;NaN&quot;</span>
+
+<span class="n">DESCRIPTOR_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;vpts.resource.json&quot;</span>
+<span class="n">CSV_ENCODING</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;utf8&quot;</span>  <span class="c1"># !! Don&#39;t change, only utf-8 is accepted in frictionless resources</span>
+<span class="p">)</span>
+<span class="n">CSV_FIELD_DELIMITER</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_odim_get_variables</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">variable_mapping</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">quantity</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;In a given dataset, find the requested quantity and return a 1d list</span>
+<span class="sd">    of the values</span>
+
+<span class="sd">    &#39;nodata&#39; and &#39;undetect&#39; are interpreted according to the metadata in the</span>
+<span class="sd">    &#39;what&#39; group.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dataset : HDF5 group</span>
+<span class="sd">        HDF5 group</span>
+<span class="sd">    variable_mapping : dict</span>
+<span class="sd">        Map the variables names to the dataset ID in the ODIM file</span>
+<span class="sd">    quantity : str</span>
+<span class="sd">        Variable name to extract</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    In order to handle the &#39;nodata&#39; and &#39;undetect&#39;, a list overcomes casting as is done</span>
+<span class="sd">    when using numpy in this case (and the non exsitence of Nan for integer in numpy).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data_group</span> <span class="o">=</span> <span class="n">variable_mapping</span><span class="p">[</span><span class="n">quantity</span><span class="p">]</span>
+
+    <span class="n">gain</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">data_group</span><span class="p">][</span><span class="s2">&quot;what&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;gain&quot;</span><span class="p">]</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">data_group</span><span class="p">][</span><span class="s2">&quot;what&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;offset&quot;</span><span class="p">]</span>
+
+    <span class="n">nodata_val</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">data_group</span><span class="p">][</span><span class="s2">&quot;what&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;nodata&quot;</span><span class="p">]</span>
+    <span class="n">undetect_val</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">data_group</span><span class="p">][</span><span class="s2">&quot;what&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;undetect&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Apply offset/gain while preserving the original variable datatype</span>
+    <span class="n">variable_dtype</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="n">data_group</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="n">data_group</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">gain</span> <span class="o">+</span> <span class="n">offset</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">variable_dtype</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="c1"># use regular list here to have mixed dtypes for the data versus nodata/undetect</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">NODATA</span> <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="n">nodata_val</span> <span class="k">else</span> <span class="n">value</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">UNDETECT</span> <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="n">undetect_val</span> <span class="k">else</span> <span class="n">value</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">values</span>
+
+
+<div class="viewcode-block" id="BirdProfile"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.BirdProfile">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">BirdProfile</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represent ODIM source file</span>
+
+<span class="sd">    Data class representing a single input ODIM source file, i.e.</span>
+<span class="sd">    (https://github.com/adokter/vol2bird/wiki/ODIM-bird-profile-format-specification)</span>
+<span class="sd">    single datetime, single radar, multiple altitudes with</span>
+<span class="sd">    variables for each altitude: dd, ff, ...</span>
+
+<span class="sd">    This object aims to stay as close as possible to the HDF5 file</span>
+<span class="sd">    (no data simplification/loss at this stage). Use the `from_odim` method</span>
+<span class="sd">    as a convenient instantiation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">identifiers</span><span class="p">:</span> <span class="nb">dict</span>  <span class="c1"># {&#39;WMO&#39;:&#39;06477&#39;, &#39;NOD&#39;:&#39;bewid&#39;, &#39;RAD&#39;:&#39;BX41&#39;, &#39;PLC&#39;:&#39;Wideumont&#39;}</span>
+    <span class="n">datetime</span><span class="p">:</span> <span class="n">datetime</span>
+    <span class="n">what</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">where</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">how</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">levels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">variables</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">source_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_file</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Source_file need to be a str representation of a file path.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>  <span class="c1"># Allows sorting by datetime</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">datetime</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">datetime</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Bird profile: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">datetime</span><span class="si">:</span><span class="s2">%Y-%m-%d %H:%M</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">identifiers</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Bird profile: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">datetime</span><span class="si">:</span><span class="s2">%Y-%m-%d %H:%M</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">identifiers</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<div class="viewcode-block" id="BirdProfile.to_vp"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.BirdProfile.to_vp">[docs]</a>    <span class="k">def</span> <span class="nf">to_vp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vpts_csv_version</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert profile data to a CSV</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        vpts_csv_version : AbstractVptsCsv</span>
+<span class="sd">            Ruleset with the VPTS CSV ruleset to use, e.g. v1.0</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        When &#39;NaN&#39; or &#39;NA&#39; values are present inside a column, the object data type</span>
+<span class="sd">        will be kept. Otherwise the difference between NaN and NA would be lost and</span>
+<span class="sd">        this overcomes int to float conversion when Nans are available as no int NaN</span>
+<span class="sd">        is supported by Pandas.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">vpts_csv_version</span><span class="o">.</span><span class="n">mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="p">{</span><span class="n">UNDETECT</span><span class="p">:</span> <span class="n">vpts_csv_version</span><span class="o">.</span><span class="n">undetect</span><span class="p">,</span> <span class="n">NODATA</span><span class="p">:</span> <span class="n">vpts_csv_version</span><span class="o">.</span><span class="n">nodata</span><span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="c1"># sort the data according to sorting rule</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">vpts_csv_version</span><span class="o">.</span><span class="n">sort</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">vpts_csv_version</span><span class="o">.</span><span class="n">sort</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+            <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="BirdProfile.from_odim"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.BirdProfile.from_odim">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_odim</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source_odim</span><span class="p">:</span> <span class="n">ODIMReader</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract BirdProfile information from ODIM with OdimReader</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        source_odim : ODIMReader</span>
+<span class="sd">            ODIM file reader interface.</span>
+<span class="sd">        source_file : str, optional</span>
+<span class="sd">            URL or path to the source file from which the data were derived.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dataset1</span> <span class="o">=</span> <span class="n">source_odim</span><span class="o">.</span><span class="n">hdf5</span><span class="p">[</span><span class="s2">&quot;dataset1&quot;</span><span class="p">]</span>
+        <span class="n">variable_mapping</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">value</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;/dataset1/</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">][</span><span class="s2">&quot;what&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;quantity&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf8&quot;</span><span class="p">):</span> <span class="n">key</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dataset1</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;what&quot;</span>
+        <span class="p">}</span>
+        <span class="n">height_values</span> <span class="o">=</span> <span class="n">_odim_get_variables</span><span class="p">(</span><span class="n">dataset1</span><span class="p">,</span> <span class="n">variable_mapping</span><span class="p">,</span> <span class="n">quantity</span><span class="o">=</span><span class="s2">&quot;HGHT&quot;</span><span class="p">)</span>
+
+        <span class="n">variable_mapping</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;HGHT&quot;</span><span class="p">)</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">variable_mapping</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">variables</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span> <span class="o">=</span> <span class="n">_odim_get_variables</span><span class="p">(</span>
+                <span class="n">dataset1</span><span class="p">,</span> <span class="n">variable_mapping</span><span class="p">,</span> <span class="n">quantity</span><span class="o">=</span><span class="n">variable</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Resolve hdf5 file full path if no source_file is provided by the user</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">source_file</span><span class="p">:</span>
+            <span class="n">source_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">source_odim</span><span class="o">.</span><span class="n">hdf5</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">datetime</span><span class="o">=</span><span class="n">source_odim</span><span class="o">.</span><span class="n">root_datetime</span><span class="p">,</span>
+            <span class="n">identifiers</span><span class="o">=</span><span class="n">source_odim</span><span class="o">.</span><span class="n">root_source</span><span class="p">,</span>
+            <span class="n">what</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">source_odim</span><span class="o">.</span><span class="n">what</span><span class="p">),</span>
+            <span class="n">where</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">source_odim</span><span class="o">.</span><span class="n">where</span><span class="p">),</span>
+            <span class="n">how</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">source_odim</span><span class="o">.</span><span class="n">how</span><span class="p">),</span>
+            <span class="n">levels</span><span class="o">=</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">height</span><span class="p">)</span> <span class="k">for</span> <span class="n">height</span> <span class="ow">in</span> <span class="n">height_values</span><span class="p">],</span>
+            <span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">,</span>
+            <span class="n">source_file</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">source_file</span><span class="p">),</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="vp"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.vp">[docs]</a><span class="k">def</span> <span class="nf">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">vpts_csv_version</span><span class="o">=</span><span class="s2">&quot;v1.0&quot;</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert ODIM h5 file to a DataFrame</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    file_path : Path</span>
+<span class="sd">        File Path of ODIM h5</span>
+<span class="sd">    vpts_csv_version : str, default &quot;&quot;</span>
+<span class="sd">        Ruleset with the VPTS CSV ruleset to use, e.g. v1.0</span>
+<span class="sd">    source_file : str | callable</span>
+<span class="sd">        URL or path to the source file from which the data were derived or</span>
+<span class="sd">        a callable that converts the file_path to the source_file</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; file_path = Path(&quot;bejab_vp_20221111T233000Z_0x9.h5&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; vp(file_path)</span>
+<span class="sd">    &gt;&gt;&gt; vp(file_path,</span>
+<span class="sd">    ...    source_file=&quot;s3://aloft/baltrad/hdf5/2022/11/11/&quot; \</span>
+<span class="sd">    ...                 &quot;bejab_vp_20221111T233000Z_0x9.h5&quot;)</span>
+
+<span class="sd">    Use file name itself as source_file representation in vp file using a custom</span>
+<span class="sd">    callable function</span>
+
+<span class="sd">    &gt;&gt;&gt; vp(file_path, source_file=lambda x: Path(x).name)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Convert file_path into source_file using callable</span>
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">source_file</span><span class="p">):</span>
+        <span class="n">source_file</span> <span class="o">=</span> <span class="n">source_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">ODIMReader</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">odim_vp</span><span class="p">:</span>
+        <span class="n">check_vp_odim</span><span class="p">(</span><span class="n">odim_vp</span><span class="p">)</span>
+        <span class="n">vp</span> <span class="o">=</span> <span class="n">BirdProfile</span><span class="o">.</span><span class="n">from_odim</span><span class="p">(</span><span class="n">odim_vp</span><span class="p">,</span> <span class="n">source_file</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">vp</span><span class="o">.</span><span class="n">to_vp</span><span class="p">(</span><span class="n">get_vpts_version</span><span class="p">(</span><span class="n">vpts_csv_version</span><span class="p">))</span></div>
+
+
+<span class="k">def</span> <span class="nf">_convert_to_source</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the file name itself from a file path&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+
+
+<div class="viewcode-block" id="vpts"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.vpts">[docs]</a><span class="k">def</span> <span class="nf">vpts</span><span class="p">(</span><span class="n">file_paths</span><span class="p">,</span> <span class="n">vpts_csv_version</span><span class="o">=</span><span class="s2">&quot;v1.0&quot;</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert set of h5 files to a DataFrame all as string</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    file_paths : Iterable of file paths</span>
+<span class="sd">        Iterable of ODIM h5 file paths</span>
+<span class="sd">    vpts_csv_version : str</span>
+<span class="sd">        Ruleset with the VPTS CSV ruleset to use, e.g. v1.0</span>
+<span class="sd">    source_file : callable, optional</span>
+<span class="sd">        A callable that converts the file_path to the source_file. When None,</span>
+<span class="sd">        the file name itself (without parent folder reference) is used.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Due tot the multiprocessing support, the source_file as a callable can not be</span>
+<span class="sd">    a anonymous lambda function.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; file_paths = sorted(Path(&quot;../data/raw/baltrad/&quot;).rglob(&quot;*.h5&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; vpts(file_paths)</span>
+
+<span class="sd">    Use file name itself as source_file representation in vp file using a</span>
+<span class="sd">    custom callable function</span>
+
+<span class="sd">    &gt;&gt;&gt; def path_to_source(file_path):</span>
+<span class="sd">    ...     return Path(file_path).name</span>
+<span class="sd">    &gt;&gt;&gt; vpts(file_paths, source_file=path_to_source)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Use the file nam itself as source_file when no custom callable is provided</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">source_file</span><span class="p">:</span>
+        <span class="n">source_file</span> <span class="o">=</span> <span class="n">_convert_to_source</span>
+
+    <span class="n">cpu_count</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">cpu_count</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+            <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+                <span class="n">vp</span><span class="p">,</span> <span class="n">vpts_csv_version</span><span class="o">=</span><span class="n">vpts_csv_version</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="n">source_file</span>
+            <span class="p">),</span>
+            <span class="n">file_paths</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">vpts_</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># Convert according to defined rule set</span>
+    <span class="n">vpts_csv</span> <span class="o">=</span> <span class="n">get_vpts_version</span><span class="p">(</span><span class="n">vpts_csv_version</span><span class="p">)</span>
+    <span class="n">vpts_</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">vpts_</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">vpts_csv</span><span class="o">.</span><span class="n">sort</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">vpts_csv</span><span class="o">.</span><span class="n">sort</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">vpts_</span></div>
+
+
+<div class="viewcode-block" id="vpts_to_csv"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.vpts_to_csv">[docs]</a><span class="k">def</span> <span class="nf">vpts_to_csv</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write vp or vpts to file</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">        DataFrame with vp or vpts data</span>
+<span class="sd">    file_path : Path | str</span>
+<span class="sd">        File path to store the vpts file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># check for str input of Path</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+
+    <span class="c1"># create directory if not yet existing</span>
+    <span class="n">file_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">CSV_FIELD_DELIMITER</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">CSV_ENCODING</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="validate_vpts"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.validate_vpts">[docs]</a><span class="k">def</span> <span class="nf">validate_vpts</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">schema_version</span><span class="o">=</span><span class="s2">&quot;v1.0&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate vpts DataFrame against the frictionless data schema and return report</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">        DataFrame as created by the vp or vpts functions</span>
+<span class="sd">    schema_version : str, v1.0,...</span>
+<span class="sd">        Version according to a release tag of https://github.com/enram/vpts-csv/tags</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Frictionless validation report</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tmp_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">())</span>
+    <span class="n">vpts_file_path</span> <span class="o">=</span> <span class="n">tmp_path</span> <span class="o">/</span> <span class="s2">&quot;vpts.csv&quot;</span>
+    <span class="n">vpts_to_csv</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">vpts_file_path</span><span class="p">)</span>
+    <span class="n">_write_resource_descriptor</span><span class="p">(</span><span class="n">vpts_file_path</span><span class="p">,</span> <span class="n">schema_version</span><span class="p">)</span>
+    <span class="n">report</span> <span class="o">=</span> <span class="n">validate</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="n">DESCRIPTOR_FILENAME</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">report</span></div>
+
+
+<span class="k">def</span> <span class="nf">_write_resource_descriptor</span><span class="p">(</span><span class="n">vpts_file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">schema_version</span><span class="o">=</span><span class="s2">&quot;v1.0&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write a frictionless resource descriptor file</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vpts_file_path : pathlib.Path</span>
+<span class="sd">        File path of the resource (vpts file) written to disk</span>
+<span class="sd">    schema_version :</span>
+<span class="sd">        Version according to a release tag of https://github.com/enram/vpts-csv/tags</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;vpts&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="n">vpts_file_path</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;csv&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mediatype&quot;</span><span class="p">:</span> <span class="s2">&quot;text/csv&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;encoding&quot;</span><span class="p">:</span> <span class="n">CSV_ENCODING</span><span class="p">,</span>
+        <span class="s2">&quot;dialect&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;delimiter&quot;</span><span class="p">:</span> <span class="n">CSV_FIELD_DELIMITER</span><span class="p">},</span>
+        <span class="s2">&quot;schema&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;https://raw.githubusercontent.com/enram/vpts-csv/&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">schema_version</span><span class="si">}</span><span class="s2">/vpts-csv-table-schema.json&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">vpts_file_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">vpts_file_path</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="n">DESCRIPTOR_FILENAME</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">outfile</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Research Institute for Nature and Forest (INBO).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

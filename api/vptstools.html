@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vptstools package &mdash; vptstools 0.0.post1.dev43+g111622c documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="vptstools.bin namespace" href="vptstools.bin.html" />
+    <link rel="prev" title="vptstools" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            vptstools
+          </a>
+              <div class="version">
+                0.0.post1.dev43+g111622c
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Module Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">vptstools package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="vptstools.bin.html">vptstools.bin namespace</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-vptstools.odimh5">vptstools.odimh5 module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.odimh5.InvalidSourceODIM"><code class="docutils literal notranslate"><span class="pre">InvalidSourceODIM</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.odimh5.ODIMReader"><code class="docutils literal notranslate"><span class="pre">ODIMReader</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.odimh5.check_vp_odim"><code class="docutils literal notranslate"><span class="pre">check_vp_odim()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-vptstools.s3">vptstools.s3 module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.s3.OdimFilePath"><code class="docutils literal notranslate"><span class="pre">OdimFilePath</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.s3.extract_daily_group_from_inventory"><code class="docutils literal notranslate"><span class="pre">extract_daily_group_from_inventory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.s3.handle_manifest"><code class="docutils literal notranslate"><span class="pre">handle_manifest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.s3.list_manifest_file_keys"><code class="docutils literal notranslate"><span class="pre">list_manifest_file_keys()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-vptstools.vpts">vptstools.vpts module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts.BirdProfile"><code class="docutils literal notranslate"><span class="pre">BirdProfile</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts.validate_vpts"><code class="docutils literal notranslate"><span class="pre">validate_vpts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts.vp"><code class="docutils literal notranslate"><span class="pre">vp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts.vpts"><code class="docutils literal notranslate"><span class="pre">vpts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts.vpts_to_csv"><code class="docutils literal notranslate"><span class="pre">vpts_to_csv()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-vptstools.vpts_csv">vptstools.vpts_csv module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts_csv.AbstractVptsCsv"><code class="docutils literal notranslate"><span class="pre">AbstractVptsCsv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts_csv.VptsCsvV1"><code class="docutils literal notranslate"><span class="pre">VptsCsvV1</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts_csv.VptsCsvVersionError"><code class="docutils literal notranslate"><span class="pre">VptsCsvVersionError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts_csv.check_source_file"><code class="docutils literal notranslate"><span class="pre">check_source_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts_csv.datetime_to_proper8601"><code class="docutils literal notranslate"><span class="pre">datetime_to_proper8601()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts_csv.get_vpts_version"><code class="docutils literal notranslate"><span class="pre">get_vpts_version()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts_csv.int_to_nodata"><code class="docutils literal notranslate"><span class="pre">int_to_nodata()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts_csv.number_to_bool_str"><code class="docutils literal notranslate"><span class="pre">number_to_bool_str()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-vptstools">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.validate_vpts"><code class="docutils literal notranslate"><span class="pre">validate_vpts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.vp"><code class="docutils literal notranslate"><span class="pre">vp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts"><code class="docutils literal notranslate"><span class="pre">vpts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts_to_csv"><code class="docutils literal notranslate"><span class="pre">vpts_to_csv()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">vptstools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">vptstools</a></li>
+      <li class="breadcrumb-item active">vptstools package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/vptstools.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="vptstools-package">
+<h1>vptstools package<a class="headerlink" href="#vptstools-package" title="Permalink to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="vptstools.bin.html">vptstools.bin namespace</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="vptstools.bin.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vptstools.bin.html#module-vptstools.bin.click_exception">vptstools.bin.click_exception module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="vptstools.bin.html#vptstools.bin.click_exception.catch_all_exceptions"><code class="docutils literal notranslate"><span class="pre">catch_all_exceptions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="vptstools.bin.html#vptstools.bin.click_exception.report_exception_to_sns"><code class="docutils literal notranslate"><span class="pre">report_exception_to_sns()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="vptstools.bin.html#module-vptstools.bin.transfer_baltrad">vptstools.bin.transfer_baltrad module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="vptstools.bin.html#vptstools.bin.transfer_baltrad.extract_metadata_from_filename"><code class="docutils literal notranslate"><span class="pre">extract_metadata_from_filename()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="vptstools.bin.html#vptstools.bin.transfer_baltrad.s3_key_exists"><code class="docutils literal notranslate"><span class="pre">s3_key_exists()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="vptstools.bin.html#module-vptstools.bin.vph5_to_vpts">vptstools.bin.vph5_to_vpts module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-vptstools.odimh5">
+<span id="vptstools-odimh5-module"></span><h2>vptstools.odimh5 module<a class="headerlink" href="#module-vptstools.odimh5" title="Permalink to this heading"></a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="vptstools.odimh5.InvalidSourceODIM">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">vptstools.odimh5.</span></span><span class="sig-name descname"><span class="pre">InvalidSourceODIM</span></span><a class="reference internal" href="../_modules/vptstools/odimh5.html#InvalidSourceODIM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.odimh5.InvalidSourceODIM" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.10/library/exceptions.html#Exception" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>Wrong ODIM file</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="vptstools.odimh5.ODIMReader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">vptstools.odimh5.</span></span><span class="sig-name descname"><span class="pre">ODIMReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/odimh5.html#ODIMReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.odimh5.ODIMReader" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.10/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Read ODIM (HDF5) files with context manager</p>
+<p>Should be used with the “with” statement  (context manager) to
+properly close the h5 file.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.odimh5.ODIMReader.hdf5">
+<span class="sig-name descname"><span class="pre">hdf5</span></span><a class="headerlink" href="#vptstools.odimh5.ODIMReader.hdf5" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>HDF5 file object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vptstools.odimh5.ODIMReader.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.10/library/constants.html#None" title="(in Python v3.10)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/vptstools/odimh5.html#ODIMReader.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.odimh5.ODIMReader.close" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.odimh5.ODIMReader.dataset_names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dataset_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/typing.html#typing.List" title="(in Python v3.10)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#vptstools.odimh5.ODIMReader.dataset_names" title="Permalink to this definition"></a></dt>
+<dd><p>Get a list of all the dataset elements (names, as str)</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.odimh5.ODIMReader.how">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">how</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></em><a class="headerlink" href="#vptstools.odimh5.ODIMReader.how" title="Permalink to this definition"></a></dt>
+<dd><p>Get the ‘how’ as dictionary</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.odimh5.ODIMReader.root_date_str">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">root_date_str</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#vptstools.odimh5.ODIMReader.root_date_str" title="Permalink to this definition"></a></dt>
+<dd><p>Get the root what.date attribute as a string, format ‘YYYYMMDD’</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.odimh5.ODIMReader.root_datetime">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">root_datetime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/datetime.html#datetime.datetime" title="(in Python v3.10)"><span class="pre">datetime</span></a></em><a class="headerlink" href="#vptstools.odimh5.ODIMReader.root_datetime" title="Permalink to this definition"></a></dt>
+<dd><p>Get the root date and time as a proper aware datetime object</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.odimh5.ODIMReader.root_object_str">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">root_object_str</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#vptstools.odimh5.ODIMReader.root_object_str" title="Permalink to this definition"></a></dt>
+<dd><p>Get the root what.object attribute as a string.</p>
+<dl class="simple">
+<dt>Possible values according to the standard:</dt><dd><ul class="simple">
+<li><p>“PVOL” (Polar volume)</p></li>
+<li><p>“CVOL” (Cartesian volume)</p></li>
+<li><p>“SCAN” (Polar scan)</p></li>
+<li><p>“RAY” (Single polar ray)</p></li>
+<li><p>“AZIM” (Azimuthal object)</p></li>
+<li><p>“ELEV” (Elevational object)</p></li>
+<li><p>“IMAGE” (2-D cartesian image)</p></li>
+<li><p>“COMP” (Cartesian composite image(s))</p></li>
+<li><p>“XSEC” (2-D vertical cross section(s))</p></li>
+<li><p>“VP” (1-D vertical profile)</p></li>
+<li><p>“PIC” (Embedded graphical image)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.odimh5.ODIMReader.root_source">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">root_source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/typing.html#typing.Dict" title="(in Python v3.10)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#vptstools.odimh5.ODIMReader.root_source" title="Permalink to this definition"></a></dt>
+<dd><p>Get the root what.source attribute as a dict.</p>
+<p>Example: {‘WMO’:’06477’, ‘NOD’:’bewid’, ‘RAD’:’BX41’, ‘PLC’:’Wideumont’}</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.odimh5.ODIMReader.root_source_str">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">root_source_str</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#vptstools.odimh5.ODIMReader.root_source_str" title="Permalink to this definition"></a></dt>
+<dd><p>Get the root what.source attribute as a string.</p>
+<p>Example: WMO:06477,RAD:BX41,PLC:Wideumont,NOD:bewid,CTY:605,CMT:VolumeScanZ</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.odimh5.ODIMReader.root_time_str">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">root_time_str</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#vptstools.odimh5.ODIMReader.root_time_str" title="Permalink to this definition"></a></dt>
+<dd><p>Get the root what.time attribute as a string, format ‘HHMMSS’ (UTC)</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.odimh5.ODIMReader.what">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">what</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></em><a class="headerlink" href="#vptstools.odimh5.ODIMReader.what" title="Permalink to this definition"></a></dt>
+<dd><p>Get the ‘what’ as dictionary</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.odimh5.ODIMReader.where">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">where</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></em><a class="headerlink" href="#vptstools.odimh5.ODIMReader.where" title="Permalink to this definition"></a></dt>
+<dd><p>Get the ‘where’ as dictionary</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vptstools.odimh5.check_vp_odim">
+<span class="sig-prename descclassname"><span class="pre">vptstools.odimh5.</span></span><span class="sig-name descname"><span class="pre">check_vp_odim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_odim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#vptstools.odimh5.ODIMReader" title="vptstools.odimh5.ODIMReader"><span class="pre">ODIMReader</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.10/library/constants.html#None" title="(in Python v3.10)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/vptstools/odimh5.html#check_vp_odim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.odimh5.check_vp_odim" title="Permalink to this definition"></a></dt>
+<dd><p>Verify ODIM file is an hdf5 ODIM format containing ‘VP’ data.</p>
+</dd></dl>
+
+</section>
+<section id="module-vptstools.s3">
+<span id="vptstools-s3-module"></span><h2>vptstools.s3 module<a class="headerlink" href="#module-vptstools.s3" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">vptstools.s3.</span></span><span class="sig-name descname"><span class="pre">OdimFilePath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">radar_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">month</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">day</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hour</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'00'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minute</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'00'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/s3.html#OdimFilePath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.s3.OdimFilePath" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.10/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>ODIM file path with translation from/to different S3 key paths</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Data source, e.g. baltrad, ecog-04003,…</p></li>
+<li><p><strong>radar_code</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – country + radar code</p></li>
+<li><p><strong>data_type</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – ODIM data type, e.g. vp, pvol,…</p></li>
+<li><p><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – year, YYYY</p></li>
+<li><p><strong>month</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – month, MM</p></li>
+<li><p><strong>day</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – day, DD</p></li>
+<li><p><strong>hour</strong> (<em>str = &quot;00&quot;</em>) – hour, HH</p></li>
+<li><p><strong>minute</strong> (<em>str = &quot;00&quot;</em>) – minute, MM</p></li>
+<li><p><strong>file_name</strong> (<em>str = &quot;&quot;</em><em>, </em><em>optional</em>) – File name from which the other properties were derived</p></li>
+<li><p><strong>file_type</strong> (<em>str = &quot;&quot;</em><em>, </em><em>optional</em>) – File type from which the other properties were derived, e.g. hdf5</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.country">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">country</span></span><a class="headerlink" href="#vptstools.s3.OdimFilePath.country" title="Permalink to this definition"></a></dt>
+<dd><p>Country code</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.daily_vpts_file_name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">daily_vpts_file_name</span></span><a class="headerlink" href="#vptstools.s3.OdimFilePath.daily_vpts_file_name" title="Permalink to this definition"></a></dt>
+<dd><p>Name of the corresponding daily vpts file</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.data_type">
+<span class="sig-name descname"><span class="pre">data_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#vptstools.s3.OdimFilePath.data_type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.day">
+<span class="sig-name descname"><span class="pre">day</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#vptstools.s3.OdimFilePath.day" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.file_name">
+<span class="sig-name descname"><span class="pre">file_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#vptstools.s3.OdimFilePath.file_name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.file_type">
+<span class="sig-name descname"><span class="pre">file_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#vptstools.s3.OdimFilePath.file_type" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.from_file_name">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_file_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h5_file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/s3.html#OdimFilePath.from_file_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.s3.OdimFilePath.from_file_name" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize class from ODIM file path</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.from_inventory">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_inventory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h5_file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/s3.html#OdimFilePath.from_inventory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.s3.OdimFilePath.from_inventory" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize class from S3 inventory which contains source and file_type</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.from_s3fs_enlisting">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_s3fs_enlisting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h5_file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/s3.html#OdimFilePath.from_s3fs_enlisting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.s3.OdimFilePath.from_s3fs_enlisting" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize class from S3 inventory which contains bucket,
+source and file_type</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.hour">
+<span class="sig-name descname"><span class="pre">hour</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'00'</span></em><a class="headerlink" href="#vptstools.s3.OdimFilePath.hour" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.minute">
+<span class="sig-name descname"><span class="pre">minute</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'00'</span></em><a class="headerlink" href="#vptstools.s3.OdimFilePath.minute" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.month">
+<span class="sig-name descname"><span class="pre">month</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#vptstools.s3.OdimFilePath.month" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.parse_file_name">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse_file_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/s3.html#OdimFilePath.parse_file_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.s3.OdimFilePath.parse_file_name" title="Permalink to this definition"></a></dt>
+<dd><p>Parse an hdf5 file name radar_code, data_type, year, month, day, hour,
+minute and file_name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – File name to be parsed. An eventual parent path and
+extension will be removed</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>radar_code, data_type, year, month, day, hour, minute, file_name</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>File format is according to the following file format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ccrrr_vp_yyyymmddhhmmss</span><span class="o">.</span><span class="n">h5</span>
+</pre></div>
+</div>
+<p>with <code class="docutils literal notranslate"><span class="pre">c</span></code> the country code two-letter ids and <code class="docutils literal notranslate"><span class="pre">rrr</span></code>
+the radar three-letter id, e.g. bejab_vp_20161120235500.h5.
+Path information in front of the h5 name itself are ignored.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.radar">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">radar</span></span><a class="headerlink" href="#vptstools.s3.OdimFilePath.radar" title="Permalink to this definition"></a></dt>
+<dd><p>Radar code</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.radar_code">
+<span class="sig-name descname"><span class="pre">radar_code</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#vptstools.s3.OdimFilePath.radar_code" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.s3_file_path_daily_vpts">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">s3_file_path_daily_vpts</span></span><a class="headerlink" href="#vptstools.s3.OdimFilePath.s3_file_path_daily_vpts" title="Permalink to this definition"></a></dt>
+<dd><p>S3 key of the daily vpts file corresponding to the h5 file</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.s3_file_path_monthly_vpts">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">s3_file_path_monthly_vpts</span></span><a class="headerlink" href="#vptstools.s3.OdimFilePath.s3_file_path_monthly_vpts" title="Permalink to this definition"></a></dt>
+<dd><p>S3 key of the monthly concatenated vpts file corresponding to the h5 file</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.s3_folder_path_h5">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">s3_folder_path_h5</span></span><a class="headerlink" href="#vptstools.s3.OdimFilePath.s3_folder_path_h5" title="Permalink to this definition"></a></dt>
+<dd><p>S3 key with the folder containing the h5 file</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.s3_path_setup">
+<span class="sig-name descname"><span class="pre">s3_path_setup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/s3.html#OdimFilePath.s3_path_setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.s3.OdimFilePath.s3_path_setup" title="Permalink to this definition"></a></dt>
+<dd><p>Common setup of the S3 bucket logic</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.s3_url_h5">
+<span class="sig-name descname"><span class="pre">s3_url_h5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'aloft'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/s3.html#OdimFilePath.s3_url_h5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.s3.OdimFilePath.s3_url_h5" title="Permalink to this definition"></a></dt>
+<dd><p>Full S3 URL for the stored h5 file</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.source">
+<span class="sig-name descname"><span class="pre">source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#vptstools.s3.OdimFilePath.source" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.year">
+<span class="sig-name descname"><span class="pre">year</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#vptstools.s3.OdimFilePath.year" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vptstools.s3.extract_daily_group_from_inventory">
+<span class="sig-prename descclassname"><span class="pre">vptstools.s3.</span></span><span class="sig-name descname"><span class="pre">extract_daily_group_from_inventory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/s3.html#extract_daily_group_from_inventory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.s3.extract_daily_group_from_inventory" title="Permalink to this definition"></a></dt>
+<dd><p>Extract file name components to define a group</p>
+<p>The coverage file counts the number of files available
+per group (e.g. daily files per radar). This function is passed
+to the Pandas <code class="docutils literal notranslate"><span class="pre">groupby</span></code> to translate the file path to a
+countable set (e.g. source, radar-code, year month and day for
+daily files per radar).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – File path of the ODIM h5 file. Only the file name is taken
+into account and a folder-path is ignored.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vptstools.s3.handle_manifest">
+<span class="sig-prename descclassname"><span class="pre">vptstools.s3.</span></span><span class="sig-name descname"><span class="pre">handle_manifest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manifest_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified_days_ago</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'2day'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/s3.html#handle_manifest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.s3.handle_manifest" title="Permalink to this definition"></a></dt>
+<dd><p>Extract modified days and coverage from a manifest file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>manifest_url</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – URL of the S3 inventory manifest file to use; s3://…</p></li>
+<li><p><strong>modified_days_ago</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>default '2day'</em>) – Time period to check for ‘modified date’ to extract
+the subset of files that should trigger a rerun.</p></li>
+<li><p><strong>storage_options</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>, </em><em>optional</em>) – Additional parameters passed to the read_csv to access the
+S3 manifest files, eg. custom AWS profile options
+({“profile”: “inbo-prd”})</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>df_cov</strong> (<em>pandas.DataFrame</em>) – DataFrame with the ‘directory’ info (source, radar_code,
+year, month, day) and the number of files in the S3 bucket.</p></li>
+<li><p><strong>df_days_to_create_vpts</strong> (<em>pandas.DataFrame</em>) – DataFrame with the ‘directory’ info (source, radar_code,
+year, month, day) and the number of new files within the
+look back period.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Check <a class="reference external" href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-inventory.html">https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-inventory.html</a>
+for more information on S3 bucket inventory and manifest files.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vptstools.s3.list_manifest_file_keys">
+<span class="sig-prename descclassname"><span class="pre">vptstools.s3.</span></span><span class="sig-name descname"><span class="pre">list_manifest_file_keys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s3_manifest_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/s3.html#list_manifest_file_keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.s3.list_manifest_file_keys" title="Permalink to this definition"></a></dt>
+<dd><p>Enlist the manifest individual files</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s3_manifest_url</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – S3 URL to manifest file</p></li>
+<li><p><strong>storage_options</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><em>dict</em></a><em>, </em><em>optional</em>) – Additional parameters passed to the read_csv to access the
+S3 manifest files, eg. custom AWS profile options
+({“profile”: “inbo-prd”})</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-vptstools.vpts">
+<span id="vptstools-vpts-module"></span><h2>vptstools.vpts module<a class="headerlink" href="#module-vptstools.vpts" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="vptstools.vpts.BirdProfile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">vptstools.vpts.</span></span><span class="sig-name descname"><span class="pre">BirdProfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifiers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/datetime.html#datetime.datetime" title="(in Python v3.10)"><span class="pre">datetime</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">what</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">how</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">levels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/typing.html#typing.List" title="(in Python v3.10)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#BirdProfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts.BirdProfile" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.10/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Represent ODIM source file</p>
+<p>Data class representing a single input ODIM source file, i.e.
+(<a class="reference external" href="https://github.com/adokter/vol2bird/wiki/ODIM-bird-profile-format-specification">https://github.com/adokter/vol2bird/wiki/ODIM-bird-profile-format-specification</a>)
+single datetime, single radar, multiple altitudes with
+variables for each altitude: dd, ff, …</p>
+<p>This object aims to stay as close as possible to the HDF5 file
+(no data simplification/loss at this stage). Use the <cite>from_odim</cite> method
+as a convenient instantiation.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.vpts.BirdProfile.datetime">
+<span class="sig-name descname"><span class="pre">datetime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/datetime.html#datetime.datetime" title="(in Python v3.10)"><span class="pre">datetime</span></a></em><a class="headerlink" href="#vptstools.vpts.BirdProfile.datetime" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vptstools.vpts.BirdProfile.from_odim">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_odim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_odim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#vptstools.odimh5.ODIMReader" title="vptstools.odimh5.ODIMReader"><span class="pre">ODIMReader</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#BirdProfile.from_odim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts.BirdProfile.from_odim" title="Permalink to this definition"></a></dt>
+<dd><p>Extract BirdProfile information from ODIM with OdimReader</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_odim</strong> (<a class="reference internal" href="#vptstools.odimh5.ODIMReader" title="vptstools.odimh5.ODIMReader"><em>ODIMReader</em></a>) – ODIM file reader interface.</p></li>
+<li><p><strong>source_file</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>optional</em>) – URL or path to the source file from which the data were derived.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.vpts.BirdProfile.how">
+<span class="sig-name descname"><span class="pre">how</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></em><a class="headerlink" href="#vptstools.vpts.BirdProfile.how" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.vpts.BirdProfile.identifiers">
+<span class="sig-name descname"><span class="pre">identifiers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></em><a class="headerlink" href="#vptstools.vpts.BirdProfile.identifiers" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.vpts.BirdProfile.levels">
+<span class="sig-name descname"><span class="pre">levels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/typing.html#typing.List" title="(in Python v3.10)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#vptstools.vpts.BirdProfile.levels" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.vpts.BirdProfile.source_file">
+<span class="sig-name descname"><span class="pre">source_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#vptstools.vpts.BirdProfile.source_file" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="vptstools.vpts.BirdProfile.to_vp">
+<span class="sig-name descname"><span class="pre">to_vp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vpts_csv_version</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#BirdProfile.to_vp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts.BirdProfile.to_vp" title="Permalink to this definition"></a></dt>
+<dd><p>Convert profile data to a CSV</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vpts_csv_version</strong> (<a class="reference internal" href="#vptstools.vpts_csv.AbstractVptsCsv" title="vptstools.vpts_csv.AbstractVptsCsv"><em>AbstractVptsCsv</em></a>) – Ruleset with the VPTS CSV ruleset to use, e.g. v1.0</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>When ‘NaN’ or ‘NA’ values are present inside a column, the object data type
+will be kept. Otherwise the difference between NaN and NA would be lost and
+this overcomes int to float conversion when Nans are available as no int NaN
+is supported by Pandas.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.vpts.BirdProfile.variables">
+<span class="sig-name descname"><span class="pre">variables</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></em><a class="headerlink" href="#vptstools.vpts.BirdProfile.variables" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.vpts.BirdProfile.what">
+<span class="sig-name descname"><span class="pre">what</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></em><a class="headerlink" href="#vptstools.vpts.BirdProfile.what" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.vpts.BirdProfile.where">
+<span class="sig-name descname"><span class="pre">where</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></em><a class="headerlink" href="#vptstools.vpts.BirdProfile.where" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vptstools.vpts.validate_vpts">
+<span class="sig-prename descclassname"><span class="pre">vptstools.vpts.</span></span><span class="sig-name descname"><span class="pre">validate_vpts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'v1.0'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#validate_vpts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts.validate_vpts" title="Permalink to this definition"></a></dt>
+<dd><p>Validate vpts DataFrame against the frictionless data schema and return report</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.0.2)"><em>pandas.DataFrame</em></a>) – DataFrame as created by the vp or vpts functions</p></li>
+<li><p><strong>schema_version</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>v1.0</em><em>,</em><em>...</em>) – Version according to a release tag of <a class="reference external" href="https://github.com/enram/vpts-csv/tags">https://github.com/enram/vpts-csv/tags</a></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Frictionless validation report</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vptstools.vpts.vp">
+<span class="sig-prename descclassname"><span class="pre">vptstools.vpts.</span></span><span class="sig-name descname"><span class="pre">vp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vpts_csv_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'v1.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#vp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts.vp" title="Permalink to this definition"></a></dt>
+<dd><p>Convert ODIM h5 file to a DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<em>Path</em>) – File Path of ODIM h5</p></li>
+<li><p><strong>vpts_csv_version</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>default &quot;&quot;</em>) – Ruleset with the VPTS CSV ruleset to use, e.g. v1.0</p></li>
+<li><p><strong>source_file</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>callable</em>) – URL or path to the source file from which the data were derived or
+a callable that converts the file_path to the source_file</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;bejab_vp_20221111T233000Z_0x9.h5&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;s3://aloft/baltrad/hdf5/2022/11/11/&quot;</span>     <span class="o">...</span>                 <span class="s2">&quot;bejab_vp_20221111T233000Z_0x9.h5&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Use file name itself as source_file representation in vp file using a custom
+callable function</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Path</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vptstools.vpts.vpts">
+<span class="sig-prename descclassname"><span class="pre">vptstools.vpts.</span></span><span class="sig-name descname"><span class="pre">vpts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vpts_csv_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'v1.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#vpts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts.vpts" title="Permalink to this definition"></a></dt>
+<dd><p>Convert set of h5 files to a DataFrame all as string</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_paths</strong> (<em>Iterable</em><em> of </em><em>file paths</em>) – Iterable of ODIM h5 file paths</p></li>
+<li><p><strong>vpts_csv_version</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Ruleset with the VPTS CSV ruleset to use, e.g. v1.0</p></li>
+<li><p><strong>source_file</strong> (<em>callable</em><em>, </em><em>optional</em>) – A callable that converts the file_path to the source_file. When None,
+the file name itself (without parent folder reference) is used.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Due tot the multiprocessing support, the source_file as a callable can not be
+a anonymous lambda function.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_paths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;../data/raw/baltrad/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*.h5&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vpts</span><span class="p">(</span><span class="n">file_paths</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Use file name itself as source_file representation in vp file using a
+custom callable function</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">path_to_source</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vpts</span><span class="p">(</span><span class="n">file_paths</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="n">path_to_source</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vptstools.vpts.vpts_to_csv">
+<span class="sig-prename descclassname"><span class="pre">vptstools.vpts.</span></span><span class="sig-name descname"><span class="pre">vpts_to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#vpts_to_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts.vpts_to_csv" title="Permalink to this definition"></a></dt>
+<dd><p>Write vp or vpts to file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.0.2)"><em>pandas.DataFrame</em></a>) – DataFrame with vp or vpts data</p></li>
+<li><p><strong>file_path</strong> (<em>Path</em><em> | </em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – File path to store the vpts file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-vptstools.vpts_csv">
+<span id="vptstools-vpts-csv-module"></span><h2>vptstools.vpts_csv module<a class="headerlink" href="#module-vptstools.vpts_csv" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="vptstools.vpts_csv.AbstractVptsCsv">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">vptstools.vpts_csv.</span></span><span class="sig-name descname"><span class="pre">AbstractVptsCsv</span></span><a class="reference internal" href="../_modules/vptstools/vpts_csv.html#AbstractVptsCsv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts_csv.AbstractVptsCsv" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.10/library/abc.html#abc.ABC" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<p>Abstract class to define VPTS CSV conversion rules with a certain version</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="vptstools.vpts_csv.AbstractVptsCsv.mapping">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bird_profile</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../_modules/vptstools/vpts_csv.html#AbstractVptsCsv.mapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts_csv.AbstractVptsCsv.mapping" title="Permalink to this definition"></a></dt>
+<dd><p>Translation from ODIM bird profile to VPTS CSV data format.</p>
+<p>Data columns can be derived from the different attributes of the
+bird profile:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">identifiers</span></code>: radar identification metadata</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">datetime</span></code>: the timestamp</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">levels</span></code>: the heights or levels of the measurement</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">variables</span></code>: the variables in the data (e.g. dd, ff, u,…)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">how</span></code>: ODIM5 metadata</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">where</span></code>: ODIM5 metadata</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">what</span></code>: ODIM5 metadata</p></li>
+</ul>
+</div></blockquote>
+<p>An example of the dict to return:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">dict</span><span class="p">(</span>
+    <span class="n">radar</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">identifiers</span><span class="p">[</span><span class="s2">&quot;NOD&quot;</span><span class="p">],</span>
+    <span class="n">height</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">levels</span><span class="p">,</span>
+    <span class="n">u</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;u&quot;</span><span class="p">],</span>
+    <span class="n">v</span><span class="o">=</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;v&quot;</span><span class="p">],</span>
+    <span class="n">vcp</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">how</span><span class="p">[</span><span class="s2">&quot;vcp&quot;</span><span class="p">])</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>As data is extracted as such additional helper functions can
+be added as well, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">...</span>
+<span class="n">datetime</span><span class="o">=</span><span class="n">datetime_to_proper8601</span><span class="p">(</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">datetime</span><span class="p">),</span>
+<span class="n">gap</span><span class="o">=</span><span class="n">number_to_bool_str</span><span class="p">(</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;gap&quot;</span><span class="p">]),</span>
+<span class="n">radar_latitude</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">bird_profile</span><span class="o">.</span><span class="n">where</span><span class="p">[</span><span class="s2">&quot;lat&quot;</span><span class="p">],</span> <span class="mi">6</span><span class="p">)</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<p>The order of the variables matter, as this defines the column
+order.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.vpts_csv.AbstractVptsCsv.nodata">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nodata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#vptstools.vpts_csv.AbstractVptsCsv.nodata" title="Permalink to this definition"></a></dt>
+<dd><p>‘No data’ representation</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.vpts_csv.AbstractVptsCsv.sort">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sort</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></em><a class="headerlink" href="#vptstools.vpts_csv.AbstractVptsCsv.sort" title="Permalink to this definition"></a></dt>
+<dd><p>Columns to define row order</p>
+<p>The dict need to provide the column name in
+combination with the data type to use for
+the sorting, e.g.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">dict</span><span class="p">(</span><span class="n">radar</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">datetime</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As the data is returned as strings, casting to the data
+is done before sorting, after which the casting to str
+is applied again.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.vpts_csv.AbstractVptsCsv.source_file_regex">
+<span class="sig-name descname"><span class="pre">source_file_regex</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'.*'</span></em><a class="headerlink" href="#vptstools.vpts_csv.AbstractVptsCsv.source_file_regex" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.vpts_csv.AbstractVptsCsv.undetect">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">undetect</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#vptstools.vpts_csv.AbstractVptsCsv.undetect" title="Permalink to this definition"></a></dt>
+<dd><p>‘Undetect’ representation</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="vptstools.vpts_csv.VptsCsvV1">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">vptstools.vpts_csv.</span></span><span class="sig-name descname"><span class="pre">VptsCsvV1</span></span><a class="reference internal" href="../_modules/vptstools/vpts_csv.html#VptsCsvV1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts_csv.VptsCsvV1" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#vptstools.vpts_csv.AbstractVptsCsv" title="vptstools.vpts_csv.AbstractVptsCsv"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractVptsCsv</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="vptstools.vpts_csv.VptsCsvV1.mapping">
+<span class="sig-name descname"><span class="pre">mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bird_profile</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts_csv.html#VptsCsvV1.mapping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts_csv.VptsCsvV1.mapping" title="Permalink to this definition"></a></dt>
+<dd><p>Translation from ODIM bird profile to VPTS CSV data format.</p>
+<p class="rubric">Notes</p>
+<p>The order of the variables matter, as this defines the column
+order.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.vpts_csv.VptsCsvV1.nodata">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nodata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#vptstools.vpts_csv.VptsCsvV1.nodata" title="Permalink to this definition"></a></dt>
+<dd><p>‘No data’ representation</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.vpts_csv.VptsCsvV1.sort">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sort</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></em><a class="headerlink" href="#vptstools.vpts_csv.VptsCsvV1.sort" title="Permalink to this definition"></a></dt>
+<dd><p>Columns to define row order</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="vptstools.vpts_csv.VptsCsvV1.source_file_regex">
+<span class="sig-name descname"><span class="pre">source_file_regex</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'^(?=^[^.\\/~])(^((?!\\.{2}).)*$).*$'</span></em><a class="headerlink" href="#vptstools.vpts_csv.VptsCsvV1.source_file_regex" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="vptstools.vpts_csv.VptsCsvV1.undetect">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">undetect</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></em><a class="headerlink" href="#vptstools.vpts_csv.VptsCsvV1.undetect" title="Permalink to this definition"></a></dt>
+<dd><p>‘Undetect’ representation</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="vptstools.vpts_csv.VptsCsvVersionError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">vptstools.vpts_csv.</span></span><span class="sig-name descname"><span class="pre">VptsCsvVersionError</span></span><a class="reference internal" href="../_modules/vptstools/vpts_csv.html#VptsCsvVersionError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts_csv.VptsCsvVersionError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.10/library/exceptions.html#Exception" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>Raised when non supported VPTS CSV version is asked</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vptstools.vpts_csv.check_source_file">
+<span class="sig-prename descclassname"><span class="pre">vptstools.vpts_csv.</span></span><span class="sig-name descname"><span class="pre">check_source_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regex</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts_csv.html#check_source_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts_csv.check_source_file" title="Permalink to this definition"></a></dt>
+<dd><p>Raise Exception when the source_file str is not according to the regex</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_file</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – URL or path to the source file from which the data were derived.</p></li>
+<li><p><strong>regex</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Regular expression to test the source_file against</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>source_file</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)">str</a></p>
+</dd>
+</dl>
+<p>:raises ValueError : : source_file not according to regex:</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">check_source_file</span><span class="p">(</span><span class="s2">&quot;s3://alof/baltrad/2023/01/01/&quot;</span>
+<span class="gp">... </span>                  <span class="s2">&quot;bejab_vp_20230101T000500Z_0x9.h5&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="sa">r</span><span class="s2">&quot;.*h5&quot;</span><span class="p">)</span>
+<span class="go">&#39;s3://alof/baltrad/2023/01/01/bejab_vp_20230101T000500Z_0x9.h5&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vptstools.vpts_csv.datetime_to_proper8601">
+<span class="sig-prename descclassname"><span class="pre">vptstools.vpts_csv.</span></span><span class="sig-name descname"><span class="pre">datetime_to_proper8601</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timestamp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts_csv.html#datetime_to_proper8601"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts_csv.datetime_to_proper8601" title="Permalink to this definition"></a></dt>
+<dd><p>Convert datetime to ISO8601 standard</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timestamp</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/datetime.html#datetime.datetime" title="(in Python v3.10)"><em>datetime.datetime</em></a>) – datetime to represent to ISO8601 standard.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>See <a class="reference external" href="https://stackoverflow.com/questions/19654578/python-utc-datetime">https://stackoverflow.com/questions/19654578/python-utc-datetime</a>-    objects-iso-format-doesnt-include-z-zulu-or-zero-offset</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">datetime_to_proper8601</span><span class="p">(</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2021</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="go">&#39;2021-01-01T04:00:00Z&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vptstools.vpts_csv.get_vpts_version">
+<span class="sig-prename descclassname"><span class="pre">vptstools.vpts_csv.</span></span><span class="sig-name descname"><span class="pre">get_vpts_version</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts_csv.html#get_vpts_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts_csv.get_vpts_version" title="Permalink to this definition"></a></dt>
+<dd><p>Link version ID (v1, v2,..) with correct AbstractVptsCsv child class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>version</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – e.g. v1.0, v2.0,…</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>VptsCsvVx</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>child class of the AbstractVptsCsv</p>
+</dd>
+</dl>
+<p>:raises VptsCsvVersionError : Version of the VPTS CSV is not supported by an implementation:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vptstools.vpts_csv.int_to_nodata">
+<span class="sig-prename descclassname"><span class="pre">vptstools.vpts_csv.</span></span><span class="sig-name descname"><span class="pre">int_to_nodata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodata_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts_csv.html#int_to_nodata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts_csv.int_to_nodata" title="Permalink to this definition"></a></dt>
+<dd><p>Convert str to either integer or the corresponding nodata value if enlisted</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Single data value</p></li>
+<li><p><strong>nodata_values</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – List of values in which case the data point need to be converted to <code class="docutils literal notranslate"><span class="pre">nodata</span></code></p></li>
+<li><p><strong>nodata</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3.10/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>default &quot;&quot;</em>) – Data value to use when incoming value is one of the <code class="docutils literal notranslate"><span class="pre">nodata_values</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)">str</a> | <a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)">int</a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">int_to_nodata</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s1">&#39;NULL&#39;</span><span class="p">],</span> <span class="n">nodata</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="go">&#39;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">int_to_nodata</span><span class="p">(</span><span class="s2">&quot;12&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s1">&#39;NULL&#39;</span><span class="p">],</span> <span class="n">nodata</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="go">12</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">int_to_nodata</span><span class="p">(</span><span class="s1">&#39;NULL&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s1">&#39;NULL&#39;</span><span class="p">],</span> <span class="n">nodata</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="go">&#39;&#39;</span>
+<span class="go">&quot;&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vptstools.vpts_csv.number_to_bool_str">
+<span class="sig-prename descclassname"><span class="pre">vptstools.vpts_csv.</span></span><span class="sig-name descname"><span class="pre">number_to_bool_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts_csv.html#number_to_bool_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts_csv.number_to_bool_str" title="Permalink to this definition"></a></dt>
+<dd><p>Convert list of boolean values to str versions with capital letters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>values</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3.10/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – List of Boolean values</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#list" title="(in Python v3.10)">list</a> of <a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)">str</a> [TRUE, FALSE,…]</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">number_to_bool_str</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
+<span class="go">[&#39;TRUE&#39;, &#39;FALSE&#39;, &#39;FALSE&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-vptstools">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-vptstools" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="vptstools.validate_vpts">
+<span class="sig-prename descclassname"><span class="pre">vptstools.</span></span><span class="sig-name descname"><span class="pre">validate_vpts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'v1.0'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#validate_vpts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.validate_vpts" title="Permalink to this definition"></a></dt>
+<dd><p>Validate vpts DataFrame against the frictionless data schema and return report</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.0.2)"><em>pandas.DataFrame</em></a>) – DataFrame as created by the vp or vpts functions</p></li>
+<li><p><strong>schema_version</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>v1.0</em><em>,</em><em>...</em>) – Version according to a release tag of <a class="reference external" href="https://github.com/enram/vpts-csv/tags">https://github.com/enram/vpts-csv/tags</a></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Frictionless validation report</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vptstools.vp">
+<span class="sig-prename descclassname"><span class="pre">vptstools.</span></span><span class="sig-name descname"><span class="pre">vp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vpts_csv_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'v1.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#vp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vp" title="Permalink to this definition"></a></dt>
+<dd><p>Convert ODIM h5 file to a DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<em>Path</em>) – File Path of ODIM h5</p></li>
+<li><p><strong>vpts_csv_version</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>default &quot;&quot;</em>) – Ruleset with the VPTS CSV ruleset to use, e.g. v1.0</p></li>
+<li><p><strong>source_file</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>callable</em>) – URL or path to the source file from which the data were derived or
+a callable that converts the file_path to the source_file</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;bejab_vp_20221111T233000Z_0x9.h5&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;s3://aloft/baltrad/hdf5/2022/11/11/&quot;</span>     <span class="o">...</span>                 <span class="s2">&quot;bejab_vp_20221111T233000Z_0x9.h5&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Use file name itself as source_file representation in vp file using a custom
+callable function</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Path</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vptstools.vpts">
+<span class="sig-prename descclassname"><span class="pre">vptstools.</span></span><span class="sig-name descname"><span class="pre">vpts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vpts_csv_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'v1.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#vpts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts" title="Permalink to this definition"></a></dt>
+<dd><p>Convert set of h5 files to a DataFrame all as string</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_paths</strong> (<em>Iterable</em><em> of </em><em>file paths</em>) – Iterable of ODIM h5 file paths</p></li>
+<li><p><strong>vpts_csv_version</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Ruleset with the VPTS CSV ruleset to use, e.g. v1.0</p></li>
+<li><p><strong>source_file</strong> (<em>callable</em><em>, </em><em>optional</em>) – A callable that converts the file_path to the source_file. When None,
+the file name itself (without parent folder reference) is used.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Due tot the multiprocessing support, the source_file as a callable can not be
+a anonymous lambda function.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_paths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;../data/raw/baltrad/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*.h5&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vpts</span><span class="p">(</span><span class="n">file_paths</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Use file name itself as source_file representation in vp file using a
+custom callable function</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">path_to_source</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vpts</span><span class="p">(</span><span class="n">file_paths</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="n">path_to_source</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vptstools.vpts_to_csv">
+<span class="sig-prename descclassname"><span class="pre">vptstools.</span></span><span class="sig-name descname"><span class="pre">vpts_to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#vpts_to_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts_to_csv" title="Permalink to this definition"></a></dt>
+<dd><p>Write vp or vpts to file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.0.2)"><em>pandas.DataFrame</em></a>) – DataFrame with vp or vpts data</p></li>
+<li><p><strong>file_path</strong> (<em>Path</em><em> | </em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – File path to store the vpts file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="vptstools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vptstools.bin.html" class="btn btn-neutral float-right" title="vptstools.bin namespace" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Research Institute for Nature and Forest (INBO).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

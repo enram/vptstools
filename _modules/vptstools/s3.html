@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vptstools.s3 &mdash; vptstools 0.0.post1.dev43+g111622c documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            vptstools
+          </a>
+              <div class="version">
+                0.0.post1.dev43+g111622c
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Module Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">vptstools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">vptstools.s3</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for vptstools.s3</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+
+<span class="kn">import</span> <span class="nn">s3fs</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<div class="viewcode-block" id="OdimFilePath"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">OdimFilePath</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;ODIM file path with translation from/to different S3 key paths</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    source: str</span>
+<span class="sd">        Data source, e.g. baltrad, ecog-04003,...</span>
+<span class="sd">    radar_code: str</span>
+<span class="sd">        country + radar code</span>
+<span class="sd">    data_type: str</span>
+<span class="sd">        ODIM data type, e.g. vp, pvol,...</span>
+<span class="sd">    year: str</span>
+<span class="sd">        year, YYYY</span>
+<span class="sd">    month: str</span>
+<span class="sd">        month, MM</span>
+<span class="sd">    day: str</span>
+<span class="sd">        day, DD</span>
+<span class="sd">    hour: str = &quot;00&quot;</span>
+<span class="sd">        hour, HH</span>
+<span class="sd">    minute: str = &quot;00&quot;</span>
+<span class="sd">        minute, MM</span>
+<span class="sd">    file_name: str = &quot;&quot;, optional</span>
+<span class="sd">        File name from which the other properties were derived</span>
+<span class="sd">    file_type: str = &quot;&quot;, optional</span>
+<span class="sd">        File type from which the other properties were derived, e.g. hdf5</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">source</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">radar_code</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">year</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">month</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">day</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">hour</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;00&quot;</span>
+    <span class="n">minute</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;00&quot;</span>
+    <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># optional as this can be constructed from scratch as well</span>
+    <span class="n">file_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+<div class="viewcode-block" id="OdimFilePath.from_file_name"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.from_file_name">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_file_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">h5_file_path</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize class from ODIM file path&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="o">*</span><span class="bp">cls</span><span class="o">.</span><span class="n">parse_file_name</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">h5_file_path</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="OdimFilePath.from_inventory"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.from_inventory">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_inventory</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">h5_file_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize class from S3 inventory which contains source and file_type&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">h5_file_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="o">*</span><span class="bp">cls</span><span class="o">.</span><span class="n">parse_file_name</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">h5_file_path</span><span class="p">)),</span>
+            <span class="n">h5_file_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="OdimFilePath.from_s3fs_enlisting"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.from_s3fs_enlisting">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_s3fs_enlisting</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">h5_file_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize class from S3 inventory which contains bucket,</span>
+<span class="sd">        source and file_type&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">h5_file_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="o">*</span><span class="bp">cls</span><span class="o">.</span><span class="n">parse_file_name</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">h5_file_path</span><span class="p">)),</span>
+            <span class="n">h5_file_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="OdimFilePath.parse_file_name"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.parse_file_name">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">parse_file_name</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse an hdf5 file name radar_code, data_type, year, month, day, hour,</span>
+<span class="sd">        minute and file_name.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_name : str</span>
+<span class="sd">            File name to be parsed. An eventual parent path and</span>
+<span class="sd">            extension will be removed</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        radar_code, data_type, year, month, day, hour, minute, file_name</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        File format is according to the following file format::</span>
+
+<span class="sd">            ccrrr_vp_yyyymmddhhmmss.h5</span>
+
+<span class="sd">        with ``c`` the country code two-letter ids and ``rrr``</span>
+<span class="sd">        the radar three-letter id, e.g. bejab_vp_20161120235500.h5.</span>
+<span class="sd">        Path information in front of the h5 name itself are ignored.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">name_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+            <span class="sa">r</span><span class="s2">&quot;.*([a-z]</span><span class="si">{2}</span><span class="s2">)([a-z]</span><span class="si">{3}</span><span class="s2">)_([a-z]*)_(\d\d\d\d)(\d\d)(\d\d)T?&quot;</span>
+            <span class="sa">r</span><span class="s2">&quot;(\d\d)(\d\d)(?:Z|00)?.*\.h5&quot;</span>
+        <span class="p">)</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">name_regex</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">file_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">country</span><span class="p">,</span> <span class="n">radar</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+            <span class="n">radar_code</span> <span class="o">=</span> <span class="n">country</span> <span class="o">+</span> <span class="n">radar</span>
+            <span class="k">return</span> <span class="n">radar_code</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">file_name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;File name is not a valid ODIM h5 file.&quot;</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">country</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Country code&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">radar_code</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">radar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Radar code&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">radar_code</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">daily_vpts_file_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Name of the corresponding daily vpts file&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">radar_code</span><span class="si">}</span><span class="s2">_vpts_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">month</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">day</span><span class="si">}</span><span class="s2">.csv&quot;</span>
+
+<div class="viewcode-block" id="OdimFilePath.s3_path_setup"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.s3_path_setup">[docs]</a>    <span class="k">def</span> <span class="nf">s3_path_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_output</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Common setup of the S3 bucket logic&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file_output</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">radar_code</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+<div class="viewcode-block" id="OdimFilePath.s3_url_h5"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.s3_url_h5">[docs]</a>    <span class="k">def</span> <span class="nf">s3_url_h5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bucket</span><span class="o">=</span><span class="s2">&quot;aloft&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Full S3 URL for the stored h5 file&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;s3://</span><span class="si">{</span><span class="n">bucket</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s3_path_setup</span><span class="p">(</span><span class="s1">&#39;hdf5&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">/&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">month</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">day</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">s3_folder_path_h5</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;S3 key with the folder containing the h5 file&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s3_path_setup</span><span class="p">(</span><span class="s1">&#39;hdf5&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">month</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">day</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">s3_file_path_daily_vpts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;S3 key of the daily vpts file corresponding to the h5 file&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s3_path_setup</span><span class="p">(</span><span class="s1">&#39;daily&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">daily_vpts_file_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">s3_file_path_monthly_vpts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;S3 key of the monthly concatenated vpts file corresponding to the h5 file&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s3_path_setup</span><span class="p">(</span><span class="s1">&#39;monthly&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">/&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">radar_code</span><span class="si">}</span><span class="s2">_vpts_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">month</span><span class="si">}</span><span class="s2">.csv.gz&quot;</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="list_manifest_file_keys"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.list_manifest_file_keys">[docs]</a><span class="k">def</span> <span class="nf">list_manifest_file_keys</span><span class="p">(</span><span class="n">s3_manifest_url</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enlist the manifest individual files</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    s3_manifest_url : str</span>
+<span class="sd">        S3 URL to manifest file</span>
+<span class="sd">    storage_options : dict, optional</span>
+<span class="sd">        Additional parameters passed to the read_csv to access the</span>
+<span class="sd">        S3 manifest files, eg. custom AWS profile options</span>
+<span class="sd">        ({&quot;profile&quot;: &quot;inbo-prd&quot;})</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">storage_options</span><span class="p">:</span>
+        <span class="n">storage_options</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">s3fs_s3</span> <span class="o">=</span> <span class="n">s3fs</span><span class="o">.</span><span class="n">S3FileSystem</span><span class="p">(</span><span class="o">**</span><span class="n">storage_options</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">s3fs_s3</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">s3_manifest_url</span><span class="p">)</span> <span class="k">as</span> <span class="n">manifest</span><span class="p">:</span>
+        <span class="n">manifest_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">manifest</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">manifest_json</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">]:</span>
+            <span class="k">yield</span> <span class="n">obj</span></div>
+
+
+<div class="viewcode-block" id="extract_daily_group_from_inventory"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.extract_daily_group_from_inventory">[docs]</a><span class="k">def</span> <span class="nf">extract_daily_group_from_inventory</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract file name components to define a group</span>
+
+<span class="sd">    The coverage file counts the number of files available</span>
+<span class="sd">    per group (e.g. daily files per radar). This function is passed</span>
+<span class="sd">    to the Pandas ``groupby`` to translate the file path to a</span>
+<span class="sd">    countable set (e.g. source, radar-code, year month and day for</span>
+<span class="sd">    daily files per radar).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    file_path : str</span>
+<span class="sd">        File path of the ODIM h5 file. Only the file name is taken</span>
+<span class="sd">        into account and a folder-path is ignored.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path_info</span> <span class="o">=</span> <span class="n">OdimFilePath</span><span class="o">.</span><span class="n">from_inventory</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">path_info</span><span class="o">.</span><span class="n">source</span><span class="p">,</span>
+        <span class="n">path_info</span><span class="o">.</span><span class="n">file_type</span><span class="p">,</span>
+        <span class="n">path_info</span><span class="o">.</span><span class="n">radar_code</span><span class="p">,</span>
+        <span class="n">path_info</span><span class="o">.</span><span class="n">year</span><span class="p">,</span>
+        <span class="n">path_info</span><span class="o">.</span><span class="n">month</span><span class="p">,</span>
+        <span class="n">path_info</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_last_modified_from_inventory</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">modified_days_ago</span><span class="o">=</span><span class="s2">&quot;2day&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter manifest files on last modified</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">        S3 csv-based inventory read by pandas</span>
+<span class="sd">    modified_days_ago : str , default &#39;2day&#39;</span>
+<span class="sd">        Pandas Timedelta valid string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">df</span><span class="p">[</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;modified&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">tz</span><span class="o">=</span><span class="s2">&quot;utc&quot;</span><span class="p">)</span> <span class="o">-</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timedelta</span><span class="p">(</span><span class="n">modified_days_ago</span><span class="p">))</span>
+    <span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_radar_day_counts_from_inventory</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span> <span class="n">group_callable</span><span class="o">=</span><span class="n">extract_daily_group_from_inventory</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Count files according to groups as defined by callable</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">        DataFrame need to contain a &#39;file&#39; column used to count and is passed to callable</span>
+<span class="sd">    group_callable : callable</span>
+<span class="sd">        Function to translate the file name into individual groups</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    df : pandas DataFrame</span>
+<span class="sd">        DataFrame containing the counts per group</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;file&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">group_callable</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_handle_inventory</span><span class="p">(</span>
+    <span class="n">df</span><span class="p">,</span> <span class="n">modified_days_ago</span><span class="p">,</span> <span class="n">group_func</span><span class="o">=</span><span class="n">extract_daily_group_from_inventory</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract modified days and coverage from a single inventory df</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : pandas.DataFrame</span>
+<span class="sd">        Pandas DataFrame of a parsed inventory file with the columns</span>
+<span class="sd">        &quot;repo&quot; (str), &quot;file&quot; (str), &quot;size&quot; (int) and &quot;modified&quot; (datetime)</span>
+<span class="sd">    modified_days_ago : str</span>
+<span class="sd">        pandas Timedelta description, e.g. 2days</span>
+<span class="sd">    group_func : callable</span>
+<span class="sd">        Function used to create countable groups</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    df_last_n_days : pandas.DataFrame</span>
+<span class="sd">        pandas.DataFrame with the &#39;directory&#39; info (source, radar_code,</span>
+<span class="sd">        year, month, day) and the number of new files within the</span>
+<span class="sd">        look back period.</span>
+<span class="sd">    df_coverage : pandas.DataFrame</span>
+<span class="sd">        pandas.DataFrame with the &#39;directory&#39; info (source, radar_code,</span>
+<span class="sd">        year, month, day) and the number of files in the S3 bucket for each group.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Filter for h5 files and extract source</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;modified&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;modified&quot;</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S.</span><span class="si">%f</span><span class="s2">Z&quot;</span><span class="p">,</span> <span class="n">utc</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;file_items&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;suffix&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;file_items&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;file_items&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;suffix&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;h5&quot;</span><span class="p">]</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;file_items&quot;</span><span class="p">,</span> <span class="s2">&quot;suffix&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Extract IDs latest N days modified files</span>
+    <span class="n">df_last_n_days</span> <span class="o">=</span> <span class="n">_last_modified_from_inventory</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">modified_days_ago</span><span class="p">)</span>
+    <span class="c1"># Count occurrences per radar-day -&gt; coverage input</span>
+    <span class="n">df_coverage</span> <span class="o">=</span> <span class="n">_radar_day_counts_from_inventory</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">group_func</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df_coverage</span><span class="p">,</span> <span class="n">df_last_n_days</span>
+
+
+<div class="viewcode-block" id="handle_manifest"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.handle_manifest">[docs]</a><span class="k">def</span> <span class="nf">handle_manifest</span><span class="p">(</span><span class="n">manifest_url</span><span class="p">,</span> <span class="n">modified_days_ago</span><span class="o">=</span><span class="s2">&quot;2day&quot;</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract modified days and coverage from a manifest file</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    manifest_url : str</span>
+<span class="sd">        URL of the S3 inventory manifest file to use; s3://...</span>
+<span class="sd">    modified_days_ago : str, default &#39;2day&#39;</span>
+<span class="sd">        Time period to check for &#39;modified date&#39; to extract</span>
+<span class="sd">        the subset of files that should trigger a rerun.</span>
+<span class="sd">    storage_options : dict, optional</span>
+<span class="sd">        Additional parameters passed to the read_csv to access the</span>
+<span class="sd">        S3 manifest files, eg. custom AWS profile options</span>
+<span class="sd">        ({&quot;profile&quot;: &quot;inbo-prd&quot;})</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    df_cov : pandas.DataFrame</span>
+<span class="sd">        DataFrame with the &#39;directory&#39; info (source, radar_code,</span>
+<span class="sd">        year, month, day) and the number of files in the S3 bucket.</span>
+<span class="sd">    df_days_to_create_vpts : pandas.DataFrame</span>
+<span class="sd">        DataFrame with the &#39;directory&#39; info (source, radar_code,</span>
+<span class="sd">        year, month, day) and the number of new files within the</span>
+<span class="sd">        look back period.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Check https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-inventory.html</span>
+<span class="sd">    for more information on S3 bucket inventory and manifest files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># TODO - add additional checks on input</span>
+    <span class="n">df_last_n_days</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">df_coverage</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">list_manifest_file_keys</span><span class="p">(</span><span class="n">manifest_url</span><span class="p">,</span> <span class="n">storage_options</span><span class="p">)):</span>
+        <span class="c1"># Read the manifest referenced file</span>
+        <span class="n">parsed_url</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="n">manifest_url</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;s3://</span><span class="si">{</span><span class="n">parsed_url</span><span class="o">.</span><span class="n">netloc</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">obj</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span>
+            <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;repo&quot;</span><span class="p">,</span> <span class="s2">&quot;file&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="s2">&quot;modified&quot;</span><span class="p">],</span>
+            <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">,</span>
+            <span class="n">chunksize</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">reader</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+                <span class="c1"># Extract counts per group and groups within defined time window</span>
+                <span class="n">df_co</span><span class="p">,</span> <span class="n">df_last</span> <span class="o">=</span> <span class="n">_handle_inventory</span><span class="p">(</span>
+                    <span class="n">chunk</span><span class="p">,</span>
+                    <span class="n">modified_days_ago</span><span class="p">,</span>
+                    <span class="n">group_func</span><span class="o">=</span><span class="n">extract_daily_group_from_inventory</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="c1"># Extract IDs latest N days modified files</span>
+                <span class="n">df_last_n_days</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_last</span><span class="p">)</span>
+                <span class="c1"># Count occurrences per radar-day -&gt; coverage input</span>
+                <span class="n">df_coverage</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df_co</span><span class="p">)</span>
+
+    <span class="c1"># Create coverage file DataFrame</span>
+    <span class="n">df_cov</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_coverage</span><span class="p">)</span>
+    <span class="n">df_cov</span> <span class="o">=</span> <span class="n">df_cov</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;index&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="n">df_cov</span> <span class="o">=</span> <span class="n">df_cov</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="s2">&quot;directory&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;file_count&quot;</span><span class="p">})</span>
+
+    <span class="c1"># Create modified days DataFrame</span>
+    <span class="n">df_mod</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_last_n_days</span><span class="p">)</span>
+    <span class="n">df_days_to_create_vpts</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">df_mod</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;file&quot;</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">extract_daily_group_from_inventory</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">size</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">df_days_to_create_vpts</span> <span class="o">=</span> <span class="n">df_days_to_create_vpts</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="s2">&quot;directory&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="s2">&quot;directory&quot;</span><span class="p">,</span>  <span class="c1"># mapping depends on content; both included</span>
+            <span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;file_count&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_cov</span><span class="p">,</span> <span class="n">df_days_to_create_vpts</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Research Institute for Nature and Forest (INBO).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

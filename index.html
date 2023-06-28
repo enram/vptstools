@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vptstools &mdash; vptstools 0.0.post1.dev43+g111622c documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contributing" href="contributing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            vptstools
+          </a>
+              <div class="version">
+                0.0.post1.dev43+g111622c
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/modules.html">Module Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">vptstools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">vptstools</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="vptstools">
+<h1>vptstools<a class="headerlink" href="#vptstools" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="https://pyscaffold.org/"><img alt="Project generated with PyScaffold" src="https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold" /></a>
+<a class="reference external" href="https://pypi.org/project/vptstools/"><img alt="PyPI-Server" src="https://img.shields.io/pypi/v/vptstools.svg" /></a>
+<a class="reference external" href="https://github.com/enram/vptstools/actions/workflows/release.yml"><img alt=".github/workflows/run_tests.yaml" src="https://github.com/enram/vptstools/actions/workflows/release.yml/badge.svg" /></a></p>
+<p>vptstools is a Python library to transfer and convert vpts data. VPTS (vertical profile time series) express the
+density, speed and direction of biological signals such as birds, bats and insects within a weather radar volume,
+grouped into altitude layers (height) and measured over time (datetime).</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
+<p>Python 3.9+ is required.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">vptstools</span>
+</pre></div>
+</div>
+<p>If you need the tools/services to transfer data (SFTP, S3) install these additional dependencies:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">vptstools</span><span class="p">[</span><span class="n">transfer</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="cli-endpoints">
+<h2>CLI endpoints<a class="headerlink" href="#cli-endpoints" title="Permalink to this heading"></a></h2>
+<p>In addition to using functions in Python scripts, two vptstools functions can be called from the command line:</p>
+<section id="transfer-baltrad">
+<h3>transfer_baltrad<a class="headerlink" href="#transfer-baltrad" title="Permalink to this heading"></a></h3>
+<p>CLI tool to move files from the Baltrad FTP server to an S3 bucket.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>transfer_baltrad
+</pre></div>
+</div>
+<p>Configuration is loaded from environmental variables:</p>
+<ul class="simple">
+<li><p>FTP_HOST: Baltrad FTP host ip address</p></li>
+<li><p>FTP_PORT: Baltrad FTP host port</p></li>
+<li><p>FTP_USERNAME: Baltrad FTP user name</p></li>
+<li><p>FTP_PWD: Baltrad FTP password</p></li>
+<li><p>FTP_DATADIR: Baltrad FTP directory to load data files from</p></li>
+<li><p>DESTINATION_BUCKET: AWS S3 bucket to write data to</p></li>
+<li><p>SNS_TOPIC: AWS SNS topic to report when routine fails</p></li>
+<li><p>AWS_PROFILE: AWS profile (mainly for local development)</p></li>
+</ul>
+</section>
+<section id="vph5-to-vpts">
+<h3>vph5_to_vpts<a class="headerlink" href="#vph5-to-vpts" title="Permalink to this heading"></a></h3>
+<p>CLI tool to aggregate/convert the <a class="reference external" href="https://github.com/adokter/vol2bird/wiki/ODIM-bird-profile-format-specification">ODIM hdf5 bird profile</a>
+files available on the aloft S3 bucket (as generated by <a class="reference external" href="https://github.com/adokter/vol2bird">vol2bird</a>) to
+daily and monthly aggregates following the <a class="reference external" href="https://github.com/enram/vpts-csv">VPTS CSV file specification</a>.</p>
+<p>The CLI checks the modified date of the uploaded ODIM hdf5 files and applies the aggregation/conversion for the files modified within the defined time window:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>vph5_to_vpts<span class="w"> </span>--modified-days-ago<span class="o">=</span><span class="m">1</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="development-instructions">
+<h2>Development instructions<a class="headerlink" href="#development-instructions" title="Permalink to this heading"></a></h2>
+<p>See <a class="reference internal" href="contributing.html"><span class="std std-doc">contributing</span></a> for a detailed overview and set of guidelines. If familiar with <code class="docutils literal notranslate"><span class="pre">tox</span></code>,
+the setup of a development environment boils down to:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>tox<span class="w"> </span>-e<span class="w"> </span>dev<span class="w">   </span><span class="c1"># Create development environment with venv and register an ipykernel. </span>
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate<span class="w">  </span><span class="c1"># Activate this environment to get started</span>
+</pre></div>
+</div>
+<p>Next, the following set of commands are available to support development:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>tox<span class="w">              </span><span class="c1"># Run the unit tests</span>
+tox<span class="w"> </span>-e<span class="w"> </span>docs<span class="w">      </span><span class="c1"># Invoke sphinx-build to build the docs</span>
+tox<span class="w"> </span>-e<span class="w"> </span>format<span class="w">    </span><span class="c1"># Run black code formatting</span>
+
+tox<span class="w"> </span>-e<span class="w"> </span>clean<span class="w">     </span><span class="c1"># Remove old distribution files and temporary build artifacts (./build and ./dist)</span>
+tox<span class="w"> </span>-e<span class="w"> </span>build<span class="w">     </span><span class="c1"># Build the package wheels and tar</span>
+
+tox<span class="w"> </span>-e<span class="w"> </span>linkcheck<span class="w"> </span><span class="c1"># Check for broken links in the documentation</span>
+
+tox<span class="w"> </span>-e<span class="w"> </span>publish<span class="w">   </span><span class="c1"># Publish the package you have been developing to a package index server. By default, it uses testpypi. If you really want to publish your package to be publicly accessible in PyPI, use the `-- --repository pypi` option.</span>
+tox<span class="w"> </span>-av<span class="w">          </span><span class="c1"># List all available tasks</span>
+</pre></div>
+</div>
+<p>To create a pinned <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> set of dependencies, <a class="reference external" href="https://github.com/jazzband/pip-tools">pip-tools</a> is used:</p>
+<div class="highlight-commandline notranslate"><div class="highlight"><pre><span></span>pip-compile --extra transfer --resolver=backtracking`
+</pre></div>
+</div>
+<!-- pyscaffold-notes -->
+</section>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>This project has been set up using PyScaffold 4.3.1. For details and usage information on PyScaffold see <a class="reference external" href="https://pyscaffold.org/">https://pyscaffold.org/</a>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">odimh5</span></code> module was originally developed and released to pypi as a</p></li>
+<li><p>separate <a class="reference external" href="https://pypi.org/project/odimh5/"><code class="docutils literal notranslate"><span class="pre">odimh5</span></code></a> package by Nicolas Noé</p></li>
+<li><p>(<a class="reference external" href="https://github.com/niconoe">&#64;niconoe</a>). Version 0.1.0 has been included into this vptstools package.</p></li>
+</ul>
+</section>
+<section id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributions &amp; Help</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#issue-reports">Issue Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#documentation-improvements">Documentation Improvements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#code-contributions">Code Contributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#maintainer-tasks">Maintainer tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#version-0-1-0">Version 0.1.0</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/modules.html">Module Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/vptstools.html">vptstools package</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="indices-and-tables">
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Research Institute for Nature and Forest (INBO).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
