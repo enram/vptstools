@@ -1,0 +1,31 @@
+# Run unit tests on multiple Python version during PR
+name: test-pr
+
+on:
+  pull_request: # Run when pull request
+  workflow_dispatch:  # Allow manually triggering the workflow
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+
+    steps:
+    - uses: actions/checkout@v3
+      with: {fetch-depth: 0}  # deep clone for setuptools-scm
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install tox tox-gh-actions
+    - name: Run unit tests with tox
+      run: tox

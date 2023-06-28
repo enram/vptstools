@@ -269,8 +269,8 @@ def _handle_inventory(
     )
     df["file_items"] = df["file"].str.split("/")
     df["suffix"] = df["file_items"].str.get(-1).str.split(".").str.get(-1)
-    df = df[df["suffix"] == "h5"]
     df["source"] = df["file_items"].str.get(0)
+    df = df[df["suffix"] == "h5"]
     df = df.drop(columns=["file_items", "suffix"])
 
     # Extract IDs latest N days modified files
@@ -310,6 +310,7 @@ def handle_manifest(manifest_url, modified_days_ago="2day", storage_options=None
     Check https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-inventory.html
     for more information on S3 bucket inventory and manifest files.
     """
+
     # TODO - add additional checks on input
     df_last_n_days = []
     df_coverage = []
