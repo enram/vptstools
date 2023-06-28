@@ -1,5 +1,5 @@
 # Deploy package documentation to github pages on each push to main branch (or triggered manually)
-name: Update documentation pages
+name: deploy-docs
 
 on:
   push:
@@ -7,14 +7,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  documentton:
+  documentation:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
     - uses: actions/checkout@v3
       with: {fetch-depth: 0}  # deep clone for setuptools-scm
-    #- name: Get all git tags
-    #run: git fetch --prune --unshallow --tags
+    - name: Get all git tags
+      run: git fetch --prune --unshallow --tags
     - name: Set up Python 3.10
       uses: actions/setup-python@v4
       with:
@@ -23,7 +25,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -e .[develop,transfer]
+        python -m pip install tox
     - name: Build documentation
       run: |
         tox -e docs
