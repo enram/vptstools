@@ -136,7 +136,7 @@ jobs:
           with:
             context: .
             file: ./Dockerfile
-            platforms: linux/amd64,linux/arm64
+            platforms: linux/arm64
             push: true
             tags: ${{ steps.login-ecr.outputs.registry }}/inbo-aloft:latest
             build-args: |
