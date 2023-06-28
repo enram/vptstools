@@ -139,5 +139,3 @@ jobs:
             platforms: linux/arm64
             push: true
             tags: ${{ steps.login-ecr.outputs.registry }}/inbo-aloft:latest
-            build-args: |
-              WHEEL_FILE=$(ls dist/*.whl)
