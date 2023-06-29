@@ -107,7 +107,7 @@ jobs:
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
 
-  test-pinned:
+  test-pinned-dependencies:
     needs: prepare
     runs-on: ubuntu-latest
     steps:
