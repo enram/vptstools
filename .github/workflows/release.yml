@@ -129,7 +129,7 @@ jobs:
           pytest -rFEx --durations 10 --color yes  # pytest args
 
   docker:
-      needs: test-pinned
+      needs: test-pinned-dependencies
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v3
