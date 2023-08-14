@@ -90,9 +90,8 @@ pip-compile --extra transfer --resolver=backtracking`
 ```
 
 <!-- pyscaffold-notes -->
+
 ## Notes
 
 - This project has been set up using PyScaffold 4.3.1. For details and usage information on PyScaffold see https://pyscaffold.org/.
-- The `odimh5` module was originally developed and released to pypi as a 
-- separate [`odimh5`](https://pypi.org/project/odimh5/) package by Nicolas Noé 
-- ([@niconoe](https://github.com/niconoe)). Version 0.1.0 has been included into this vptstools package.
+- The `odimh5` module was originally developed and released to pypi as a separate [`odimh5`](https://pypi.org/project/odimh5/) package by Nicolas Noé ([@niconoe](https://github.com/niconoe)). Version 0.1.0 has been included into this vptstools package.
