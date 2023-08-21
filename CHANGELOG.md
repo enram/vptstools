@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 0.2.0
+
+- Add support for uppercase radarcode in file names (#53)
+- Improve logs and alert handling to AWS cloudwatch/SNS and make sure routine does not stop on single file failure (#54)
+- Improve documentation (#55)
+
 ## Version 0.1.0
 
 - Integrate functions from [odimh5](https://pypi.org/project/odimh5) to read odim5 files

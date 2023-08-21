@@ -251,6 +251,8 @@ module are required:
   {py:class}`vptstools.vpts_csv.AbstractVptsCsv` documentation for more info.
 - Link the string version ID (v1, v2,..) with the correct `AbstractVptsCsv` child class by extending the 
   {py:func}`vptstools.vpts_csv.get_vpts_version` with a new mapping from version string to class instance. 
+- Add the string version to the unit test in the ``@pytest.mark.parametrize("vpts_version", ["v1.0", "vX.X])`` so these
+  existing unit tests are also checked for the new version.
 
 
 [black]: https://pypi.org/project/black/
