@@ -188,15 +188,17 @@ def vp(file_path, vpts_csv_version="v1.0", source_file=""):
         Ruleset with the VPTS CSV ruleset to use, e.g. v1.0
     source_file : str | callable
         URL or path to the source file from which the data were derived or
-        a callable that converts the file_path to the source_file
+        a callable that converts the file_path to the source_file. See
+        https://aloftdata.eu/vpts-csv/#source_file for more information on
+        the source file field.
+
 
     Examples
     --------
     >>> file_path = Path("bejab_vp_20221111T233000Z_0x9.h5")
     >>> vp(file_path)
     >>> vp(file_path,
-    ...    source_file="s3://aloft/baltrad/hdf5/2022/11/11/" \
-    ...                 "bejab_vp_20221111T233000Z_0x9.h5")
+    ...    source_file="s3://aloft/baltrad/hdf5/2022/11/11/bejab_vp_20221111T233000Z_0x9.h5")  #noqa
 
     Use file name itself as source_file representation in vp file using a custom
     callable function
