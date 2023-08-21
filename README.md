@@ -18,8 +18,8 @@ pip install vptstools
 
 If you need the tools/services to transfer data (SFTP, S3) install these additional dependencies:
 
-```
-pip install vptstools[transfer]
+```ini
+pip install vptstools\[transfer\]
 ```
 
 ## CLI endpoints
