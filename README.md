@@ -86,7 +86,8 @@ Other modules in the package are:
 
 ## CLI endpoints
 
-In addition to using functions in Python scripts, two vptstools functions can be called from the command line:
+In addition to using functions in Python scripts, two vptstools routines are available to be called from the command line
+after installing the package:
 
 ```{eval-rst}
 .. include:: click.rst
