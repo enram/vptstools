@@ -123,10 +123,10 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
           python -m pip install '${{ needs.prepare.outputs.wheel-distribution }}'
-          python -m pip install pytest moto[s3]
+          python -m pip install pytest moto[s3] pytest-cov
       - name: Run unit tests on pinned dependencies
         run: >-
-          pytest -rFEx --no-cov --durations 10 --color yes  # pytest args
+          pytest -rFEx --durations 10 --color yes  # pytest args
 
   docker:
       needs: finalize
