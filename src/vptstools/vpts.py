@@ -93,7 +93,7 @@ class BirdProfile:
     def __post_init__(self):
         if not isinstance(self.source_file, str):
             raise TypeError(
-                "Source_file need to be a str representation of a file path."
+                f"Source_file {self.source_file} need to be a str representation of a file path."
             )
 
     def __lt__(self, other):  # Allows sorting by datetime

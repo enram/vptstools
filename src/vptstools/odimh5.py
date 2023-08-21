@@ -142,11 +142,10 @@ def check_vp_odim(source_odim: ODIMReader) -> None:
     """Verify ODIM file is an hdf5 ODIM format containing 'VP' data."""
     if not {"what", "how", "where"}.issubset(source_odim.hdf5.keys()):
         raise InvalidSourceODIM(
-            "No hdf5 ODIM format: File does not contain what/how/where "
-            "group information."
+            f"No hdf5 ODIM format: File {source_odim.hdf5} does not contain what/how/where group information."
         )
     if source_odim.root_object_str != "VP":
         raise InvalidSourceODIM(
-            f"Incorrect what.object value: expected VP, "
-            f"found {source_odim.root_object_str}"
+            f"Incorrect what.object value in file {source_odim.hdf5}: expected VP, "
+            f"found {source_odim.root_object_str}. "
         )
