@@ -24,6 +24,10 @@ pip install vptstools\[transfer\]
 
 ## CLI endpoints
 
+```{eval-rst}
+.. include:: click.rst
+```
+
 In addition to using functions in Python scripts, two vptstools functions can be called from the command line:
 
 ### transfer_baltrad
@@ -44,6 +48,11 @@ Configuration is loaded from environmental variables:
 - DESTINATION_BUCKET: AWS S3 bucket to write data to
 - SNS_TOPIC: AWS SNS topic to report when routine fails
 - AWS_PROFILE: AWS profile (mainly for local development)
+
+```{click} vptstools.bin.vph5_to_vpts:cli
+:prog: Convert h5 files to daily/monthly vpts files
+
+```
 
 ### vph5_to_vpts
 

@@ -1,23 +1,3 @@
-"""
-Python CLI script that:
-- Connects via SFTP to the BALTRAD server
-- For each vp file (pvol gets ignored), download the file from the server and
-  upload it to the "aloft" S3 bucket
-- If file already exists at destination => do nothing
-
-Designed to be executed daily via a simple scheduled job like cron (files disappear after a few
-days on the BALTRAD server)
-
-Configuration is loaded from environmental variables:
-- FTP_HOST: Baltrad FTP host ip address
-- FTP_PORT: Baltrad FTP host port
-- FTP_USERNAME: Baltrad FTP user name
-- FTP_PWD: Baltrad FTP password
-- FTP_DATADIR: Baltrad FTP directory to load data files from
-- DESTINATION_BUCKET: AWS S3 bucket to write data to
-- SNS_TOPIC: AWS SNS topic to report when routine fails
-- AWS_PROFILE: AWS profile (mainly for local development)
-"""
 import datetime
 import os
 from functools import partial
@@ -92,6 +72,28 @@ def extract_metadata_from_filename(filename: str) -> tuple:
 
 @click.command(cls=catch_all_exceptions(click.Command, handler=report_sns))  # Add SNS-reporting to exception
 def cli():
+    """Sync files from FTP to s3 bucket.
+
+
+    Python CLI script that:
+    - Connects via SFTP to the BALTRAD server
+    - For each vp file (pvol gets ignored), download the file from the server and
+      upload it to the "aloft" S3 bucket
+    - If file already exists at destination => do nothing
+
+    Designed to be executed daily via a simple scheduled job like cron (files disappear after a few
+    days on the BALTRAD server)
+
+    Configuration is loaded from environmental variables:
+    - FTP_HOST: Baltrad FTP host ip address
+    - FTP_PORT: Baltrad FTP host port
+    - FTP_USERNAME: Baltrad FTP user name
+    - FTP_PWD: Baltrad FTP password
+    - FTP_DATADIR: Baltrad FTP directory to load data files from
+    - DESTINATION_BUCKET: AWS S3 bucket to write data to
+    - SNS_TOPIC: AWS SNS topic to report when routine fails
+    - AWS_PROFILE: AWS profile (mainly for local development)
+    """
     cli_start_time = datetime.datetime.now()
     click.echo(f"Start transfer Baltrad FTP sync at {cli_start_time}")
     click.echo("Read configuration from environmental variables.")
