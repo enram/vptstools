@@ -108,7 +108,7 @@ class OdimFilePath:
             radar_code = country + radar
             return radar_code.lower(), data_type, year, month, day, hour, minute, file_name
         else:
-            raise ValueError("File name is not a valid ODIM h5 file.")
+            raise ValueError(f"File name {file_name} is not a valid ODIM h5 file.")
 
     @property
     def country(self):
