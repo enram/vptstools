@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools.vpts_csv &mdash; vptstools 0.1.0.post1.dev8+g108fc15 documentation</title>
+  <title>vptstools.vpts_csv &mdash; vptstools 0.1.0.post1.dev9+ga7e4032 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=bb1313d5"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -32,7 +32,7 @@
             vptstools
           </a>
               <div class="version">
-                0.1.0.post1.dev8+g108fc15
+                0.1.0.post1.dev9+ga7e4032
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -81,10 +81,13 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
-<div class="viewcode-block" id="VptsCsvVersionError"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.VptsCsvVersionError">[docs]</a><span class="k">class</span> <span class="nc">VptsCsvVersionError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="VptsCsvVersionError">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.VptsCsvVersionError">[docs]</a>
+<span class="k">class</span> <span class="nc">VptsCsvVersionError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when non supported VPTS CSV version is asked&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
+
 
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -92,7 +95,9 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="datetime_to_proper8601"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.datetime_to_proper8601">[docs]</a><span class="k">def</span> <span class="nf">datetime_to_proper8601</span><span class="p">(</span><span class="n">timestamp</span><span class="p">):</span>
+<div class="viewcode-block" id="datetime_to_proper8601">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.datetime_to_proper8601">[docs]</a>
+<span class="k">def</span> <span class="nf">datetime_to_proper8601</span><span class="p">(</span><span class="n">timestamp</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert datetime to ISO8601 standard</span>
 
 <span class="sd">    Parameters</span>
@@ -114,7 +119,10 @@
     <span class="k">return</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="int_to_nodata"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.int_to_nodata">[docs]</a><span class="k">def</span> <span class="nf">int_to_nodata</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">nodata_values</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="int_to_nodata">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.int_to_nodata">[docs]</a>
+<span class="k">def</span> <span class="nf">int_to_nodata</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">nodata_values</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert str to either integer or the corresponding nodata value if enlisted</span>
 
 <span class="sd">    Parameters</span>
@@ -150,7 +158,10 @@
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="number_to_bool_str"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.number_to_bool_str">[docs]</a><span class="k">def</span> <span class="nf">number_to_bool_str</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+
+<div class="viewcode-block" id="number_to_bool_str">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.number_to_bool_str">[docs]</a>
+<span class="k">def</span> <span class="nf">number_to_bool_str</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert list of boolean values to str versions with capital letters</span>
 
 <span class="sd">    Parameters</span>
@@ -171,7 +182,10 @@
     <span class="k">return</span> <span class="p">[</span><span class="n">to_bool</span><span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="check_source_file"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.check_source_file">[docs]</a><span class="k">def</span> <span class="nf">check_source_file</span><span class="p">(</span><span class="n">source_file</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
+
+<div class="viewcode-block" id="check_source_file">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.check_source_file">[docs]</a>
+<span class="k">def</span> <span class="nf">check_source_file</span><span class="p">(</span><span class="n">source_file</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise Exception when the source_file str is not according to the regex</span>
 
 <span class="sd">    Parameters</span>
@@ -206,6 +220,7 @@
         <span class="p">)</span></div>
 
 
+
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">VPTS CSV version abstract version and individual version mapping implementations</span>
 
@@ -216,7 +231,9 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="get_vpts_version"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.get_vpts_version">[docs]</a><span class="k">def</span> <span class="nf">get_vpts_version</span><span class="p">(</span><span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="get_vpts_version">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.get_vpts_version">[docs]</a>
+<span class="k">def</span> <span class="nf">get_vpts_version</span><span class="p">(</span><span class="n">version</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Link version ID (v1, v2,..) with correct AbstractVptsCsv child class</span>
 
 <span class="sd">    Parameters</span>
@@ -238,7 +255,10 @@
         <span class="k">raise</span> <span class="n">VptsCsvVersionError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Version </span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2"> not supported.&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="AbstractVptsCsv"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.AbstractVptsCsv">[docs]</a><span class="k">class</span> <span class="nc">AbstractVptsCsv</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+
+<div class="viewcode-block" id="AbstractVptsCsv">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.AbstractVptsCsv">[docs]</a>
+<span class="k">class</span> <span class="nc">AbstractVptsCsv</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract class to define VPTS CSV conversion rules with a certain version&quot;&quot;&quot;</span>
 
     <span class="n">source_file_regex</span> <span class="o">=</span> <span class="s2">&quot;.*&quot;</span>
@@ -272,7 +292,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="p">()</span>
 
-<div class="viewcode-block" id="AbstractVptsCsv.mapping"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.AbstractVptsCsv.mapping">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractVptsCsv.mapping">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.AbstractVptsCsv.mapping">[docs]</a>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bird_profile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Translation from ODIM bird profile to VPTS CSV data format.</span>
 
@@ -311,10 +333,14 @@
 <span class="sd">        The order of the variables matter, as this defines the column</span>
 <span class="sd">        order.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">()</span></div>
+</div>
 
 
-<div class="viewcode-block" id="VptsCsvV1"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.VptsCsvV1">[docs]</a><span class="k">class</span> <span class="nc">VptsCsvV1</span><span class="p">(</span><span class="n">AbstractVptsCsv</span><span class="p">):</span>
+
+<div class="viewcode-block" id="VptsCsvV1">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.VptsCsvV1">[docs]</a>
+<span class="k">class</span> <span class="nc">VptsCsvV1</span><span class="p">(</span><span class="n">AbstractVptsCsv</span><span class="p">):</span>
     <span class="n">source_file_regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^(?=^[^.\/~])(^((?!\.</span><span class="si">{2}</span><span class="s2">).)*$).*$&quot;</span>
 
     <span class="nd">@property</span>
@@ -332,7 +358,9 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Columns to define row order&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">radar</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">datetime</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
 
-<div class="viewcode-block" id="VptsCsvV1.mapping"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.VptsCsvV1.mapping">[docs]</a>    <span class="k">def</span> <span class="nf">mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bird_profile</span><span class="p">):</span>
+<div class="viewcode-block" id="VptsCsvV1.mapping">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts_csv.VptsCsvV1.mapping">[docs]</a>
+    <span class="k">def</span> <span class="nf">mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bird_profile</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Translation from ODIM bird profile to VPTS CSV data format.</span>
 
 <span class="sd">        Notes</span>
@@ -369,7 +397,9 @@
             <span class="n">source_file</span><span class="o">=</span><span class="n">check_source_file</span><span class="p">(</span>
                 <span class="n">bird_profile</span><span class="o">.</span><span class="n">source_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_file_regex</span>
             <span class="p">),</span>
-        <span class="p">)</span></div></div>
+        <span class="p">)</span></div>
+</div>
+
 </pre></div>
 
            </div>

@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools.vpts &mdash; vptstools 0.1.0.post1.dev8+g108fc15 documentation</title>
+  <title>vptstools.vpts &mdash; vptstools 0.1.0.post1.dev9+ga7e4032 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=bb1313d5"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -32,7 +32,7 @@
             vptstools
           </a>
               <div class="version">
-                0.1.0.post1.dev8+g108fc15
+                0.1.0.post1.dev9+ga7e4032
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -144,7 +144,9 @@
     <span class="k">return</span> <span class="n">values</span>
 
 
-<div class="viewcode-block" id="BirdProfile"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.BirdProfile">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="viewcode-block" id="BirdProfile">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.BirdProfile">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">BirdProfile</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Represent ODIM source file</span>
 
@@ -182,7 +184,9 @@
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Bird profile: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">datetime</span><span class="si">:</span><span class="s2">%Y-%m-%d %H:%M</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">identifiers</span><span class="si">}</span><span class="s2">&quot;</span>
 
-<div class="viewcode-block" id="BirdProfile.to_vp"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.BirdProfile.to_vp">[docs]</a>    <span class="k">def</span> <span class="nf">to_vp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vpts_csv_version</span><span class="p">):</span>
+<div class="viewcode-block" id="BirdProfile.to_vp">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.BirdProfile.to_vp">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_vp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vpts_csv_version</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert profile data to a CSV</span>
 
 <span class="sd">        Parameters</span>
@@ -212,7 +216,10 @@
 
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="BirdProfile.from_odim"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.BirdProfile.from_odim">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="BirdProfile.from_odim">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.BirdProfile.from_odim">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_odim</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source_odim</span><span class="p">:</span> <span class="n">ODIMReader</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract BirdProfile information from ODIM with OdimReader</span>
 
@@ -251,10 +258,14 @@
             <span class="n">levels</span><span class="o">=</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">height</span><span class="p">)</span> <span class="k">for</span> <span class="n">height</span> <span class="ow">in</span> <span class="n">height_values</span><span class="p">],</span>
             <span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">,</span>
             <span class="n">source_file</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">source_file</span><span class="p">),</span>
-        <span class="p">)</span></div></div>
+        <span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="vp"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.vp">[docs]</a><span class="k">def</span> <span class="nf">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">vpts_csv_version</span><span class="o">=</span><span class="s2">&quot;v1.0&quot;</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="vp">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.vp">[docs]</a>
+<span class="k">def</span> <span class="nf">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">vpts_csv_version</span><span class="o">=</span><span class="s2">&quot;v1.0&quot;</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert ODIM h5 file to a DataFrame</span>
 
 <span class="sd">    Parameters</span>
@@ -290,12 +301,15 @@
     <span class="k">return</span> <span class="n">vp</span><span class="o">.</span><span class="n">to_vp</span><span class="p">(</span><span class="n">get_vpts_version</span><span class="p">(</span><span class="n">vpts_csv_version</span><span class="p">))</span></div>
 
 
+
 <span class="k">def</span> <span class="nf">_convert_to_source</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the file name itself from a file path&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
 
 
-<div class="viewcode-block" id="vpts"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.vpts">[docs]</a><span class="k">def</span> <span class="nf">vpts</span><span class="p">(</span><span class="n">file_paths</span><span class="p">,</span> <span class="n">vpts_csv_version</span><span class="o">=</span><span class="s2">&quot;v1.0&quot;</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="vpts">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.vpts">[docs]</a>
+<span class="k">def</span> <span class="nf">vpts</span><span class="p">(</span><span class="n">file_paths</span><span class="p">,</span> <span class="n">vpts_csv_version</span><span class="o">=</span><span class="s2">&quot;v1.0&quot;</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert set of h5 files to a DataFrame all as string</span>
 
 <span class="sd">    Parameters</span>
@@ -350,7 +364,10 @@
     <span class="k">return</span> <span class="n">vpts_</span></div>
 
 
-<div class="viewcode-block" id="vpts_to_csv"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.vpts_to_csv">[docs]</a><span class="k">def</span> <span class="nf">vpts_to_csv</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+
+<div class="viewcode-block" id="vpts_to_csv">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.vpts_to_csv">[docs]</a>
+<span class="k">def</span> <span class="nf">vpts_to_csv</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Write vp or vpts to file</span>
 
 <span class="sd">    Parameters</span>
@@ -369,7 +386,10 @@
     <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">CSV_FIELD_DELIMITER</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">CSV_ENCODING</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="validate_vpts"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.validate_vpts">[docs]</a><span class="k">def</span> <span class="nf">validate_vpts</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">schema_version</span><span class="o">=</span><span class="s2">&quot;v1.0&quot;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="validate_vpts">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.validate_vpts">[docs]</a>
+<span class="k">def</span> <span class="nf">validate_vpts</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">schema_version</span><span class="o">=</span><span class="s2">&quot;v1.0&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate vpts DataFrame against the frictionless data schema and return report</span>
 
 <span class="sd">    Parameters</span>
@@ -390,6 +410,7 @@
     <span class="n">_write_resource_descriptor</span><span class="p">(</span><span class="n">vpts_file_path</span><span class="p">,</span> <span class="n">schema_version</span><span class="p">)</span>
     <span class="n">report</span> <span class="o">=</span> <span class="n">validate</span><span class="p">(</span><span class="n">tmp_path</span> <span class="o">/</span> <span class="n">DESCRIPTOR_FILENAME</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">report</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">_write_resource_descriptor</span><span class="p">(</span><span class="n">vpts_file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">schema_version</span><span class="o">=</span><span class="s2">&quot;v1.0&quot;</span><span class="p">):</span>

@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools.odimh5 &mdash; vptstools 0.1.0.post1.dev8+g108fc15 documentation</title>
+  <title>vptstools.odimh5 &mdash; vptstools 0.1.0.post1.dev9+ga7e4032 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=bb1313d5"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -32,7 +32,7 @@
             vptstools
           </a>
               <div class="version">
-                0.1.0.post1.dev8+g108fc15
+                0.1.0.post1.dev9+ga7e4032
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -84,13 +84,18 @@
 <span class="kn">import</span> <span class="nn">pytz</span>
 
 
-<div class="viewcode-block" id="InvalidSourceODIM"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.odimh5.InvalidSourceODIM">[docs]</a><span class="k">class</span> <span class="nc">InvalidSourceODIM</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="InvalidSourceODIM">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.odimh5.InvalidSourceODIM">[docs]</a>
+<span class="k">class</span> <span class="nc">InvalidSourceODIM</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrong ODIM file&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="ODIMReader"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.odimh5.ODIMReader">[docs]</a><span class="k">class</span> <span class="nc">ODIMReader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ODIMReader">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.odimh5.ODIMReader">[docs]</a>
+<span class="k">class</span> <span class="nc">ODIMReader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read ODIM (HDF5) files with context manager</span>
 
 <span class="sd">    Should be used with the &quot;with&quot; statement  (context manager) to</span>
@@ -211,11 +216,17 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_root_attribute_str</span><span class="p">(</span><span class="s2">&quot;what&quot;</span><span class="p">,</span> <span class="s2">&quot;object&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ODIMReader.close"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.odimh5.ODIMReader.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hdf5</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+<div class="viewcode-block" id="ODIMReader.close">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.odimh5.ODIMReader.close">[docs]</a>
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hdf5</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</div>
 
 
-<div class="viewcode-block" id="check_vp_odim"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.odimh5.check_vp_odim">[docs]</a><span class="k">def</span> <span class="nf">check_vp_odim</span><span class="p">(</span><span class="n">source_odim</span><span class="p">:</span> <span class="n">ODIMReader</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="check_vp_odim">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.odimh5.check_vp_odim">[docs]</a>
+<span class="k">def</span> <span class="nf">check_vp_odim</span><span class="p">(</span><span class="n">source_odim</span><span class="p">:</span> <span class="n">ODIMReader</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Verify ODIM file is an hdf5 ODIM format containing &#39;VP&#39; data.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="p">{</span><span class="s2">&quot;what&quot;</span><span class="p">,</span> <span class="s2">&quot;how&quot;</span><span class="p">,</span> <span class="s2">&quot;where&quot;</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">source_odim</span><span class="o">.</span><span class="n">hdf5</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
         <span class="k">raise</span> <span class="n">InvalidSourceODIM</span><span class="p">(</span>
@@ -227,6 +238,7 @@
             <span class="sa">f</span><span class="s2">&quot;Incorrect what.object value: expected VP, &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;found </span><span class="si">{</span><span class="n">source_odim</span><span class="o">.</span><span class="n">root_object_str</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
+
 </pre></div>
 
            </div>

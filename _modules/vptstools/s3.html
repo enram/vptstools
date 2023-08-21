@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools.s3 &mdash; vptstools 0.1.0.post1.dev8+g108fc15 documentation</title>
+  <title>vptstools.s3 &mdash; vptstools 0.1.0.post1.dev9+ga7e4032 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=bb1313d5"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -32,7 +32,7 @@
             vptstools
           </a>
               <div class="version">
-                0.1.0.post1.dev8+g108fc15
+                0.1.0.post1.dev9+ga7e4032
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -85,7 +85,9 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 
-<div class="viewcode-block" id="OdimFilePath"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath">[docs]</a><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="viewcode-block" id="OdimFilePath">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">OdimFilePath</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;ODIM file path with translation from/to different S3 key paths</span>
 
@@ -124,12 +126,17 @@
     <span class="n">file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># optional as this can be constructed from scratch as well</span>
     <span class="n">file_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
-<div class="viewcode-block" id="OdimFilePath.from_file_name"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.from_file_name">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="OdimFilePath.from_file_name">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.from_file_name">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_file_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">h5_file_path</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize class from ODIM file path&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="o">*</span><span class="bp">cls</span><span class="o">.</span><span class="n">parse_file_name</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">h5_file_path</span><span class="p">)))</span></div>
 
-<div class="viewcode-block" id="OdimFilePath.from_inventory"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.from_inventory">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="OdimFilePath.from_inventory">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.from_inventory">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_inventory</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">h5_file_path</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize class from S3 inventory which contains source and file_type&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
@@ -138,7 +145,10 @@
             <span class="n">h5_file_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="OdimFilePath.from_s3fs_enlisting"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.from_s3fs_enlisting">[docs]</a>    <span class="nd">@classmethod</span>
+
+<div class="viewcode-block" id="OdimFilePath.from_s3fs_enlisting">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.from_s3fs_enlisting">[docs]</a>
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_s3fs_enlisting</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">h5_file_path</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize class from S3 inventory which contains bucket,</span>
 <span class="sd">        source and file_type&quot;&quot;&quot;</span>
@@ -148,7 +158,10 @@
             <span class="n">h5_file_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="OdimFilePath.parse_file_name"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.parse_file_name">[docs]</a>    <span class="nd">@staticmethod</span>
+
+<div class="viewcode-block" id="OdimFilePath.parse_file_name">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.parse_file_name">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">parse_file_name</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Parse an hdf5 file name radar_code, data_type, year, month, day, hour,</span>
 <span class="sd">        minute and file_name.</span>
@@ -175,7 +188,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">name_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
-            <span class="sa">r</span><span class="s2">&quot;.*([a-z]</span><span class="si">{2}</span><span class="s2">)([a-z]</span><span class="si">{3}</span><span class="s2">)_([a-z]*)_(\d\d\d\d)(\d\d)(\d\d)T?&quot;</span>
+            <span class="sa">r</span><span class="s2">&quot;.*([a-zA-Z]</span><span class="si">{2}</span><span class="s2">)([a-zA-Z]</span><span class="si">{3}</span><span class="s2">)_([a-z]*)_(\d\d\d\d)(\d\d)(\d\d)T?&quot;</span>
             <span class="sa">r</span><span class="s2">&quot;(\d\d)(\d\d)(?:Z|00)?.*\.h5&quot;</span>
         <span class="p">)</span>
         <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">name_regex</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
@@ -183,9 +196,10 @@
             <span class="n">file_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
             <span class="n">country</span><span class="p">,</span> <span class="n">radar</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
             <span class="n">radar_code</span> <span class="o">=</span> <span class="n">country</span> <span class="o">+</span> <span class="n">radar</span>
-            <span class="k">return</span> <span class="n">radar_code</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">file_name</span>
+            <span class="k">return</span> <span class="n">radar_code</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">file_name</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;File name is not a valid ODIM h5 file.&quot;</span><span class="p">)</span></div>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">country</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -202,16 +216,22 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Name of the corresponding daily vpts file&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">radar_code</span><span class="si">}</span><span class="s2">_vpts_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">month</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">day</span><span class="si">}</span><span class="s2">.csv&quot;</span>
 
-<div class="viewcode-block" id="OdimFilePath.s3_path_setup"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.s3_path_setup">[docs]</a>    <span class="k">def</span> <span class="nf">s3_path_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_output</span><span class="p">):</span>
+<div class="viewcode-block" id="OdimFilePath.s3_path_setup">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.s3_path_setup">[docs]</a>
+    <span class="k">def</span> <span class="nf">s3_path_setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_output</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Common setup of the S3 bucket logic&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file_output</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">radar_code</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
-<div class="viewcode-block" id="OdimFilePath.s3_url_h5"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.s3_url_h5">[docs]</a>    <span class="k">def</span> <span class="nf">s3_url_h5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bucket</span><span class="o">=</span><span class="s2">&quot;aloft&quot;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="OdimFilePath.s3_url_h5">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.s3_url_h5">[docs]</a>
+    <span class="k">def</span> <span class="nf">s3_url_h5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bucket</span><span class="o">=</span><span class="s2">&quot;aloft&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Full S3 URL for the stored h5 file&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;s3://</span><span class="si">{</span><span class="n">bucket</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s3_path_setup</span><span class="p">(</span><span class="s1">&#39;hdf5&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">/&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">month</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">day</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">s3_folder_path_h5</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -232,7 +252,10 @@
         <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="list_manifest_file_keys"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.list_manifest_file_keys">[docs]</a><span class="k">def</span> <span class="nf">list_manifest_file_keys</span><span class="p">(</span><span class="n">s3_manifest_url</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="list_manifest_file_keys">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.list_manifest_file_keys">[docs]</a>
+<span class="k">def</span> <span class="nf">list_manifest_file_keys</span><span class="p">(</span><span class="n">s3_manifest_url</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Enlist the manifest individual files</span>
 
 <span class="sd">    Parameters</span>
@@ -253,7 +276,10 @@
             <span class="k">yield</span> <span class="n">obj</span></div>
 
 
-<div class="viewcode-block" id="extract_daily_group_from_inventory"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.extract_daily_group_from_inventory">[docs]</a><span class="k">def</span> <span class="nf">extract_daily_group_from_inventory</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+
+<div class="viewcode-block" id="extract_daily_group_from_inventory">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.extract_daily_group_from_inventory">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_daily_group_from_inventory</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract file name components to define a group</span>
 
 <span class="sd">    The coverage file counts the number of files available</span>
@@ -277,6 +303,7 @@
         <span class="n">path_info</span><span class="o">.</span><span class="n">month</span><span class="p">,</span>
         <span class="n">path_info</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
     <span class="p">)</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">_last_modified_from_inventory</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">modified_days_ago</span><span class="o">=</span><span class="s2">&quot;2day&quot;</span><span class="p">):</span>
@@ -357,7 +384,9 @@
     <span class="k">return</span> <span class="n">df_coverage</span><span class="p">,</span> <span class="n">df_last_n_days</span>
 
 
-<div class="viewcode-block" id="handle_manifest"><a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.handle_manifest">[docs]</a><span class="k">def</span> <span class="nf">handle_manifest</span><span class="p">(</span><span class="n">manifest_url</span><span class="p">,</span> <span class="n">modified_days_ago</span><span class="o">=</span><span class="s2">&quot;2day&quot;</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="handle_manifest">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.handle_manifest">[docs]</a>
+<span class="k">def</span> <span class="nf">handle_manifest</span><span class="p">(</span><span class="n">manifest_url</span><span class="p">,</span> <span class="n">modified_days_ago</span><span class="o">=</span><span class="s2">&quot;2day&quot;</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract modified days and coverage from a manifest file</span>
 
 <span class="sd">    Parameters</span>
@@ -436,6 +465,7 @@
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">df_cov</span><span class="p">,</span> <span class="n">df_days_to_create_vpts</span></div>
+
 </pre></div>
 
            </div>
