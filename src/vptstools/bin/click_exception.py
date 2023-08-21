@@ -51,9 +51,33 @@ def catch_all_exceptions(cls, handler):  # noqa
     return Cls
 
 
-def report_exception_to_sns(cmd, info_name, exc,
-                            aws_sns_topic, subject,
-                            profile_name=None, region_name=None):
+def report_message_to_sns(subject, message, aws_sns_topic,
+                          profile_name=None, region_name=None):
+    """Push exceptions from click to SNS topic, used as handler for click applications
+
+    Parameters
+    ----------
+    subject : str
+        Mail subject when sending notifications
+    message : str
+        Mail message when sending notifications
+    aws_sns_topic : str
+        arn of the AWS SNS topic
+    profile_name : aws profile (optional)
+        AWS profile
+    region_name : aws region (optional)
+        AWS region
+    """
+    session = boto3.Session(profile_name=profile_name, region_name=region_name)
+    sns_client = session.client('sns')
+    click.echo(message)
+    sns_client.publish(TopicArn=aws_sns_topic,
+                       Message=message,
+                       Subject=subject)
+    click.echo("Sent error message to SNS topic.")
+
+
+def report_click_exception_to_sns(cmd, info_name, exc, aws_sns_topic, subject, profile_name=None, region_name=None):
     """Push exceptions from click to SNS topic, used as handler for click applications
 
     Parameters
@@ -68,11 +92,7 @@ def report_exception_to_sns(cmd, info_name, exc,
     region_name : aws region (optional)
         AWS region
     """
-    session = boto3.Session(profile_name=profile_name, region_name=region_name)
-    sns_client = session.client('sns')
     sns_message = f"CLI routine '{info_name} {cmd._original_args}' failed raising error: '{type(exc)}: {exc}'."  # noqa
-    click.echo(sns_message)
-    sns_client.publish(TopicArn=aws_sns_topic,
-                       Message=sns_message,
-                       Subject=subject)
-    click.echo("Sent error message to SNS topic.")
+    report_message_to_sns(subject, sns_message, aws_sns_topic,
+                          profile_name=profile_name, region_name=region_name)
+
