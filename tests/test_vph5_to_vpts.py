@@ -84,5 +84,6 @@ def test_e2e_cli_all(s3_inventory, path_inventory, tmp_path, sns):
         assert "Create 5 daily vpts files" in result.output
         assert "Recreate the full set of bucket files" in result.output
         #  test fails/stops after creation of first daily file (only files provided for test)
-        assert result.exception is not None
+        assert "[WARNING] - During conversion" in result.output
+        assert result.exception is None
         # TODO - check if notification is sent to the SNS-TOPIC (currently only sent to mocked endpoint)

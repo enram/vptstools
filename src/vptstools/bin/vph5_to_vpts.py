@@ -116,7 +116,7 @@ def cli(modified_days_ago):
                 h5_path = OdimFilePath.from_s3fs_enlisting(file_key)
                 h5_local_path = str(temp_folder_path / h5_path.file_name)
                 # inbo_s3.get_file(file_key, h5_local_path)
-                # s3f3 failes in wrapped moto environment; fall back to boto3
+                # s3f3 fails in wrapped moto environment; fall back to boto3
                 s3_client.download_file(
                     S3_BUCKET,
                     f"{h5_path.s3_folder_path_h5}/{h5_path.file_name}",
