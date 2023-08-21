@@ -139,7 +139,7 @@ def cli(modified_days_ago):
             # - remove tempdir with local files
             shutil.rmtree(temp_folder_path)
         except Exception as exc:
-            click.echo(f"During conversion from h5 files of {source}/{radar_code} at "
+            click.echo(f"[WARNING] - During conversion from h5 files of {source}/{radar_code} at "
                        f"{year}-{month}-{day} to daily vpts file, the following error occurred: {exc}.")
 
     click.echo("Finished creating daily vpts files.")
@@ -187,7 +187,7 @@ def cli(modified_days_ago):
                 storage_options=storage_options,
             )
         except Exception as exc:
-            click.echo(f"During conversion from h5 files of {source}/{radar_code} at "
+            click.echo(f"[WARNING] - During conversion from h5 files of {source}/{radar_code} at "
                        f"{year}-{month}-{day} to monthly vpts file, the following error occurred: {exc}.")
 
     click.echo("Finished creating monthly vpts files.")
