@@ -106,7 +106,7 @@ class OdimFilePath:
             file_name = Path(file_name).name
             country, radar, data_type, year, month, day, hour, minute = match.groups()
             radar_code = country + radar
-            return radar_code, data_type, year, month, day, hour, minute, file_name
+            return radar_code.lower(), data_type, year, month, day, hour, minute, file_name
         else:
             raise ValueError("File name is not a valid ODIM h5 file.")
 

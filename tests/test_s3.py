@@ -85,6 +85,19 @@ class TestOdimFilePath:
                     "plrze_vp_20201027T172000Z_0x9.h5",
                 ),
             ),
+            (
+                    "uva/hdf5/2008/02/15/NLDBL_vp_20080215T0000_NL50_v0-3-20.h5",
+                    (
+                            "nldbl",
+                            "vp",
+                            "2008",
+                            "02",
+                            "15",
+                            "00",
+                            "00",
+                            "NLDBL_vp_20080215T0000_NL50_v0-3-20.h5",
+                    ),
+            ),
         ],
     )
     def test_parse_file_name(self, file_path, components):
