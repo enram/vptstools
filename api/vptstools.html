@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools package &mdash; vptstools 0.1.0.post1.dev10+g79e73bf documentation</title>
+  <title>vptstools package &mdash; vptstools 0.1.0.post1.dev11+gb888cf2 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,7 +13,7 @@
   
         <script src="../_static/jquery.js?v=5d32c60e"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=44bb090c"></script>
+        <script src="../_static/documentation_options.js?v=a42f005c"></script>
         <script src="../_static/doctools.js?v=888ff710"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -35,7 +35,7 @@
             vptstools
           </a>
               <div class="version">
-                0.1.0.post1.dev10+g79e73bf
+                0.1.0.post1.dev11+gb888cf2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -616,7 +616,9 @@ is supported by Pandas.</p>
 <li><p><strong>file_path</strong> (<em>Path</em>) – File Path of ODIM h5</p></li>
 <li><p><strong>vpts_csv_version</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>default &quot;&quot;</em>) – Ruleset with the VPTS CSV ruleset to use, e.g. v1.0</p></li>
 <li><p><strong>source_file</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>callable</em>) – URL or path to the source file from which the data were derived or
-a callable that converts the file_path to the source_file</p></li>
+a callable that converts the file_path to the source_file. See
+<a class="reference external" href="https://aloftdata.eu/vpts-csv/#source_file">https://aloftdata.eu/vpts-csv/#source_file</a> for more information on
+the source file field.</p></li>
 </ul>
 </dd>
 </dl>
@@ -624,7 +626,7 @@ a callable that converts the file_path to the source_file</p></li>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;bejab_vp_20221111T233000Z_0x9.h5&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span>
-<span class="gp">... </span>   <span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;s3://aloft/baltrad/hdf5/2022/11/11/&quot;</span>     <span class="o">...</span>                 <span class="s2">&quot;bejab_vp_20221111T233000Z_0x9.h5&quot;</span><span class="p">)</span>
+<span class="gp">... </span>   <span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;s3://aloft/baltrad/hdf5/2022/11/11/bejab_vp_20221111T233000Z_0x9.h5&quot;</span><span class="p">)</span>  <span class="c1">#noqa</span>
 </pre></div>
 </div>
 <p>Use file name itself as source_file representation in vp file using a custom
@@ -825,7 +827,7 @@ order.</p>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)">str</a></p>
 </dd>
 </dl>
-<p>:raises ValueError : : source_file not according to regex:</p>
+<p>:raises ValueError : source_file not according to regex:</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">check_source_file</span><span class="p">(</span><span class="s2">&quot;s3://alof/baltrad/2023/01/01/&quot;</span>
 <span class="gp">... </span>                  <span class="s2">&quot;bejab_vp_20230101T000500Z_0x9.h5&quot;</span><span class="p">,</span>
@@ -952,7 +954,9 @@ order.</p>
 <li><p><strong>file_path</strong> (<em>Path</em>) – File Path of ODIM h5</p></li>
 <li><p><strong>vpts_csv_version</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>default &quot;&quot;</em>) – Ruleset with the VPTS CSV ruleset to use, e.g. v1.0</p></li>
 <li><p><strong>source_file</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>callable</em>) – URL or path to the source file from which the data were derived or
-a callable that converts the file_path to the source_file</p></li>
+a callable that converts the file_path to the source_file. See
+<a class="reference external" href="https://aloftdata.eu/vpts-csv/#source_file">https://aloftdata.eu/vpts-csv/#source_file</a> for more information on
+the source file field.</p></li>
 </ul>
 </dd>
 </dl>
@@ -960,7 +964,7 @@ a callable that converts the file_path to the source_file</p></li>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;bejab_vp_20221111T233000Z_0x9.h5&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span>
-<span class="gp">... </span>   <span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;s3://aloft/baltrad/hdf5/2022/11/11/&quot;</span>     <span class="o">...</span>                 <span class="s2">&quot;bejab_vp_20221111T233000Z_0x9.h5&quot;</span><span class="p">)</span>
+<span class="gp">... </span>   <span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;s3://aloft/baltrad/hdf5/2022/11/11/bejab_vp_20221111T233000Z_0x9.h5&quot;</span><span class="p">)</span>  <span class="c1">#noqa</span>
 </pre></div>
 </div>
 <p>Use file name itself as source_file representation in vp file using a custom
