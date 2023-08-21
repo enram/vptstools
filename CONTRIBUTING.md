@@ -239,6 +239,19 @@ for `vptstools` to pypi can be done manually as well with the following steps:
    500KB), unwanted clutter may have been accidentally included.
 4. Run `tox -e publish -- --repository pypi` and check that everything was uploaded to [PyPI] correctly.
 
+(new-vptscsv-version)=
+### Support a new version of the VPTS-CSV data exchange format
+
+To support a new version of the VPTS-CSV data exchange format, following adjustments in the {py:mod}`vptstools.vpts_csv` 
+module are required:
+
+- Create a new class `VptsCsvVX` which subclasses from the abstract class {py:class}`vptstools.vpts_csv.AbstractVptsCsv`
+- Overwrite the abstract methods to define 'no data' representation, the 'Undetect' representation, the sorting logic 
+  and the mapping of the individual fields from ODIM bird profile to the VPTS CSV data format. Check the
+  {py:class}`vptstools.vpts_csv.AbstractVptsCsv` documentation for more info.
+- Link the string version ID (v1, v2,..) with the correct `AbstractVptsCsv` child class by extending the 
+  {py:func}`vptstools.vpts_csv.get_vpts_version` with a new mapping from version string to class instance. 
+
 
 [black]: https://pypi.org/project/black/
 [commonmark]: https://commonmark.org/
