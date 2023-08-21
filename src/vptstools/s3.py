@@ -98,7 +98,7 @@ class OdimFilePath:
         """
 
         name_regex = re.compile(
-            r".*([a-z]{2})([a-z]{3})_([a-z]*)_(\d\d\d\d)(\d\d)(\d\d)T?"
+            r".*([a-zA-Z]{2})([a-zA-Z]{3})_([a-z]*)_(\d\d\d\d)(\d\d)(\d\d)T?"
             r"(\d\d)(\d\d)(?:Z|00)?.*\.h5"
         )
         match = re.match(name_regex, file_name)
@@ -106,7 +106,7 @@ class OdimFilePath:
             file_name = Path(file_name).name
             country, radar, data_type, year, month, day, hour, minute = match.groups()
             radar_code = country + radar
-            return radar_code, data_type, year, month, day, hour, minute, file_name
+            return radar_code.lower(), data_type, year, month, day, hour, minute, file_name
         else:
             raise ValueError("File name is not a valid ODIM h5 file.")
 
