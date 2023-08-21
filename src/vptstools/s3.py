@@ -98,7 +98,7 @@ class OdimFilePath:
         """
 
         name_regex = re.compile(
-            r".*([a-z]{2})([a-z]{3})_([a-z]*)_(\d\d\d\d)(\d\d)(\d\d)T?"
+            r".*([a-zA-Z]{2})([a-zA-Z]{3})_([a-z]*)_(\d\d\d\d)(\d\d)(\d\d)T?"
             r"(\d\d)(\d\d)(?:Z|00)?.*\.h5"
         )
         match = re.match(name_regex, file_name)
