@@ -1,23 +1,3 @@
-"""
-Python CLI script that:
-- Connects via SFTP to the BALTRAD server
-- For each vp file (pvol gets ignored), download the file from the server and
-  upload it to the "aloft" S3 bucket
-- If file already exists at destination => do nothing
-
-Designed to be executed daily via a simple scheduled job like cron (files disappear after a few
-days on the BALTRAD server)
-
-Configuration is loaded from environmental variables:
-- FTP_HOST: Baltrad FTP host ip address
-- FTP_PORT: Baltrad FTP host port
-- FTP_USERNAME: Baltrad FTP user name
-- FTP_PWD: Baltrad FTP password
-- FTP_DATADIR: Baltrad FTP directory to load data files from
-- DESTINATION_BUCKET: AWS S3 bucket to write data to
-- SNS_TOPIC: AWS SNS topic to report when routine fails
-- AWS_PROFILE: AWS profile (mainly for local development)
-"""
 import datetime
 import os
 from functools import partial
@@ -68,8 +48,7 @@ def s3_key_exists(key: str, bucket: str, s3_client) -> bool:
 
 
 def extract_metadata_from_filename(filename: str) -> tuple:
-    """Extract the metadata from the filename (format
-    such as 'fropo_vp_20220809T051000Z_0xb')
+    """Extract the metadata from the filename (format such as 'fropo_vp_20220809T051000Z_0xb')
 
     All returned values are strings, month and days are 0-prefixed if
     they are single-digit.
@@ -92,6 +71,27 @@ def extract_metadata_from_filename(filename: str) -> tuple:
 
 @click.command(cls=catch_all_exceptions(click.Command, handler=report_sns))  # Add SNS-reporting to exception
 def cli():
+    """Sync files from Baltrad FTP server to the aloft s3 bucket.
+
+    This function connects via SFTP to the BALTRAD server, downloads the available ``vp`` files (``pvol`` gets ignored),
+    from the FTP server and upload the h5 file to the 'aloft' S3 bucket according to the defined folder path name
+    convention. Existing files are ignored.
+
+    Designed to be executed via a simple scheduled job like cron or scheduled cloud function. Remark that
+    files disappear after a few days on the BALTRAD server.
+
+    Configuration is loaded from the following environmental variables:
+
+    - ``FTP_HOST``: Baltrad FTP host ip address
+    - ``FTP_PORT``: Baltrad FTP host port
+    - ``FTP_USERNAME``: Baltrad FTP user name
+    - ``FTP_PWD``: Baltrad FTP password
+    - ``FTP_DATADIR``: Baltrad FTP directory to load data files from
+    - ``DESTINATION_BUCKET``: AWS S3 bucket to write data to
+    - ``SNS_TOPIC``: AWS SNS topic to report when routine fails
+    - ``AWS_REGION``: AWS region where the SNS alerting is defined
+    - ``AWS_PROFILE``: AWS profile (mainly useful for local development when working with multiple AWS profiles)
+    """
     cli_start_time = datetime.datetime.now()
     click.echo(f"Start transfer Baltrad FTP sync at {cli_start_time}")
     click.echo("Read configuration from environmental variables.")

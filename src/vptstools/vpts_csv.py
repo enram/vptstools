@@ -110,7 +110,7 @@ def check_source_file(source_file, regex):
 
     Raises
     ------
-    ValueError : : source_file not according to regex
+    ValueError : source_file not according to regex
 
     Examples
     --------

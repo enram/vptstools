@@ -12,7 +12,7 @@ def test_help():
     result = runner.invoke(cli, ["--help"])
     assert result.exit_code == 0
     assert (
-        "Convert and aggregate h5 vp files to daily/monthly vpts files on S3 bucket"
+        "Convert and aggregate h5 vp files to daily and monthly vpts-csv files"
         in result.output
     )
 

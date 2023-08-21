@@ -123,10 +123,10 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
           python -m pip install '${{ needs.prepare.outputs.wheel-distribution }}'
-          python -m pip install pytest
+          python -m pip install pytest moto[s3]
       - name: Run unit tests on pinned dependencies
         run: >-
-          pytest -rFEx --durations 10 --color yes  # pytest args
+          pytest -rFEx --no-cov --durations 10 --color yes  # pytest args
 
   docker:
       needs: finalize
@@ -135,6 +135,8 @@ jobs:
         - name: Retrieve pre-built distribution files
           uses: actions/download-artifact@v3
           with: {name: python-distribution-files, path: dist/}
+        - uses: actions/checkout@v3  # get Dockerfile from repo
+          with: {fetch-depth: 0}  # deep clone for setuptools-scm
         - name: Set up Docker Buildx
           uses: docker/setup-buildx-action@v1
         - name: Configure AWS credentials

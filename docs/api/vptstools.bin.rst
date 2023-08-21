@@ -6,6 +6,14 @@ vptstools.bin namespace
 Submodules
 ----------
 
+vptstools.bin.click\_exception module
+-------------------------------------
+
+.. automodule:: vptstools.bin.click_exception
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 vptstools.bin.transfer\_baltrad module
 --------------------------------------
 
