@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools.vpts &mdash; vptstools 0.1.0.post1.dev9+ga7e4032 documentation</title>
+  <title>vptstools.vpts &mdash; vptstools 0.1.0.post1.dev10+g79e73bf documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -12,7 +12,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=bb1313d5"></script>
+        <script src="../../_static/documentation_options.js?v=44bb090c"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -32,7 +32,7 @@
             vptstools
           </a>
               <div class="version">
-                0.1.0.post1.dev9+ga7e4032
+                0.1.0.post1.dev10+g79e73bf
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -172,7 +172,7 @@
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">source_file</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="s2">&quot;Source_file need to be a str representation of a file path.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Source_file </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">source_file</span><span class="si">}</span><span class="s2"> need to be a str representation of a file path.&quot;</span>
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>  <span class="c1"># Allows sorting by datetime</span>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools.bin.click_exception &mdash; vptstools 0.1.0.post1.dev9+ga7e4032 documentation</title>
+  <title>vptstools.bin.click_exception &mdash; vptstools 0.1.0.post1.dev10+g79e73bf documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -12,7 +12,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=bb1313d5"></script>
+        <script src="../../../_static/documentation_options.js?v=44bb090c"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -32,7 +32,7 @@
             vptstools
           </a>
               <div class="version">
-                0.1.0.post1.dev9+ga7e4032
+                0.1.0.post1.dev10+g79e73bf
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -131,11 +131,38 @@
 
 
 
-<div class="viewcode-block" id="report_exception_to_sns">
-<a class="viewcode-back" href="../../../api/vptstools.bin.html#vptstools.bin.click_exception.report_exception_to_sns">[docs]</a>
-<span class="k">def</span> <span class="nf">report_exception_to_sns</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">info_name</span><span class="p">,</span> <span class="n">exc</span><span class="p">,</span>
-                            <span class="n">aws_sns_topic</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span>
-                            <span class="n">profile_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">region_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="report_message_to_sns">
+<a class="viewcode-back" href="../../../api/vptstools.bin.html#vptstools.bin.click_exception.report_message_to_sns">[docs]</a>
+<span class="k">def</span> <span class="nf">report_message_to_sns</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">aws_sns_topic</span><span class="p">,</span>
+                          <span class="n">profile_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">region_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Push exceptions from click to SNS topic, used as handler for click applications</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    subject : str</span>
+<span class="sd">        Mail subject when sending notifications</span>
+<span class="sd">    message : str</span>
+<span class="sd">        Mail message when sending notifications</span>
+<span class="sd">    aws_sns_topic : str</span>
+<span class="sd">        arn of the AWS SNS topic</span>
+<span class="sd">    profile_name : aws profile (optional)</span>
+<span class="sd">        AWS profile</span>
+<span class="sd">    region_name : aws region (optional)</span>
+<span class="sd">        AWS region</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">session</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span><span class="n">profile_name</span><span class="o">=</span><span class="n">profile_name</span><span class="p">,</span> <span class="n">region_name</span><span class="o">=</span><span class="n">region_name</span><span class="p">)</span>
+    <span class="n">sns_client</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s1">&#39;sns&#39;</span><span class="p">)</span>
+    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="n">sns_client</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">TopicArn</span><span class="o">=</span><span class="n">aws_sns_topic</span><span class="p">,</span>
+                       <span class="n">Message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span>
+                       <span class="n">Subject</span><span class="o">=</span><span class="n">subject</span><span class="p">)</span>
+    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Sent error message to SNS topic.&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="report_click_exception_to_sns">
+<a class="viewcode-back" href="../../../api/vptstools.bin.html#vptstools.bin.click_exception.report_click_exception_to_sns">[docs]</a>
+<span class="k">def</span> <span class="nf">report_click_exception_to_sns</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">info_name</span><span class="p">,</span> <span class="n">exc</span><span class="p">,</span> <span class="n">aws_sns_topic</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">profile_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">region_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Push exceptions from click to SNS topic, used as handler for click applications</span>
 
 <span class="sd">    Parameters</span>
@@ -150,14 +177,10 @@
 <span class="sd">    region_name : aws region (optional)</span>
 <span class="sd">        AWS region</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">session</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span><span class="n">profile_name</span><span class="o">=</span><span class="n">profile_name</span><span class="p">,</span> <span class="n">region_name</span><span class="o">=</span><span class="n">region_name</span><span class="p">)</span>
-    <span class="n">sns_client</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s1">&#39;sns&#39;</span><span class="p">)</span>
     <span class="n">sns_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;CLI routine &#39;</span><span class="si">{</span><span class="n">info_name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">cmd</span><span class="o">.</span><span class="n">_original_args</span><span class="si">}</span><span class="s2">&#39; failed raising error: &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>  <span class="c1"># noqa</span>
-    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="n">sns_message</span><span class="p">)</span>
-    <span class="n">sns_client</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">TopicArn</span><span class="o">=</span><span class="n">aws_sns_topic</span><span class="p">,</span>
-                       <span class="n">Message</span><span class="o">=</span><span class="n">sns_message</span><span class="p">,</span>
-                       <span class="n">Subject</span><span class="o">=</span><span class="n">subject</span><span class="p">)</span>
-    <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">&quot;Sent error message to SNS topic.&quot;</span><span class="p">)</span></div>
+    <span class="n">report_message_to_sns</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="n">sns_message</span><span class="p">,</span> <span class="n">aws_sns_topic</span><span class="p">,</span>
+                          <span class="n">profile_name</span><span class="o">=</span><span class="n">profile_name</span><span class="p">,</span> <span class="n">region_name</span><span class="o">=</span><span class="n">region_name</span><span class="p">)</span></div>
+
 
 </pre></div>
 
