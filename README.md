@@ -84,10 +84,12 @@ Other modules in the package are:
 - {py:mod}`vptstools.s3`: This module contains the functions to manage the 
   aloft data repository](https://aloftdata.eu/browse/) S3 Bucket.
 
-The CLI checks the modified date of the uploaded ODIM hdf5 files and applies the aggregation/conversion for the files modified within the defined time window:
+## CLI endpoints
 
-```shell
-vph5_to_vpts --modified-days-ago=1
+In addition to using functions in Python scripts, two vptstools functions can be called from the command line:
+
+```{eval-rst}
+.. include:: click.rst
 ```
 
 ## Development instructions
@@ -118,7 +120,7 @@ tox -av          # List all available tasks
 
 To create a pinned `requirements.txt` set of dependencies, [pip-tools](https://github.com/jazzband/pip-tools) is used:
 
-```commandline
+```bash
 pip-compile --extra transfer --resolver=backtracking`
 ```
 
