@@ -428,12 +428,12 @@ class TestHandleManifest:
         """Individual inventory items are correctly parsed from manifest file"""
         inventory_files = list(
             list_manifest_file_keys(
-                "aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json"
+                "inbo-aloft-prod-eu-west-1-inventory/aloftdata/aloftdata-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json"
             )
         )
         assert len(inventory_files) == 1
         assert (
-            inventory_files[0]["key"] == "aloft/aloft-hdf5-files-inventory/data/"
+            inventory_files[0]["key"] == "aloftdata/aloftdata-hdf5-files-inventory/data/"
             "dummy_inventory.csv.gz"
         )
 
@@ -452,13 +452,13 @@ class TestHandleManifest:
         # run inventory with alternative profile
         inventory_files = list(
             list_manifest_file_keys(
-                "aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
+                "inbo-aloft-prod-eu-west-1-inventory/aloftdata/aloftdata-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
                 storage_options={"profile": "my-aws-profile"},
             )
         )
         assert len(inventory_files) == 1
         assert (
-            inventory_files[0]["key"] == "aloft/aloft-hdf5-files-inventory/data/"
+            inventory_files[0]["key"] == "aloftdata/aloftdata-hdf5-files-inventory/data/"
             "dummy_inventory.csv.gz"
         )
         # clean up env variable
@@ -472,7 +472,7 @@ class TestHandleManifest:
             return_value=pd.Timestamp("2023-02-01 00:00:00", tz="UTC"),
         ):
             df_cov, days_to_create_vpts = handle_manifest(
-                "s3://aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
+                "s3://inbo-aloft-prod-eu-west-1-inventory/aloftdata/aloftdata-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
                 modified_days_ago="60days",
             )  # large enough number to get all inventory 'modified' items
             # When date-modified implies full scan, df_cov and days_to_create_vpts are the same
@@ -495,7 +495,7 @@ class TestHandleManifest:
             return_value=pd.Timestamp("2023-02-01 00:00:00", tz="UTC"),
         ):
             df_cov, days_to_create_vpts = handle_manifest(
-                "s3://aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
+                "s3://inbo-aloft-prod-eu-west-1-inventory/aloftdata/aloftdata-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
                 modified_days_ago="5days",
             )  # only subset of files is within the time window of  days
             # Coverage returns the full inventory overview
@@ -517,7 +517,7 @@ class TestHandleManifest:
             return_value=pd.Timestamp("2023-03-01 00:00:00", tz="UTC"),
         ):
             df_cov, days_to_create_vpts = handle_manifest(
-                "s3://aloft-inventory/aloft/aloft-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
+                "s3://inbo-aloft-prod-eu-west-1-inventory/aloftdata/aloftdata-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
                 modified_days_ago="1days",
             )  # only subset of files is within the time window of  days
             # Coverage returns the full inventory overview
