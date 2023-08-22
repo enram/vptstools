@@ -39,13 +39,13 @@ def test_e2e_cli(s3_inventory, path_inventory, tmp_path):
 
         # Compare resulting coverage file with reference coverage ---------------------
         with open(tmp_path / "coverage.csv", "wb") as f:
-            s3_inventory.download_fileobj("aloft", "coverage.csv", f)
+            s3_inventory.download_fileobj("aloftdata", "coverage.csv", f)
         filecmp.cmp(path_inventory / "coverage.csv", tmp_path / "coverage.csv")
 
         # Compare resulting daily file
         with open(tmp_path / "nosta_vpts_20230311.csv", "wb") as f:
             s3_inventory.download_fileobj(
-                "aloft", "baltrad/daily/nosta/2023/nosta_vpts_20230311.csv", f
+                "aloftdata", "baltrad/daily/nosta/2023/nosta_vpts_20230311.csv", f
             )
         filecmp.cmp(
             path_inventory / "nosta_vpts_20230311.csv",
@@ -55,7 +55,7 @@ def test_e2e_cli(s3_inventory, path_inventory, tmp_path):
         # Compare resulting monthly file
         with open(tmp_path / "nosta_vpts_202303.csv.gz", "wb") as f:
             s3_inventory.download_fileobj(
-                "aloft", "baltrad/monthly/nosta/2023/nosta_vpts_202303.csv.gz", f
+                "aloftdata", "baltrad/monthly/nosta/2023/nosta_vpts_202303.csv.gz", f
             )
         filecmp.cmp(
             path_inventory / "nosta_vpts_202303.csv.gz",

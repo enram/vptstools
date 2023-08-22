@@ -318,7 +318,7 @@ class TestOdimFilePath:
             odim_path.s3_path_setup(file_type)
             == f"{source}/{file_type}/{radar_code}/{year}"
         )
-        bucket = "aloft"
+        bucket = "aloftdata"
         assert (
             odim_path.s3_url_h5(bucket)
             == f"s3://{bucket}/{source}/{file_type}/{radar_code}/"
@@ -535,25 +535,25 @@ class TestHandleManifest:
         df_inventory = pd.DataFrame(
             [
                 {
-                    "repo": "aloft",
+                    "repo": "aloftdata",
                     "file": "baltrad/coverage.csv",
                     "size": 1,
                     "modified": pd.Timestamp("2023-01-31 00:00:00+0000", tz="UTC"),
                 },
                 {
-                    "repo": "aloft",
+                    "repo": "aloftdata",
                     "file": "baltrad/inventory.csv.gz",
                     "size": 1,
                     "modified": pd.Timestamp("2023-01-31 00:00:00+0000", tz="UTC"),
                 },
                 {
-                    "repo": "aloft",
+                    "repo": "aloftdata",
                     "file": "baltrad/manifest.json",
                     "size": 1,
                     "modified": pd.Timestamp("2023-01-31 00:00:00+0000", tz="UTC"),
                 },
                 {
-                    "repo": "aloft",
+                    "repo": "aloftdata",
                     "file": "baltrad/14azd6.checksum",
                     "size": 1,
                     "modified": pd.Timestamp("2023-01-31 00:00:00+0000", tz="UTC"),

@@ -19,8 +19,8 @@ from vptstools.bin.click_exception import catch_all_exceptions, report_click_exc
 # (load_dotenv doesn't override existing environment variables)
 load_dotenv()
 
-S3_BUCKET = os.environ.get("DESTINATION_BUCKET", "aloft")
 INVENTORY_BUCKET = os.environ.get("INVENTORY_BUCKET", "aloft-inventory")
+S3_BUCKET = os.environ.get("DESTINATION_BUCKET", "aloftdata")
 AWS_SNS_TOPIC = os.environ.get("SNS_TOPIC")
 AWS_PROFILE = os.environ.get("AWS_PROFILE", None)
 AWS_REGION = os.environ.get("AWS_REGION", "eu-west-1")

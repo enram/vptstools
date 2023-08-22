@@ -16,7 +16,7 @@ load_dotenv()
 AWS_SNS_TOPIC = os.environ.get("SNS_TOPIC")
 AWS_PROFILE = os.environ.get("AWS_PROFILE", None)
 AWS_REGION = os.environ.get("AWS_REGION", None)
-DESTINATION_BUCKET = os.environ.get("DESTINATION_BUCKET", "aloft")
+DESTINATION_BUCKET = os.environ.get("DESTINATION_BUCKET", "aloftdata")
 
 # Update reporting to SNS functionality
 report_sns = partial(report_exception_to_sns,
