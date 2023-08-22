@@ -8,7 +8,7 @@ import click
 from dotenv import load_dotenv
 import paramiko
 
-from vptstools.bin.click_exception import catch_all_exceptions, report_exception_to_sns
+from vptstools.bin.click_exception import catch_all_exceptions, report_click_exception_to_sns
 
 # Load environmental variables from file in dev (load_dotenv doesn't override existing environment variables)
 load_dotenv()
@@ -19,7 +19,7 @@ AWS_REGION = os.environ.get("AWS_REGION", None)
 DESTINATION_BUCKET = os.environ.get("DESTINATION_BUCKET", "aloft")
 
 # Update reporting to SNS functionality
-report_sns = partial(report_exception_to_sns,
+report_sns = partial(report_click_exception_to_sns,
                      aws_sns_topic=AWS_SNS_TOPIC,
                      subject=f"Transfer from Baltrad FTP to s3 bucket {DESTINATION_BUCKET} failed.",
                      profile_name=AWS_PROFILE,
