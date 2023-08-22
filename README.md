@@ -34,7 +34,8 @@ to a CSV file:
 ```python
 from vptstools.vpts import vp
 
-file_path_h5 = "./NLDBL_vp_20080215T0010_NL50_v0-3-20.h5"
+# Download https://aloftdata.s3-eu-west-1.amazonaws.com/baltrad/hdf5/nldbl/2013/11/23/nldbl_vp_20131123T0000Z.h5
+file_path_h5 = "./nldbl_vp_20131123T0000Z.h5"
 df_vp = vp(file_path_h5)
 ```
 
@@ -44,7 +45,8 @@ df_vp = vp(file_path_h5)
 from pathlib import Path
 from vptstools.vpts import vpts
 
-file_paths = sorted(Path("./data").rglob("*.h5"))  # Get all h5 files within the data directory
+# Download files to data directory from e.g. https://aloftdata.eu/browse/?prefix=baltrad/hdf5/nldbl/2013/11/23/
+file_paths = sorted(Path("./data").rglob("*.h5"))  # Get all H5 files within the data directory
 df_vpts = vpts(file_paths)
 ```
 
