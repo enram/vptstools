@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools.bin namespace &mdash; vptstools 0.2.0.post1.dev2+gc87c4c3 documentation</title>
+  <title>vptstools.bin namespace &mdash; vptstools 0.2.1.post1.dev1+g7b17c6d documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,7 +13,7 @@
   
         <script src="../_static/jquery.js?v=5d32c60e"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=9d35a5bd"></script>
+        <script src="../_static/documentation_options.js?v=1bcdacda"></script>
         <script src="../_static/doctools.js?v=888ff710"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             vptstools
           </a>
               <div class="version">
-                0.2.0.post1.dev2+gc87c4c3
+                0.2.1.post1.dev1+g7b17c6d
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -147,6 +147,37 @@
 </section>
 <section id="vptstools-bin-transfer-baltrad-module">
 <h2>vptstools.bin.transfer_baltrad module<a class="headerlink" href="#vptstools-bin-transfer-baltrad-module" title="Link to this heading"></a></h2>
+<dl class="py function" id="module-vptstools.bin.transfer_baltrad">
+<dt class="sig sig-object py" id="vptstools.bin.transfer_baltrad.extract_metadata_from_filename">
+<span class="sig-prename descclassname"><span class="pre">vptstools.bin.transfer_baltrad.</span></span><span class="sig-name descname"><span class="pre">extract_metadata_from_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#tuple" title="(in Python v3.10)"><span class="pre">tuple</span></a></span></span><a class="reference internal" href="../_modules/vptstools/bin/transfer_baltrad.html#extract_metadata_from_filename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.bin.transfer_baltrad.extract_metadata_from_filename" title="Link to this definition"></a></dt>
+<dd><p>Extract the metadata from the filename (format such as ‘fropo_vp_20220809T051000Z_0xb’)</p>
+<p>All returned values are strings, month and days are 0-prefixed if
+they are single-digit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Filename of a h5 incoming file from FTP</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vptstools.bin.transfer_baltrad.s3_key_exists">
+<span class="sig-prename descclassname"><span class="pre">vptstools.bin.transfer_baltrad.</span></span><span class="sig-name descname"><span class="pre">s3_key_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">s3_client</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.10/library/functions.html#bool" title="(in Python v3.10)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../_modules/vptstools/bin/transfer_baltrad.html#s3_key_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.bin.transfer_baltrad.s3_key_exists" title="Link to this definition"></a></dt>
+<dd><p>Check if an S3 key is existing in a bucket</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Key of the object</p></li>
+<li><p><strong>bucket</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Bucket name to search for key</p></li>
+<li><p><strong>s3_client</strong> (<em>boto3.Session</em>) – Boto3 session</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3.10/library/functions.html#bool" title="(in Python v3.10)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="vptstools-bin-vph5-to-vpts-module">
 <h2>vptstools.bin.vph5_to_vpts module<a class="headerlink" href="#vptstools-bin-vph5-to-vpts-module" title="Link to this heading"></a></h2>

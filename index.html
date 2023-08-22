@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools &mdash; vptstools 0.2.0.post1.dev2+gc87c4c3 documentation</title>
+  <title>vptstools &mdash; vptstools 0.2.1.post1.dev1+g7b17c6d documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,7 +13,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=9d35a5bd"></script>
+        <script src="_static/documentation_options.js?v=1bcdacda"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             vptstools
           </a>
               <div class="version">
-                0.2.0.post1.dev2+gc87c4c3
+                0.2.1.post1.dev1+g7b17c6d
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -159,6 +159,30 @@ aloft data repository](<a class="reference external" href="https://aloftdata.eu/
 <h2>CLI endpoints<a class="headerlink" href="#cli-endpoints" title="Link to this heading"></a></h2>
 <p>In addition to using functions in Python scripts, two vptstools routines are available to be called from the command line
 after installing the package:</p>
+<section id="transfer-baltrad">
+<h3>transfer_baltrad<a class="headerlink" href="#transfer-baltrad" title="Link to this heading"></a></h3>
+<p>Sync files from Baltrad FTP server to the aloft s3 bucket.</p>
+<p>This function connects via SFTP to the BALTRAD server, downloads the available <code class="docutils literal notranslate"><span class="pre">vp</span></code> files (<code class="docutils literal notranslate"><span class="pre">pvol</span></code> gets ignored),
+from the FTP server and upload the h5 file to the ‘aloft’ S3 bucket according to the defined folder path name
+convention. Existing files are ignored.</p>
+<p>Designed to be executed via a simple scheduled job like cron or scheduled cloud function. Remark that
+files disappear after a few days on the BALTRAD server.</p>
+<p>Configuration is loaded from the following environmental variables:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">FTP_HOST</span></code>: Baltrad FTP host ip address</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FTP_PORT</span></code>: Baltrad FTP host port</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FTP_USERNAME</span></code>: Baltrad FTP user name</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FTP_PWD</span></code>: Baltrad FTP password</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FTP_DATADIR</span></code>: Baltrad FTP directory to load data files from</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DESTINATION_BUCKET</span></code>: AWS S3 bucket to write data to</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SNS_TOPIC</span></code>: AWS SNS topic to report when routine fails</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AWS_REGION</span></code>: AWS region where the SNS alerting is defined</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AWS_PROFILE</span></code>: AWS profile (mainly useful for local development when working with multiple AWS profiles)</p></li>
+</ul>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>transfer_baltrad<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
 <section id="vph5-to-vpts">
 <h3>vph5_to_vpts<a class="headerlink" href="#vph5-to-vpts" title="Link to this heading"></a></h3>
 <p>Convert and aggregate h5 vp files to daily and monthly vpts-csv files on S3 bucket</p>
