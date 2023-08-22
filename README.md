@@ -4,9 +4,7 @@
 [![PyPI-Server](https://img.shields.io/pypi/v/vptstools.svg)](https://pypi.org/project/vptstools/)
 [![.github/workflows/release.yml](https://github.com/enram/vptstools/actions/workflows/release.yml/badge.svg)](https://github.com/enram/vptstools/actions/workflows/release.yml)
 
-vptstools is a Python library to transfer and convert VPTS data. VPTS (vertical profile time series) express the 
-density, speed and direction of biological signals such as birds, bats and insects within a weather radar volume, 
-grouped into altitude layers (height) and measured over time (datetime).
+vptstools is a Python library to transfer and convert VPTS data. VPTS (vertical profile time series) express the density, speed and direction of biological signals such as birds, bats and insects within a weather radar volume, grouped into altitude layers (height) and measured over time (datetime).
 
 ## Installation
 
@@ -24,10 +22,7 @@ pip install vptstools\[transfer\]
 
 ## Usage
 
-As a library user interested in working with ODIM H5 and VPTS files, the most important functions provided by the 
-package are {py:func}`vptstools.vpts.vp`, {py:func}`vptstools.vpts.vpts` and {py:func}`vptstools.vpts.vpts_to_csv`, 
-which can be used respectively to convert a single H5 file, a set of H5 files and save a VPTS DataFrame 
-to a CSV file:
+As a library user interested in working with ODIM H5 and VPTS files, the most important functions provided by the package are {py:func}`vptstools.vpts.vp`, {py:func}`vptstools.vpts.vpts` and {py:func}`vptstools.vpts.vpts_to_csv`, which can be used respectively to convert a single H5 file, a set of H5 files and save a VPTS DataFrame to a CSV file:
 
 - Convert a single local ODIM H5 file to a VP DataFrame:
 
@@ -59,15 +54,10 @@ vpts_to_csv(df_vpts, "vpts.csv")
 ```
 
 ```{note} 
-Both {py:func}`vptstools.vpts.vp` and {py:func}`vptstools.vpts.vpts` have 2 other optional parameters related to the
-[VPTS CSV data exchange format](https://aloftdata.eu/vpts-csv/). The `vpts_csv_version` parameter defines the version of the 
-[VPTS CSV data exchange standard](https://aloftdata.eu/vpts-csv/) (default v1) whereas the `source_file` provides a way to define
-a custom [source_file](https://aloftdata.eu/vpts-csv/#source_file) field to reference the source from which the 
-data were derived. 
+Both {py:func}`vptstools.vpts.vp` and {py:func}`vptstools.vpts.vpts` have 2 other optional parameters related to the [VPTS CSV data exchange format](https://aloftdata.eu/vpts-csv/). The `vpts_csv_version` parameter defines the version of the VPTS CSV data exchange standard (default v1) whereas the `source_file` provides a way to define a custom [source_file](https://aloftdata.eu/vpts-csv/#source_file) field to reference the source from which the data were derived. 
 ```
 
-To validate a VPTS DataFrame against the frictionless data schema as defined by the VPTS CSV data exchange 
-format and return a report, use the {py:func}`vptstools.vpts.validate_vpts`:
+To validate a VPTS DataFrame against the frictionless data schema as defined by the VPTS CSV data exchange format and return a report, use the {py:func}`vptstools.vpts.validate_vpts`:
 
 ```python
 from vptstools.vpts import validate_vpts
@@ -78,18 +68,13 @@ report.stats["errors"]
 
 Other modules in the package are:
 
-- {py:mod}`vptstools.odimh5`: This module extents the implementation of the original 
-  [odimh5 package](https://pypi.org/project/odimh5/) which is now deprecated.
-- {py:mod}`vptstools.vpts_csv`: This module contains - for each version of the VPTS CSV exchange format - the 
-  corresponding implementation which can be used to generate a VP or VPTS DataFrame. For more information on how to
-  support a new version of the VPTS CSV format, see [contributing docs](#new-vptscsv-version). 
-- {py:mod}`vptstools.s3`: This module contains the functions to manage the 
-  aloft data repository](https://aloftdata.eu/browse/) S3 bucket.
+- {py:mod}`vptstools.odimh5`: This module extents the implementation of the original [odimh5 package](https://pypi.org/project/odimh5/) which is now deprecated.
+- {py:mod}`vptstools.vpts_csv`: This module contains - for each version of the VPTS CSV exchange format - the corresponding implementation which can be used to generate a VP or VPTS DataFrame. For more information on how to support a new version of the VPTS CSV format, see [contributing docs](#new-vptscsv-version). 
+- {py:mod}`vptstools.s3`: This module contains the functions to manage the [Aloft data repository](https://aloftdata.eu/browse/) S3 bucket.
 
 ## CLI endpoints
 
-In addition to using functions in Python scripts, two vptstools routines are available to be called from the command line
-after installing the package:
+In addition to using functions in Python scripts, two vptstools routines are available to be called from the command line after installing the package:
 
 ```{eval-rst}
 .. include:: click.rst
@@ -97,8 +82,7 @@ after installing the package:
 
 ## Development instructions
 
-See [contributing](docs/contributing.md) for a detailed overview and set of guidelines. If familiar with `tox`, 
-the setup of a development environment boils down to:
+See [contributing](docs/contributing.md) for a detailed overview and set of guidelines. If familiar with `tox`, the setup of a development environment boils down to:
 
 ```shell
 tox -e dev   # Create development environment with venv and register an ipykernel. 
