@@ -1,4 +1,5 @@
 # Contributors
 
-* Nicola Noé
 * Stijn Van Hoey
+* Nicolas Noé
+* Peter Desmet
