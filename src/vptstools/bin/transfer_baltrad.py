@@ -21,7 +21,7 @@ DESTINATION_BUCKET = os.environ.get("DESTINATION_BUCKET", "aloft")
 # Update reporting to SNS functionality
 report_sns = partial(report_exception_to_sns,
                      aws_sns_topic=AWS_SNS_TOPIC,
-                     subject=f"Transfer from Baltrad FTP to s3 bucket {DESTINATION_BUCKET} failed.",
+                     subject=f"Transfer from Baltrad FTP to S3 bucket {DESTINATION_BUCKET} failed.",
                      profile_name=AWS_PROFILE,
                      region_name=AWS_REGION
                      )
@@ -56,7 +56,7 @@ def extract_metadata_from_filename(filename: str) -> tuple:
     Parameters
     ----------
     filename : str
-        Filename of a h5 incoming file from FTP
+        Filename of a H5 incoming file from FTP
     """
     elems = filename.split("_")
     radar_code = elems[0]
@@ -71,10 +71,10 @@ def extract_metadata_from_filename(filename: str) -> tuple:
 
 @click.command(cls=catch_all_exceptions(click.Command, handler=report_sns))  # Add SNS-reporting to exception
 def cli():
-    """Sync files from Baltrad FTP server to the aloft s3 bucket.
+    """Sync files from Baltrad FTP server to the Aloft S3 bucket.
 
-    This function connects via SFTP to the BALTRAD server, downloads the available ``vp`` files (``pvol`` gets ignored),
-    from the FTP server and upload the h5 file to the 'aloft' S3 bucket according to the defined folder path name
+    This function connects via SFTP to the BALTRAD server, downloads the available VP files (PVOL gets ignored),
+    from the FTP server and upload the H5 file to the Aloft S3 bucket according to the defined folder path name
     convention. Existing files are ignored.
 
     Designed to be executed via a simple scheduled job like cron or scheduled cloud function. Remark that
@@ -128,7 +128,7 @@ def cli():
             for entry in sftp.listdir_attr():
                 if "_vp_" in entry.filename:  # PVOLs and other files are ignored
                     click.echo(
-                        f"{entry.filename} is a vp file, we need to consider it... "
+                        f"{entry.filename} is a VP file, we need to consider it... "
                     )
 
                     radar_code, year, month_str, day_str = extract_metadata_from_filename(

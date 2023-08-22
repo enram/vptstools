@@ -4,7 +4,7 @@ from vptstools.odimh5 import ODIMReader, InvalidSourceODIM, check_vp_odim
 
 
 def test_open_and_expose_hdf5(file_path_pvol):
-    """ODIMReader can open a file, and then expose a hdf5 attribute"""
+    """ODIMReader can open a file, and then expose a 'hdf5' attribute"""
     odim = ODIMReader(file_path_pvol)
     assert hasattr(odim, "hdf5")
 
@@ -22,7 +22,7 @@ def test_root_date_str(file_path_pvol):
 
 
 def test_root_datetime(file_path_pvol):
-    """Root datetime is correctly parsed from h5"""
+    """Root datetime is correctly parsed from H5"""
     with ODIMReader(file_path_pvol) as odim:
         dt = odim.root_datetime
 
@@ -124,14 +124,14 @@ def test_where(file_path_pvol):
 
 
 def test_check_vp_odim_failure(path_with_wrong_h5):
-    """Invalid h5 vp file raises InvalidSourceODIM exception"""
+    """Invalid H5 VP file raises InvalidSourceODIM exception"""
     with pytest.raises(InvalidSourceODIM):
         with ODIMReader(path_with_wrong_h5 / "dummy.h5") as odim:
             check_vp_odim(odim)
 
 
 def test_check_pvol_odim_failure(file_path_pvol):
-    """Valid h5 pvol file raises InvalidSourceODIM exception"""
+    """Valid H5 PVOL file raises InvalidSourceODIM exception"""
     with pytest.raises(InvalidSourceODIM):
         with ODIMReader(file_path_pvol) as odim:
             check_vp_odim(odim)

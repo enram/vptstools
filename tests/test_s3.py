@@ -383,7 +383,7 @@ class TestOdimFilePath:
     )
     def test_extract_coverage_group_from_s3_inventory(self, file_path, components):
         """combination of source, type, radar_code and date are used
-        as grouping level for coverage/daily-vpts"""
+        as grouping level for coverage and daily VPTS"""
         assert extract_daily_group_from_inventory
 
     def test_last_modified_from_manifest_subfile(self):

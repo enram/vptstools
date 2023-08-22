@@ -178,12 +178,12 @@ class BirdProfile:
 
 
 def vp(file_path, vpts_csv_version="v1.0", source_file=""):
-    """Convert ODIM h5 file to a DataFrame
+    """Convert ODIM H5 file to a DataFrame
 
     Parameters
     ----------
     file_path : Path
-        File Path of ODIM h5
+        File Path of ODIM H5
     vpts_csv_version : str, default ""
         Ruleset with the VPTS CSV ruleset to use, e.g. v1.0
     source_file : str | callable
@@ -200,7 +200,7 @@ def vp(file_path, vpts_csv_version="v1.0", source_file=""):
     >>> vp(file_path,
     ...    source_file="s3://aloft/baltrad/hdf5/2022/11/11/bejab_vp_20221111T233000Z_0x9.h5")  #noqa
 
-    Use file name itself as source_file representation in vp file using a custom
+    Use file name itself as source_file representation in VP file using a custom
     callable function
 
     >>> vp(file_path, source_file=lambda x: Path(x).name)
@@ -221,12 +221,12 @@ def _convert_to_source(file_path):
 
 
 def vpts(file_paths, vpts_csv_version="v1.0", source_file=None):
-    """Convert set of h5 files to a DataFrame all as string
+    """Convert set of H5 files to a DataFrame all as string
 
     Parameters
     ----------
     file_paths : Iterable of file paths
-        Iterable of ODIM h5 file paths
+        Iterable of ODIM H5 file paths
     vpts_csv_version : str
         Ruleset with the VPTS CSV ruleset to use, e.g. v1.0
     source_file : callable, optional
@@ -243,7 +243,7 @@ def vpts(file_paths, vpts_csv_version="v1.0", source_file=None):
     >>> file_paths = sorted(Path("../data/raw/baltrad/").rglob("*.h5"))
     >>> vpts(file_paths)
 
-    Use file name itself as source_file representation in vp file using a
+    Use file name itself as source_file representation in VP file using a
     custom callable function
 
     >>> def path_to_source(file_path):
@@ -276,14 +276,14 @@ def vpts(file_paths, vpts_csv_version="v1.0", source_file=None):
 
 
 def vpts_to_csv(df, file_path):
-    """Write vp or vpts to file
+    """Write VP or VPTS to file
 
     Parameters
     ----------
     df : pandas.DataFrame
-        DataFrame with vp or vpts data
+        DataFrame with VP or VPTS data
     file_path : Path | str
-        File path to store the vpts file
+        File path to store the VPTS file
     """
     # check for str input of Path
     if not isinstance(file_path, Path):
@@ -295,7 +295,7 @@ def vpts_to_csv(df, file_path):
 
 
 def validate_vpts(df, schema_version="v1.0"):
-    """Validate vpts DataFrame against the frictionless data schema and return report
+    """Validate VPTS DataFrame against the frictionless data schema and return report
 
     Parameters
     ----------
@@ -323,7 +323,7 @@ def _write_resource_descriptor(vpts_file_path: Path, schema_version="v1.0"):
     Parameters
     ----------
     vpts_file_path : pathlib.Path
-        File path of the resource (vpts file) written to disk
+        File path of the resource (VPTS file) written to disk
     schema_version :
         Version according to a release tag of https://github.com/enram/vpts-csv/tags
     """
