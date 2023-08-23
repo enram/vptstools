@@ -29,7 +29,7 @@ import pandas as pd
 """
 IMPORTANT!
 
-When creating a new version of the vpts specification class (VptsCsvVx), add this as additional vpts version
+When creating a new version of the VPTS specification class (VptsCsvVx), add this as additional VPTS version
 to the pytest parameterize decorators of these test classes to apply these tests to the new version as well. All
 tests should be VptsCsv independent.
 """
@@ -73,7 +73,7 @@ class TestVpts:
         )
 
     def test_column_order(self, vpts_version, path_with_vp):
-        """vpts column names are present and have correct sequence of VPTS CSV standard"""
+        """VPTS column names are present and have correct sequence of VPTS CSV standard"""
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
         vpts_spec = get_vpts_version(vpts_version)
@@ -91,7 +91,7 @@ class TestVpts:
         assert df_.duplicated().sum() == 75
 
     def test_sorting(self, vpts_version, path_with_vp):
-        """vpts data is sorted, e.g. 'radar > timestamp > height'"""
+        """VPTS data is sorted, e.g. 'radar > timestamp > height'"""
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
         vpts_spec = get_vpts_version(vpts_version)
@@ -107,39 +107,39 @@ class TestVpts:
         pd.testing.assert_frame_equal(df_pre, df_post)
 
     def test_nodata(self, vpts_version, path_with_vp):
-        """vpts nodata values are serialized correctly in the output"""
+        """VPTS nodata values are serialized correctly in the output"""
         file_path = sorted(path_with_vp.rglob("bewid*.h5"))[0]
         vpts_spec = get_vpts_version(vpts_version)
         with ODIMReader(file_path) as odim_vp:
             bird_profile = BirdProfile.from_odim(odim_vp, file_path.name)
-            # raw data as saved in the hdf5 file
+            # raw data as saved in the HDF5 file
             dd_raw = np.array(
                 odim_vp.hdf5["dataset1"]["data2"]["data"]
             ).flatten()  # data2 -> dd
             dd_nodata = odim_vp.hdf5["dataset1"]["data2"]["what"].attrs["nodata"]
         # values after conversion
         dd_vpts = bird_profile.to_vp(vpts_spec)["dd"]
-        # nodata marked in vpts version need to be the same as nodata marked in raw hdf5 data
+        # nodata marked in VPTS version need to be the same as nodata marked in raw HDF5 data
         assert ((dd_vpts == vpts_spec.nodata) == (dd_raw == dd_nodata)).all()
 
     def test_undetect(self, vpts_version, path_with_vp):
-        """vpts undetect values are serialized correctly in the output"""
+        """VPTS undetect values are serialized correctly in the output"""
         file_path = sorted(path_with_vp.rglob("bejab*.h5"))[0]
         vpts_spec = get_vpts_version(vpts_version)
         with ODIMReader(file_path) as odim_vp:
             bird_profile = BirdProfile.from_odim(odim_vp, file_path.name)
-            # raw data as saved in the hdf5 file
+            # raw data as saved in the HDF5 file
             ff_raw = np.array(
                 odim_vp.hdf5["dataset1"]["data1"]["data"]
             ).flatten()  # data1 -> ff
             ff_undetect = odim_vp.hdf5["dataset1"]["data1"]["what"].attrs["undetect"]
         # values after conversion
         ff_vpts = bird_profile.to_vp(vpts_spec)["ff"]
-        # undetect marked in vpts version need to be the same as undetect marked in raw hdf5 data
+        # undetect marked in VPTS version need to be the same as undetect marked in raw HDF5 data
         assert ((ff_vpts == vpts_spec.undetect) == (ff_raw == ff_undetect)).all()
 
     def test_heights_all_the_same(self, vpts_version, path_with_vp):
-        """vpts data contains the same levels/heights for each timestamp/radar"""
+        """VPTS data contains the same levels/heights for each timestamp/radar"""
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
         levels = df_vpts.groupby(["radar", "datetime"])["height"].unique()
@@ -174,7 +174,7 @@ class TestVpts:
         df = vp_metadata_only.to_vp(vpts_csv_version)
         assert df["vcp"].unique() == vpts_csv_version.nodata
 
-        # bird profile (vp) containing NULL values
+        # bird profile (VP) containing NULL values
         vp_metadata_only.how["vcp"] = "NULL"
         df = vp_metadata_only.to_vp(vpts_csv_version)
         assert df["vcp"].unique() == vpts_csv_version.nodata
@@ -236,7 +236,7 @@ class TestVpts:
         assert df_vpts["source_file"].str.startswith("s3://aloft/baltrad").all()
 
     def test_vp_invalid_file(self, vpts_version, path_with_wrong_h5):  # noqa
-        """Invalid h5 vp file raises InvalidSourceODIM exceptin"""
+        """Invalid HDF5 VP file raises InvalidSourceODIM exceptin"""
         with pytest.raises(InvalidSourceODIM):
             vp(path_with_wrong_h5 / "dummy.h5")
 
@@ -245,7 +245,7 @@ class TestVpts:
         AbstractVptsCsv.__abstractmethods__ = set()
 
         class Dummy(AbstractVptsCsv):
-            """Dummn subclass"""
+            """Dummy subclass"""
 
         vpts_dummy = Dummy()
         assert vpts_dummy.nodata == ""
@@ -275,7 +275,7 @@ class TestVptsToCsv:
         assert not (tmp_path / DESCRIPTOR_FILENAME).exists()
 
     def test_path_as_str(self, vpts_version, path_with_vp, tmp_path):
-        """To csv support a file path provided as str instead of Path as well"""
+        """To CSV support a file path provided as str instead of Path as well"""
         file_paths = sorted(path_with_vp.rglob("*.h5"))
         df_vpts = vpts(file_paths, vpts_version)
         custom_folder = tmp_path / "SUBFOLDER"
@@ -285,11 +285,11 @@ class TestVptsToCsv:
 
 class TestBirdProfile:
     def test_from_odim(self, path_with_vp):
-        """odim format is correctly mapped"""
+        """ODIM format is correctly mapped"""
         assert True  # TODO
 
     def test_sortable(self, vp_metadata_only):
-        """vp can be sorted on datetime"""
+        """VP can be sorted on datetime"""
         vp_dict = dataclasses.asdict(vp_metadata_only)
         vp_dict["datetime"] = datetime.datetime(
             2030, 11, 14, 19, 5, tzinfo=datetime.timezone.utc
@@ -308,7 +308,7 @@ class TestBirdProfile:
     def test_source_file(self, vp_metadata_only):
         """BirdProfile can be created with a source_file reference.
 
-        No checks on the format are done (checks are only linked to a certain vpts-csv version when converting to vp).
+        No checks on the format are done (checks are only linked to a certain VPTS CSV version when converting to VP).
         """
         vp_dict = dataclasses.asdict(vp_metadata_only)
         source_file = (

@@ -17,7 +17,7 @@ class ODIMReader(object):
     """Read ODIM (HDF5) files with context manager
 
     Should be used with the "with" statement  (context manager) to
-    properly close the h5 file.
+    properly close the HDF5 file.
 
     Attributes
     ----------

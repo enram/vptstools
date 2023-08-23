@@ -16,7 +16,7 @@ from vptstools.vpts_csv import (
 """
 IMPORTANT!
 
-When creating a new version of the vpts specification class (VptsCsvVx), add this as additional vpts version
+When creating a new version of the VPTS specification class (VptsCsvVx), add this as additional VPTS version
 to the pytest parameterize decorators of these test classes to apply these tests to the new version as well. All
 tests should be VptsCsv independent.
 """
@@ -27,13 +27,13 @@ class TestVptsVersionClass:
     """Test VPTS specification mapping classes"""
 
     def test_nodata_undetect_str(self, vpts_version):
-        """vpts returns nodata/undetect as str representation"""
+        """VPTS returns nodata/undetect as str representation"""
         vpts_spec = get_vpts_version(vpts_version)
         assert isinstance(vpts_spec.nodata, str)
         assert isinstance(vpts_spec.undetect, str)
 
     def test_sort_columns(self, vpts_version, path_with_vp):
-        """vpts returns a non-empty dictionary to define the mapping wit names available in the mapping"""
+        """VPTS returns a non-empty dictionary to define the mapping wit names available in the mapping"""
         vpts_spec = get_vpts_version(vpts_version)
         assert isinstance(vpts_spec.sort, dict)
         # non-empty dict
@@ -47,7 +47,7 @@ class TestVptsVersionClass:
         assert set(vpts_spec.sort.keys()).issubset(mapping.keys())
 
     def test_mapping_dict(self, vpts_version, path_with_vp):
-        """vpts returns a dictionary to translate specific variables"""
+        """VPTS returns a dictionary to translate specific variables"""
         vpts_spec = get_vpts_version(vpts_version)
         with ODIMReader(next(path_with_vp.rglob("*.h5"))) as odim_vp:
             vp = BirdProfile.from_odim(odim_vp)

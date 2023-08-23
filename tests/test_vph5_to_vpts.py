@@ -12,7 +12,7 @@ def test_help():
     result = runner.invoke(cli, ["--help"])
     assert result.exit_code == 0
     assert (
-        "Convert and aggregate h5 vp files to daily and monthly vpts-csv files"
+        "Convert and aggregate HDF5 VP files to daily and monthly VPTS CSV files"
         in result.output
     )
 
@@ -32,9 +32,9 @@ def test_e2e_cli(s3_inventory, path_inventory, tmp_path):
         result = runner.invoke(cli, ["--modified-days-ago", str(3)])
 
         # Check individual steps of the CLI command
-        assert "Create 1 daily vpts files" in result.output
-        assert "Create 1 monthly vpts files" in result.output
-        assert "Finished vpts update procedure" in result.output
+        assert "Create 1 daily VPTS files" in result.output
+        assert "Create 1 monthly VPTS files" in result.output
+        assert "Finished VPTS update procedure" in result.output
         assert result.exception is None
 
         # Compare resulting coverage file with reference coverage ---------------------
@@ -81,7 +81,7 @@ def test_e2e_cli_all(s3_inventory, path_inventory, tmp_path, sns):
         result = runner.invoke(cli, ["--modified-days-ago", str(0)])
 
         # Check individual steps of the CLI command
-        assert "Create 5 daily vpts files" in result.output
+        assert "Create 5 daily VPTS files" in result.output
         assert "Recreate the full set of bucket files" in result.output
         #  test fails/stops after creation of first daily file (only files provided for test)
         assert "[WARNING] - During conversion" in result.output
