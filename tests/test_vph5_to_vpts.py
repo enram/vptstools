@@ -36,9 +36,10 @@ def test_e2e_cli(s3_inventory, path_inventory, tmp_path):
                                    ["--modified-days-ago", str(3)])
 
             # Check individual steps of the CLI command
-            assert "Create 1 daily vpts files" in result.output
-            assert "Create 1 monthly vpts files" in result.output
-            assert "Finished vpts update procedure" in result.output
+            print(result.output)
+            assert "Create 1 daily VPTS files" in result.output
+            assert "Create 1 monthly VPTS files" in result.output
+            assert "Finished VPTS update procedure" in result.output
             assert result.exception is None
 
             # Compare resulting coverage file with reference coverage ---------------------
