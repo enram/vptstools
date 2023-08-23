@@ -6,7 +6,7 @@
   "fileFormat" : "CSV",
   "fileSchema" : "Bucket, Key, Size, LastModifiedDate",
   "files" : [ {
-    "key" : "aloftdata/aloftdata-hdf5-files-inventory/data/dummy_inventory.csv.gz",
+    "key" : "dummy-aloftdata/dummy-aloftdata-hdf5-files-inventory/data/dummy_inventory.csv.gz",
     "size" : 1,
     "MD5checksum" : "DUMMY"
   }]

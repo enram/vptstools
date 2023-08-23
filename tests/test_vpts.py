@@ -42,7 +42,7 @@ def _convert_to_source_dummy(file_path):
 
 def _convert_to_source_s3(file_path):
     """Return the file name itself from a file path"""
-    return OdimFilePath.from_file_name(file_path, source="baltrad").s3_url_h5("aloft")
+    return OdimFilePath.from_file_name(file_path, source="baltrad").s3_url_h5("dummy-aloftdata")
 
 
 @pytest.mark.parametrize("vpts_version", ["v1.0"])
@@ -204,7 +204,7 @@ class TestVpts:
 
         # Use a conversion to S3 function
         df_vp = vp(file_path, vpts_version, _convert_to_source_s3)
-        assert df_vp["source_file"].str.startswith("s3://aloftdata/baltrad").all()
+        assert df_vp["source_file"].str.startswith("s3://dummy-aloftdata/baltrad").all()
 
     def test_vpts_no_source_file(self, vpts_version, path_with_vp):
         """The file name itself is used when no source_file reference is provided"""
@@ -233,7 +233,7 @@ class TestVpts:
 
         # Use a conversion to S3 function
         df_vpts = vpts(file_paths, vpts_version, _convert_to_source_s3)
-        assert df_vpts["source_file"].str.startswith("s3://aloftdata/baltrad").all()
+        assert df_vpts["source_file"].str.startswith("s3://dummy-aloftdata/baltrad").all()
 
     def test_vp_invalid_file(self, vpts_version, path_with_wrong_h5):  # noqa
         """Invalid h5 vp file raises InvalidSourceODIM exceptin"""

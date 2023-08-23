@@ -248,8 +248,6 @@ def vp_metadata_only():
 def path_inventory():
     """Return the folder containing minimal unit test files"""
     return SAMPlE_DATA_DIR / "inventory"
-
-
 @pytest.fixture(scope="function")
 def s3_inventory(aws_credentials, path_inventory):
     """Mocked AWS S3 inventory bucket with a manifest json example file included
@@ -276,13 +274,13 @@ def s3_inventory(aws_credentials, path_inventory):
             s3.upload_fileobj(
                 manifest_file,
                 "dummy-inventory",
-                "aloftdata/aloftdata-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
+                "dummy-aloftdata/dummy-aloftdata-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
             )
         with open(inventory, "rb") as inventory_file:
             s3.upload_fileobj(
                 inventory_file,
                 "dummy-inventory",
-                "aloftdata/aloftdata-hdf5-files-inventory/data/dummy_inventory.csv.gz",
+                "dummy-aloftdata/dummy-aloftdata-hdf5-files-inventory/data/dummy_inventory.csv.gz",
             )
 
         # Add example data to aloftdata mocked S3 bucket
