@@ -27,42 +27,44 @@ def test_e2e_cli(s3_inventory, path_inventory, tmp_path):
         "pandas.Timestamp.now",
         return_value=pd.Timestamp("2023-02-02 00:00:00", tz="UTC"),
     ):
+
         # Run CLI command `vph5_to_vpts` with limited modified period check to 3 days
         runner = CliRunner()
-        result = runner.invoke(cli,
-                               ["--modified-days-ago", str(3)],
-                               env={"DESTINATION_BUCKET": "dummy-aloftdata", "INVENTORY_BUCKET": "dummy-inventory"})
+        with runner.isolated_filesystem():
 
-        # Check individual steps of the CLI command
-        assert "Create 1 daily vpts files" in result.output
-        assert "Create 1 monthly vpts files" in result.output
-        assert "Finished vpts update procedure" in result.output
-        assert result.exception is None
+            result = runner.invoke(cli,
+                                   ["--modified-days-ago", str(3)])
 
-        # Compare resulting coverage file with reference coverage ---------------------
-        with open(tmp_path / "coverage.csv", "wb") as f:
-            s3_inventory.download_fileobj("dummy-aloftdata", "coverage.csv", f)
-        filecmp.cmp(path_inventory / "coverage.csv", tmp_path / "coverage.csv")
+            # Check individual steps of the CLI command
+            assert "Create 1 daily vpts files" in result.output
+            assert "Create 1 monthly vpts files" in result.output
+            assert "Finished vpts update procedure" in result.output
+            assert result.exception is None
 
-        # Compare resulting daily file
-        with open(tmp_path / "nosta_vpts_20230311.csv", "wb") as f:
-            s3_inventory.download_fileobj(
-                "dummy-aloftdata", "baltrad/daily/nosta/2023/nosta_vpts_20230311.csv", f
+            # Compare resulting coverage file with reference coverage ---------------------
+            with open(tmp_path / "coverage.csv", "wb") as f:
+                s3_inventory.download_fileobj("dummy-aloftdata", "coverage.csv", f)
+            filecmp.cmp(path_inventory / "coverage.csv", tmp_path / "coverage.csv")
+
+            # Compare resulting daily file
+            with open(tmp_path / "nosta_vpts_20230311.csv", "wb") as f:
+                s3_inventory.download_fileobj(
+                    "dummy-aloftdata", "baltrad/daily/nosta/2023/nosta_vpts_20230311.csv", f
+                )
+            filecmp.cmp(
+                path_inventory / "nosta_vpts_20230311.csv",
+                tmp_path / "nosta_vpts_20230311.csv",
             )
-        filecmp.cmp(
-            path_inventory / "nosta_vpts_20230311.csv",
-            tmp_path / "nosta_vpts_20230311.csv",
-        )
 
-        # Compare resulting monthly file
-        with open(tmp_path / "nosta_vpts_202303.csv.gz", "wb") as f:
-            s3_inventory.download_fileobj(
-                "dummy-aloftdata", "baltrad/monthly/nosta/2023/nosta_vpts_202303.csv.gz", f
+            # Compare resulting monthly file
+            with open(tmp_path / "nosta_vpts_202303.csv.gz", "wb") as f:
+                s3_inventory.download_fileobj(
+                    "dummy-aloftdata", "baltrad/monthly/nosta/2023/nosta_vpts_202303.csv.gz", f
+                )
+            filecmp.cmp(
+                path_inventory / "nosta_vpts_202303.csv.gz",
+                tmp_path / "nosta_vpts_202303.csv.gz",
             )
-        filecmp.cmp(
-            path_inventory / "nosta_vpts_202303.csv.gz",
-            tmp_path / "nosta_vpts_202303.csv.gz",
-        )
 
 
 def test_e2e_cli_all(s3_inventory, path_inventory, tmp_path, sns):

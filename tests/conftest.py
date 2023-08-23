@@ -1,5 +1,6 @@
 import os
 import datetime
+import os
 from pathlib import Path
 from typing import Callable, Any
 from unittest.mock import MagicMock, patch
@@ -125,6 +126,12 @@ def patch_aiobotocore() -> None:
 
 # ----------------------------------------------------------------------------------------------------------------------
 
+def pytest_generate_tests(metafunc):
+    """Set bucket and inventory to dummy versions as environmental variables during testing"""
+    os.environ['DESTINATION_BUCKET'] = "dummy-aloftdata"
+    os.environ['INVENTORY_BUCKET'] = "dummy-inventory"
+
+# ----------------------------------------------------------------------------------------------------------------------
 
 @pytest.fixture
 def path_with_vp():
@@ -248,6 +255,8 @@ def vp_metadata_only():
 def path_inventory():
     """Return the folder containing minimal unit test files"""
     return SAMPlE_DATA_DIR / "inventory"
+
+
 @pytest.fixture(scope="function")
 def s3_inventory(aws_credentials, path_inventory):
     """Mocked AWS S3 inventory bucket with a manifest json example file included
