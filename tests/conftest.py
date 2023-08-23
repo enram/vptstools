@@ -141,19 +141,19 @@ def path_with_vp():
 
 @pytest.fixture
 def path_with_wrong_h5():
-    """Return the folder containing wrong - not ODIM - hdf5 file"""
+    """Return the folder containing wrong - not ODIM - HDF5 file"""
     return SAMPlE_DATA_DIR / "vp_no_odim_h5"
 
 
 @pytest.fixture
 def path_with_pvol():
-    """Return the folder containing wrong ODIM hdf5 file (pvol)"""
+    """Return the folder containing wrong ODIM HDF5 file (PVOL)"""
     return SAMPlE_DATA_DIR / "vp_no_odim_h5"
 
 
 @pytest.fixture
 def file_path_pvol():
-    """Return minimal unit test file of pvol ODIM5"""
+    """Return minimal unit test file of PVOL ODIM5"""
     return SAMPlE_DATA_DIR / "odimh5" / "bewid_pvol_20170214T0000Z_0x1.h5"
 
 
@@ -261,7 +261,7 @@ def path_inventory():
 def s3_inventory(aws_credentials, path_inventory):
     """Mocked AWS S3 inventory bucket with a manifest json example file included
 
-    The example inventory file contains the following hdf5 files:
+    The example inventory file contains the following HDF5 files:
     source - radar_code - date - count   -> last modified
     baltrad - fiuta  - 2021 04 23 - 1    -> 2023-01-01
     baltrad - fiuta  - 2021 04 24 - 1    -> 2023-01-28

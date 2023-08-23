@@ -88,27 +88,25 @@ class OdimFilePath:
 
         Notes
         -----
-        File format is according to the following file format::
+        File names are expected to have the following format::
 
-            ccrrr_vp_yyyymmddhhmmss.h5
+            radar_type_yyyymmddThhmmextra.h5
 
-        with ``c`` the country code two-letter ids and ``rrr``
-        the radar three-letter id, e.g. bejab_vp_20161120235500.h5.
-        Path information in front of the h5 name itself are ignored.
+        with ``radar`` the 5-letter radar code, ``type`` the data type,
+        ``yyyymmdd`` the date and ``hhmm`` the hours and minutes.
+        ``T`` is optional, ``extra`` is ignored.
         """
 
         name_regex = re.compile(
-            r".*([a-zA-Z]{2})([a-zA-Z]{3})_([a-z]*)_(\d\d\d\d)(\d\d)(\d\d)T?"
-            r"(\d\d)(\d\d)(?:Z|00)?.*\.h5"
+            r".*([a-zA-Z]{5})_([a-z]*)_(\d\d\d\d)(\d\d)(\d\d)T?(\d\d)(\d\d).*\.h5"
         )
         match = re.match(name_regex, file_name)
         if match:
             file_name = Path(file_name).name
-            country, radar, data_type, year, month, day, hour, minute = match.groups()
-            radar_code = country + radar
+            radar_code, data_type, year, month, day, hour, minute = match.groups()
             return radar_code.lower(), data_type, year, month, day, hour, minute, file_name
         else:
-            raise ValueError(f"File name {file_name} is not a valid ODIM h5 file.")
+            raise ValueError(f"File name {file_name} is not a valid ODIM HDF5 file.")
 
     @property
     def country(self):
@@ -122,7 +120,7 @@ class OdimFilePath:
 
     @property
     def daily_vpts_file_name(self):
-        """Name of the corresponding daily vpts file"""
+        """Name of the corresponding daily VPTS file"""
         return f"{self.radar_code}_vpts_{self.year}{self.month}{self.day}.csv"
 
     def s3_path_setup(self, file_output):
@@ -138,17 +136,17 @@ class OdimFilePath:
 
     @property
     def s3_folder_path_h5(self):
-        """S3 key with the folder containing the h5 file"""
+        """S3 key with the folder containing the HDF5 file"""
         return f"{self.s3_path_setup('hdf5')}/{self.month}/{self.day}"
 
     @property
     def s3_file_path_daily_vpts(self):
-        """S3 key of the daily vpts file corresponding to the h5 file"""
+        """S3 key of the daily VPTS file corresponding to the HDF5 file"""
         return f"{self.s3_path_setup('daily')}/{self.daily_vpts_file_name}"
 
     @property
     def s3_file_path_monthly_vpts(self):
-        """S3 key of the monthly concatenated vpts file corresponding to the h5 file"""
+        """S3 key of the monthly concatenated VPTS file corresponding to the HDF5 file"""
         return (
             f"{self.s3_path_setup('monthly')}/"
             f"{self.radar_code}_vpts_{self.year}{self.month}.csv.gz"
@@ -188,7 +186,7 @@ def extract_daily_group_from_inventory(file_path):
     Parameters
     ----------
     file_path : str
-        File path of the ODIM h5 file. Only the file name is taken
+        File path of the ODIM HDF5 file. Only the file name is taken
         into account and a folder-path is ignored.
     """
     path_info = OdimFilePath.from_inventory(file_path)
@@ -263,7 +261,7 @@ def _handle_inventory(
         year, month, day) and the number of files in the S3 bucket for each group.
 
     """
-    # Filter for h5 files and extract source
+    # Filter for HDF5 files and extract source
     df["modified"] = pd.to_datetime(
         df["modified"], format="%Y-%m-%dT%H:%M:%S.%fZ", utc=True
     )
