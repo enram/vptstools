@@ -236,7 +236,7 @@ class TestVpts:
         assert df_vpts["source_file"].str.startswith("s3://aloft/baltrad").all()
 
     def test_vp_invalid_file(self, vpts_version, path_with_wrong_h5):  # noqa
-        """Invalid H5 VP file raises InvalidSourceODIM exceptin"""
+        """Invalid HDF5 VP file raises InvalidSourceODIM exceptin"""
         with pytest.raises(InvalidSourceODIM):
             vp(path_with_wrong_h5 / "dummy.h5")
 

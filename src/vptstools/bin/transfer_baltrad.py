@@ -56,7 +56,7 @@ def extract_metadata_from_filename(filename: str) -> tuple:
     Parameters
     ----------
     filename : str
-        Filename of a H5 incoming file from FTP
+        Filename of a HDF5 incoming file from FTP
     """
     elems = filename.split("_")
     radar_code = elems[0]
@@ -74,7 +74,7 @@ def cli():
     """Sync files from Baltrad FTP server to the Aloft S3 bucket.
 
     This function connects via SFTP to the BALTRAD server, downloads the available VP files (PVOL gets ignored),
-    from the FTP server and upload the H5 file to the Aloft S3 bucket according to the defined folder path name
+    from the FTP server and upload the HDF5 file to the Aloft S3 bucket according to the defined folder path name
     convention. Existing files are ignored.
 
     Designed to be executed via a simple scheduled job like cron or scheduled cloud function. Remark that

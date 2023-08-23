@@ -22,9 +22,9 @@ pip install vptstools\[transfer\]
 
 ## Usage
 
-As a library user interested in working with ODIM H5 and VPTS files, the most important functions provided by the package are {py:func}`vptstools.vpts.vp`, {py:func}`vptstools.vpts.vpts` and {py:func}`vptstools.vpts.vpts_to_csv`, which can be used respectively to convert a single H5 file, a set of H5 files and save a VPTS DataFrame to a CSV file:
+As a library user interested in working with ODIM HDF5 and VPTS files, the most important functions provided by the package are {py:func}`vptstools.vpts.vp`, {py:func}`vptstools.vpts.vpts` and {py:func}`vptstools.vpts.vpts_to_csv`, which can be used respectively to convert a single HDF5 file, a set of HDF5 files and save a VPTS DataFrame to a CSV file:
 
-- Convert a single local ODIM H5 file to a VP DataFrame:
+- Convert a single local ODIM HDF5 file to a VP DataFrame:
 
 ```python
 from vptstools.vpts import vp
@@ -34,14 +34,14 @@ file_path_h5 = "./nldbl_vp_20131123T0000Z.h5"
 df_vp = vp(file_path_h5)
 ```
 
-- Convert a set of locally stored ODIM H5 files to a VPTS DataFrame:
+- Convert a set of locally stored ODIM HDF5 files to a VPTS DataFrame:
 
 ```python
 from pathlib import Path
 from vptstools.vpts import vpts
 
 # Download files to data directory from e.g. https://aloftdata.eu/browse/?prefix=baltrad/hdf5/nldbl/2013/11/23/
-file_paths = sorted(Path("./data").rglob("*.h5"))  # Get all H5 files within the data directory
+file_paths = sorted(Path("./data").rglob("*.h5"))  # Get all HDF5 files within the data directory
 df_vpts = vpts(file_paths)
 ```
 

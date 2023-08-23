@@ -178,12 +178,12 @@ class BirdProfile:
 
 
 def vp(file_path, vpts_csv_version="v1.0", source_file=""):
-    """Convert ODIM H5 file to a DataFrame
+    """Convert ODIM HDF5 file to a DataFrame
 
     Parameters
     ----------
     file_path : Path
-        File Path of ODIM H5
+        File Path of ODIM HDF5
     vpts_csv_version : str, default ""
         Ruleset with the VPTS CSV ruleset to use, e.g. v1.0
     source_file : str | callable
@@ -221,12 +221,12 @@ def _convert_to_source(file_path):
 
 
 def vpts(file_paths, vpts_csv_version="v1.0", source_file=None):
-    """Convert set of H5 files to a DataFrame all as string
+    """Convert set of HDF5 files to a DataFrame all as string
 
     Parameters
     ----------
     file_paths : Iterable of file paths
-        Iterable of ODIM H5 file paths
+        Iterable of ODIM HDF5 file paths
     vpts_csv_version : str
         Ruleset with the VPTS CSV ruleset to use, e.g. v1.0
     source_file : callable, optional
