@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools.s3 &mdash; vptstools 0.2.2.post1.dev1+gf6545e0 documentation</title>
+  <title>vptstools.s3 &mdash; vptstools 0.2.2.post1.dev3+ge78f50f documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -12,7 +12,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=feddb932"></script>
+        <script src="../../_static/documentation_options.js?v=78048689"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -32,7 +32,7 @@
             vptstools
           </a>
               <div class="version">
-                0.2.2.post1.dev1+gf6545e0
+                0.2.2.post1.dev3+ge78f50f
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -178,24 +178,22 @@
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
-<span class="sd">        File format is according to the following file format::</span>
+<span class="sd">        File names are expected to have the following format::</span>
 
-<span class="sd">            ccrrr_vp_yyyymmddhhmmss.h5</span>
+<span class="sd">            radar_type_yyyymmddThhmmextra.h5</span>
 
-<span class="sd">        with ``c`` the country code two-letter ids and ``rrr``</span>
-<span class="sd">        the radar three-letter id, e.g. bejab_vp_20161120235500.h5.</span>
-<span class="sd">        Path information in front of the h5 name itself are ignored.</span>
+<span class="sd">        with ``radar`` the 5-letter radar code, ``type`` the data type,</span>
+<span class="sd">        ``yyyymmdd`` the date and ``hhmm`` the hours and minutes.</span>
+<span class="sd">        ``T`` is optional, ``extra`` is ignored.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">name_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
-            <span class="sa">r</span><span class="s2">&quot;.*([a-zA-Z]</span><span class="si">{2}</span><span class="s2">)([a-zA-Z]</span><span class="si">{3}</span><span class="s2">)_([a-z]*)_(\d\d\d\d)(\d\d)(\d\d)T?&quot;</span>
-            <span class="sa">r</span><span class="s2">&quot;(\d\d)(\d\d)(?:Z|00)?.*\.h5&quot;</span>
+            <span class="sa">r</span><span class="s2">&quot;.*([a-zA-Z]</span><span class="si">{5}</span><span class="s2">)_([a-z]*)_(\d\d\d\d)(\d\d)(\d\d)T?(\d\d)(\d\d).*\.h5&quot;</span>
         <span class="p">)</span>
         <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">name_regex</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
             <span class="n">file_name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
-            <span class="n">country</span><span class="p">,</span> <span class="n">radar</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
-            <span class="n">radar_code</span> <span class="o">=</span> <span class="n">country</span> <span class="o">+</span> <span class="n">radar</span>
+            <span class="n">radar_code</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">radar_code</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">file_name</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File name </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> is not a valid ODIM h5 file.&quot;</span><span class="p">)</span></div>

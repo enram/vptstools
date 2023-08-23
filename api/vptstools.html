@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools package &mdash; vptstools 0.2.2.post1.dev1+gf6545e0 documentation</title>
+  <title>vptstools package &mdash; vptstools 0.2.2.post1.dev3+ge78f50f documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,7 +13,7 @@
   
         <script src="../_static/jquery.js?v=5d32c60e"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=feddb932"></script>
+        <script src="../_static/documentation_options.js?v=78048689"></script>
         <script src="../_static/doctools.js?v=888ff710"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -35,7 +35,7 @@
             vptstools
           </a>
               <div class="version">
-                0.2.2.post1.dev1+gf6545e0
+                0.2.2.post1.dev3+ge78f50f
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -377,13 +377,13 @@ extension will be removed</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>File format is according to the following file format:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ccrrr_vp_yyyymmddhhmmss</span><span class="o">.</span><span class="n">h5</span>
+<p>File names are expected to have the following format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">radar_type_yyyymmddThhmmextra</span><span class="o">.</span><span class="n">h5</span>
 </pre></div>
 </div>
-<p>with <code class="docutils literal notranslate"><span class="pre">c</span></code> the country code two-letter ids and <code class="docutils literal notranslate"><span class="pre">rrr</span></code>
-the radar three-letter id, e.g. bejab_vp_20161120235500.h5.
-Path information in front of the h5 name itself are ignored.</p>
+<p>with <code class="docutils literal notranslate"><span class="pre">radar</span></code> the 5-letter radar code, <code class="docutils literal notranslate"><span class="pre">type</span></code> the data type,
+<code class="docutils literal notranslate"><span class="pre">yyyymmdd</span></code> the date and <code class="docutils literal notranslate"><span class="pre">hhmm</span></code> the hours and minutes.
+<code class="docutils literal notranslate"><span class="pre">T</span></code> is optional, <code class="docutils literal notranslate"><span class="pre">extra</span></code> is ignored.</p>
 </dd></dl>
 
 <dl class="py property">
