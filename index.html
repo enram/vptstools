@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools &mdash; vptstools 0.2.2.post1.dev13+g297d933 documentation</title>
+  <title>vptstools &mdash; vptstools 0.2.2.post1.dev15+g52af3b7 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,7 +13,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=8b39b4ab"></script>
+        <script src="_static/documentation_options.js?v=b4cdf19a"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             vptstools
           </a>
               <div class="version">
-                0.2.2.post1.dev13+g297d933
+                0.2.2.post1.dev15+g52af3b7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -127,12 +127,12 @@
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Both <a class="reference internal" href="api/vptstools.html#vptstools.vpts.vp" title="vptstools.vpts.vp"><code class="xref py py-func docutils literal notranslate"><span class="pre">vptstools.vpts.vp()</span></code></a> and <a class="reference internal" href="api/vptstools.html#vptstools.vpts.vpts" title="vptstools.vpts.vpts"><code class="xref py py-func docutils literal notranslate"><span class="pre">vptstools.vpts.vpts()</span></code></a> have 2 other optional parameters related to the <a class="reference external" href="https://aloftdata.eu/vpts-csv/">VPTS CSV data exchange format</a>. The <code class="docutils literal notranslate"><span class="pre">vpts_csv_version</span></code> parameter defines the version of the VPTS CSV data exchange standard (default v1) whereas the <code class="docutils literal notranslate"><span class="pre">source_file</span></code> provides a way to define a custom <a class="reference external" href="https://aloftdata.eu/vpts-csv/#source_file">source_file</a> field to reference the source from which the data were derived.</p>
+<p>Both <a class="reference internal" href="api/vptstools.html#vptstools.vpts.vp" title="vptstools.vpts.vp"><code class="xref py py-func docutils literal notranslate"><span class="pre">vptstools.vpts.vp()</span></code></a> and <a class="reference internal" href="api/vptstools.html#vptstools.vpts.vpts" title="vptstools.vpts.vpts"><code class="xref py py-func docutils literal notranslate"><span class="pre">vptstools.vpts.vpts()</span></code></a> have 2 other optional parameters related to the <a class="reference external" href="https://aloftdata.eu/vpts-csv/">VPTS CSV data exchange format</a>. The <code class="docutils literal notranslate"><span class="pre">vpts_csv_version</span></code> parameter defines the version of the VPTS CSV data exchange standard (default v1.0) whereas the <code class="docutils literal notranslate"><span class="pre">source_file</span></code> provides a way to define a custom <a class="reference external" href="https://aloftdata.eu/vpts-csv/#source_file">source_file</a> field to reference the source from which the data were derived.</p>
 </div>
 <p>To validate a VPTS DataFrame against the frictionless data schema as defined by the VPTS CSV data exchange format and return a report, use the <a class="reference internal" href="api/vptstools.html#vptstools.vpts.validate_vpts" title="vptstools.vpts.validate_vpts"><code class="xref py py-func docutils literal notranslate"><span class="pre">vptstools.vpts.validate_vpts()</span></code></a>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vptstools.vpts</span> <span class="kn">import</span> <span class="n">validate_vpts</span>
 
-<span class="n">report</span> <span class="o">=</span> <span class="n">validate_vpts</span><span class="p">(</span><span class="n">df_vpts</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;v1&quot;</span><span class="p">)</span>
+<span class="n">report</span> <span class="o">=</span> <span class="n">validate_vpts</span><span class="p">(</span><span class="n">df_vpts</span><span class="p">,</span> <span class="n">schema_version</span><span class="o">=</span><span class="s2">&quot;v1.0&quot;</span><span class="p">)</span>
 <span class="n">report</span><span class="o">.</span><span class="n">stats</span><span class="p">[</span><span class="s2">&quot;errors&quot;</span><span class="p">]</span>
 </pre></div>
 </div>
