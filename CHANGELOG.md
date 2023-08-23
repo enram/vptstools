@@ -1,5 +1,14 @@
 # Changelog
 
+## Version 0.2.2
+
+- Hotfix for Docker deployment continued
+- Handle wrong function import
+
+## Version 0.2.1
+
+- Hotfix for Docker deployment
+
 ## Version 0.2.0
 
 - Add support for uppercase radarcode in file names (#53)

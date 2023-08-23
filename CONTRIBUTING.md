@@ -219,7 +219,7 @@ Github Actions is used to automatic push releases to pypi by the publish step in
 
 - `git checkout main`, `git pull origin main`
 - Update the `CHANGELOG.md` with the changes for this new release
-- `git commit -m 'Update changelog for release  X.X.X' CHANGELOG.rst
+- `git commit -m 'Update changelog for release  X.X.X' CHANGELOG.md
 - `git push origin master`
 - Add git tags: `git tag vX.X.X` 
 - Push the git tags: `git push --tags`
