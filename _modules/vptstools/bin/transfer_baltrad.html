@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools.bin.transfer_baltrad &mdash; vptstools 0.2.2.post1.dev3+ge78f50f documentation</title>
+  <title>vptstools.bin.transfer_baltrad &mdash; vptstools 0.2.2.post1.dev12+g324a180 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -12,7 +12,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=78048689"></script>
+        <script src="../../../_static/documentation_options.js?v=fda395d5"></script>
         <script src="../../../_static/doctools.js?v=888ff710"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -32,7 +32,7 @@
             vptstools
           </a>
               <div class="version">
-                0.2.2.post1.dev3+ge78f50f
+                0.2.2.post1.dev12+g324a180
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -98,7 +98,7 @@
 <span class="c1"># Update reporting to SNS functionality</span>
 <span class="n">report_sns</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">report_click_exception_to_sns</span><span class="p">,</span>
                      <span class="n">aws_sns_topic</span><span class="o">=</span><span class="n">AWS_SNS_TOPIC</span><span class="p">,</span>
-                     <span class="n">subject</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Transfer from Baltrad FTP to s3 bucket </span><span class="si">{</span><span class="n">DESTINATION_BUCKET</span><span class="si">}</span><span class="s2"> failed.&quot;</span><span class="p">,</span>
+                     <span class="n">subject</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Transfer from Baltrad FTP to S3 bucket </span><span class="si">{</span><span class="n">DESTINATION_BUCKET</span><span class="si">}</span><span class="s2"> failed.&quot;</span><span class="p">,</span>
                      <span class="n">profile_name</span><span class="o">=</span><span class="n">AWS_PROFILE</span><span class="p">,</span>
                      <span class="n">region_name</span><span class="o">=</span><span class="n">AWS_REGION</span>
                      <span class="p">)</span>
@@ -138,7 +138,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    filename : str</span>
-<span class="sd">        Filename of a h5 incoming file from FTP</span>
+<span class="sd">        Filename of a HDF5 incoming file from FTP</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">elems</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
     <span class="n">radar_code</span> <span class="o">=</span> <span class="n">elems</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -154,10 +154,10 @@
 
 <span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="bp">cls</span><span class="o">=</span><span class="n">catch_all_exceptions</span><span class="p">(</span><span class="n">click</span><span class="o">.</span><span class="n">Command</span><span class="p">,</span> <span class="n">handler</span><span class="o">=</span><span class="n">report_sns</span><span class="p">))</span>  <span class="c1"># Add SNS-reporting to exception</span>
 <span class="k">def</span> <span class="nf">cli</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sync files from Baltrad FTP server to the aloft s3 bucket.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sync files from Baltrad FTP server to the Aloft S3 bucket.</span>
 
-<span class="sd">    This function connects via SFTP to the BALTRAD server, downloads the available ``vp`` files (``pvol`` gets ignored),</span>
-<span class="sd">    from the FTP server and upload the h5 file to the &#39;aloft&#39; S3 bucket according to the defined folder path name</span>
+<span class="sd">    This function connects via SFTP to the BALTRAD server, downloads the available VP files (PVOL gets ignored),</span>
+<span class="sd">    from the FTP server and upload the HDF5 file to the Aloft S3 bucket according to the defined folder path name</span>
 <span class="sd">    convention. Existing files are ignored.</span>
 
 <span class="sd">    Designed to be executed via a simple scheduled job like cron or scheduled cloud function. Remark that</span>
@@ -211,7 +211,7 @@
             <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">sftp</span><span class="o">.</span><span class="n">listdir_attr</span><span class="p">():</span>
                 <span class="k">if</span> <span class="s2">&quot;_vp_&quot;</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">filename</span><span class="p">:</span>  <span class="c1"># PVOLs and other files are ignored</span>
                     <span class="n">click</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s2"> is a vp file, we need to consider it... &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s2"> is a VP file, we need to consider it... &quot;</span>
                     <span class="p">)</span>
 
                     <span class="n">radar_code</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month_str</span><span class="p">,</span> <span class="n">day_str</span> <span class="o">=</span> <span class="n">extract_metadata_from_filename</span><span class="p">(</span>

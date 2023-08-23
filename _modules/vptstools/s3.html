@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools.s3 &mdash; vptstools 0.2.2.post1.dev3+ge78f50f documentation</title>
+  <title>vptstools.s3 &mdash; vptstools 0.2.2.post1.dev12+g324a180 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -12,7 +12,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=78048689"></script>
+        <script src="../../_static/documentation_options.js?v=fda395d5"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -32,7 +32,7 @@
             vptstools
           </a>
               <div class="version">
-                0.2.2.post1.dev3+ge78f50f
+                0.2.2.post1.dev12+g324a180
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -196,7 +196,7 @@
             <span class="n">radar_code</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">radar_code</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">file_name</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File name </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> is not a valid ODIM h5 file.&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File name </span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s2"> is not a valid ODIM HDF5 file.&quot;</span><span class="p">)</span></div>
 
 
     <span class="nd">@property</span>
@@ -211,7 +211,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">daily_vpts_file_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Name of the corresponding daily vpts file&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Name of the corresponding daily VPTS file&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">radar_code</span><span class="si">}</span><span class="s2">_vpts_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">month</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">day</span><span class="si">}</span><span class="s2">.csv&quot;</span>
 
 <div class="viewcode-block" id="OdimFilePath.s3_path_setup">
@@ -224,7 +224,7 @@
 <div class="viewcode-block" id="OdimFilePath.s3_url_h5">
 <a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.s3_url_h5">[docs]</a>
     <span class="k">def</span> <span class="nf">s3_url_h5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bucket</span><span class="o">=</span><span class="s2">&quot;aloft&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Full S3 URL for the stored h5 file&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Full S3 URL for the stored HDF5 file&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;s3://</span><span class="si">{</span><span class="n">bucket</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s3_path_setup</span><span class="p">(</span><span class="s1">&#39;hdf5&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">/&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">month</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">day</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -233,17 +233,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">s3_folder_path_h5</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;S3 key with the folder containing the h5 file&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;S3 key with the folder containing the HDF5 file&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s3_path_setup</span><span class="p">(</span><span class="s1">&#39;hdf5&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">month</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">day</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">s3_file_path_daily_vpts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;S3 key of the daily vpts file corresponding to the h5 file&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;S3 key of the daily VPTS file corresponding to the HDF5 file&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s3_path_setup</span><span class="p">(</span><span class="s1">&#39;daily&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">daily_vpts_file_name</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">s3_file_path_monthly_vpts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;S3 key of the monthly concatenated vpts file corresponding to the h5 file&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;S3 key of the monthly concatenated VPTS file corresponding to the HDF5 file&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s3_path_setup</span><span class="p">(</span><span class="s1">&#39;monthly&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">/&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">radar_code</span><span class="si">}</span><span class="s2">_vpts_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">year</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">month</span><span class="si">}</span><span class="s2">.csv.gz&quot;</span>
@@ -289,7 +289,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    file_path : str</span>
-<span class="sd">        File path of the ODIM h5 file. Only the file name is taken</span>
+<span class="sd">        File path of the ODIM HDF5 file. Only the file name is taken</span>
 <span class="sd">        into account and a folder-path is ignored.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">path_info</span> <span class="o">=</span> <span class="n">OdimFilePath</span><span class="o">.</span><span class="n">from_inventory</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
@@ -365,7 +365,7 @@
 <span class="sd">        year, month, day) and the number of files in the S3 bucket for each group.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Filter for h5 files and extract source</span>
+    <span class="c1"># Filter for HDF5 files and extract source</span>
     <span class="n">df</span><span class="p">[</span><span class="s2">&quot;modified&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
         <span class="n">df</span><span class="p">[</span><span class="s2">&quot;modified&quot;</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S.</span><span class="si">%f</span><span class="s2">Z&quot;</span><span class="p">,</span> <span class="n">utc</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>

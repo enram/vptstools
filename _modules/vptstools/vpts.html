@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools.vpts &mdash; vptstools 0.2.2.post1.dev3+ge78f50f documentation</title>
+  <title>vptstools.vpts &mdash; vptstools 0.2.2.post1.dev12+g324a180 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -12,7 +12,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=78048689"></script>
+        <script src="../../_static/documentation_options.js?v=fda395d5"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -32,7 +32,7 @@
             vptstools
           </a>
               <div class="version">
-                0.2.2.post1.dev3+ge78f50f
+                0.2.2.post1.dev12+g324a180
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -266,12 +266,12 @@
 <div class="viewcode-block" id="vp">
 <a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.vp">[docs]</a>
 <span class="k">def</span> <span class="nf">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">vpts_csv_version</span><span class="o">=</span><span class="s2">&quot;v1.0&quot;</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert ODIM h5 file to a DataFrame</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert ODIM HDF5 file to a DataFrame</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    file_path : Path</span>
-<span class="sd">        File Path of ODIM h5</span>
+<span class="sd">        File Path of ODIM HDF5</span>
 <span class="sd">    vpts_csv_version : str, default &quot;&quot;</span>
 <span class="sd">        Ruleset with the VPTS CSV ruleset to use, e.g. v1.0</span>
 <span class="sd">    source_file : str | callable</span>
@@ -288,7 +288,7 @@
 <span class="sd">    &gt;&gt;&gt; vp(file_path,</span>
 <span class="sd">    ...    source_file=&quot;s3://aloft/baltrad/hdf5/2022/11/11/bejab_vp_20221111T233000Z_0x9.h5&quot;)  #noqa</span>
 
-<span class="sd">    Use file name itself as source_file representation in vp file using a custom</span>
+<span class="sd">    Use file name itself as source_file representation in VP file using a custom</span>
 <span class="sd">    callable function</span>
 
 <span class="sd">    &gt;&gt;&gt; vp(file_path, source_file=lambda x: Path(x).name)</span>
@@ -312,12 +312,12 @@
 <div class="viewcode-block" id="vpts">
 <a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.vpts">[docs]</a>
 <span class="k">def</span> <span class="nf">vpts</span><span class="p">(</span><span class="n">file_paths</span><span class="p">,</span> <span class="n">vpts_csv_version</span><span class="o">=</span><span class="s2">&quot;v1.0&quot;</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert set of h5 files to a DataFrame all as string</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert set of HDF5 files to a DataFrame all as string</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    file_paths : Iterable of file paths</span>
-<span class="sd">        Iterable of ODIM h5 file paths</span>
+<span class="sd">        Iterable of ODIM HDF5 file paths</span>
 <span class="sd">    vpts_csv_version : str</span>
 <span class="sd">        Ruleset with the VPTS CSV ruleset to use, e.g. v1.0</span>
 <span class="sd">    source_file : callable, optional</span>
@@ -334,7 +334,7 @@
 <span class="sd">    &gt;&gt;&gt; file_paths = sorted(Path(&quot;../data/raw/baltrad/&quot;).rglob(&quot;*.h5&quot;))</span>
 <span class="sd">    &gt;&gt;&gt; vpts(file_paths)</span>
 
-<span class="sd">    Use file name itself as source_file representation in vp file using a</span>
+<span class="sd">    Use file name itself as source_file representation in VP file using a</span>
 <span class="sd">    custom callable function</span>
 
 <span class="sd">    &gt;&gt;&gt; def path_to_source(file_path):</span>
@@ -370,14 +370,14 @@
 <div class="viewcode-block" id="vpts_to_csv">
 <a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.vpts_to_csv">[docs]</a>
 <span class="k">def</span> <span class="nf">vpts_to_csv</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write vp or vpts to file</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write VP or VPTS to file</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    df : pandas.DataFrame</span>
-<span class="sd">        DataFrame with vp or vpts data</span>
+<span class="sd">        DataFrame with VP or VPTS data</span>
 <span class="sd">    file_path : Path | str</span>
-<span class="sd">        File path to store the vpts file</span>
+<span class="sd">        File path to store the VPTS file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># check for str input of Path</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
@@ -392,7 +392,7 @@
 <div class="viewcode-block" id="validate_vpts">
 <a class="viewcode-back" href="../../api/vptstools.html#vptstools.vpts.validate_vpts">[docs]</a>
 <span class="k">def</span> <span class="nf">validate_vpts</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">schema_version</span><span class="o">=</span><span class="s2">&quot;v1.0&quot;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate vpts DataFrame against the frictionless data schema and return report</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate VPTS DataFrame against the frictionless data schema and return report</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -421,7 +421,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    vpts_file_path : pathlib.Path</span>
-<span class="sd">        File path of the resource (vpts file) written to disk</span>
+<span class="sd">        File path of the resource (VPTS file) written to disk</span>
 <span class="sd">    schema_version :</span>
 <span class="sd">        Version according to a release tag of https://github.com/enram/vpts-csv/tags</span>
 <span class="sd">    &quot;&quot;&quot;</span>

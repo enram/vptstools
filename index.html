@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools &mdash; vptstools 0.2.2.post1.dev3+ge78f50f documentation</title>
+  <title>vptstools &mdash; vptstools 0.2.2.post1.dev12+g324a180 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,7 +13,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=78048689"></script>
+        <script src="_static/documentation_options.js?v=fda395d5"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             vptstools
           </a>
               <div class="version">
-                0.2.2.post1.dev3+ge78f50f
+                0.2.2.post1.dev12+g324a180
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -81,9 +81,7 @@
 <p><a class="reference external" href="https://pyscaffold.org/"><img alt="Project generated with PyScaffold" src="https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold" /></a>
 <a class="reference external" href="https://pypi.org/project/vptstools/"><img alt="PyPI-Server" src="https://img.shields.io/pypi/v/vptstools.svg" /></a>
 <a class="reference external" href="https://github.com/enram/vptstools/actions/workflows/release.yml"><img alt=".github/workflows/release.yml" src="https://github.com/enram/vptstools/actions/workflows/release.yml/badge.svg" /></a></p>
-<p>vptstools is a Python library to transfer and convert vpts data. VPTS (vertical profile time series) express the
-density, speed and direction of biological signals such as birds, bats and insects within a weather radar volume,
-grouped into altitude layers (height) and measured over time (datetime).</p>
+<p>vptstools is a Python library to transfer and convert VPTS data. VPTS (vertical profile time series) express the density, speed and direction of biological signals such as birds, bats and insects within a weather radar volume, grouped into altitude layers (height) and measured over time (datetime).</p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
 <p>Python 3.9+ is required.</p>
@@ -97,31 +95,30 @@ grouped into altitude layers (height) and measured over time (datetime).</p>
 </section>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
-<p>As a library user interested in working with ODIM h5 and vpts files, the most important functions provided by the
-package are <a class="reference internal" href="api/vptstools.html#vptstools.vpts.vp" title="vptstools.vpts.vp"><code class="xref py py-func docutils literal notranslate"><span class="pre">vptstools.vpts.vp()</span></code></a>, <a class="reference internal" href="api/vptstools.html#vptstools.vpts.vpts" title="vptstools.vpts.vpts"><code class="xref py py-func docutils literal notranslate"><span class="pre">vptstools.vpts.vpts()</span></code></a> and <a class="reference internal" href="api/vptstools.html#vptstools.vpts.vpts_to_csv" title="vptstools.vpts.vpts_to_csv"><code class="xref py py-func docutils literal notranslate"><span class="pre">vptstools.vpts.vpts_to_csv()</span></code></a>,
-which can be used respectively to convert a single <code class="docutils literal notranslate"><span class="pre">h5</span></code> file, a set of <code class="docutils literal notranslate"><span class="pre">h5</span></code> files and save a <code class="docutils literal notranslate"><span class="pre">vpts</span></code> DataFrame
-to a csv-file:</p>
+<p>As a library user interested in working with ODIM HDF5 and VPTS files, the most important functions provided by the package are <a class="reference internal" href="api/vptstools.html#vptstools.vpts.vp" title="vptstools.vpts.vp"><code class="xref py py-func docutils literal notranslate"><span class="pre">vptstools.vpts.vp()</span></code></a>, <a class="reference internal" href="api/vptstools.html#vptstools.vpts.vpts" title="vptstools.vpts.vpts"><code class="xref py py-func docutils literal notranslate"><span class="pre">vptstools.vpts.vpts()</span></code></a> and <a class="reference internal" href="api/vptstools.html#vptstools.vpts.vpts_to_csv" title="vptstools.vpts.vpts_to_csv"><code class="xref py py-func docutils literal notranslate"><span class="pre">vptstools.vpts.vpts_to_csv()</span></code></a>, which can be used respectively to convert a single HDF5 file, a set of HDF5 files and save a VPTS DataFrame to a CSV file:</p>
 <ul class="simple">
-<li><p>Convert a single local ODIM h5 file to a vp DataFrame:</p></li>
+<li><p>Convert a single local ODIM HDF5 file to a VP DataFrame:</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vptstools.vpts</span> <span class="kn">import</span> <span class="n">vp</span>
 
-<span class="n">file_path_h5</span> <span class="o">=</span> <span class="s2">&quot;./NLDBL_vp_20080215T0010_NL50_v0-3-20.h5&quot;</span>
+<span class="c1"># Download https://aloftdata.s3-eu-west-1.amazonaws.com/baltrad/hdf5/nldbl/2013/11/23/nldbl_vp_20131123T0000Z.h5</span>
+<span class="n">file_path_h5</span> <span class="o">=</span> <span class="s2">&quot;./nldbl_vp_20131123T0000Z.h5&quot;</span>
 <span class="n">df_vp</span> <span class="o">=</span> <span class="n">vp</span><span class="p">(</span><span class="n">file_path_h5</span><span class="p">)</span>
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>Convert a set of locally stored ODIM h5 files to a vpts DataFrame:</p></li>
+<li><p>Convert a set of locally stored ODIM HDF5 files to a VPTS DataFrame:</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">vptstools.vpts</span> <span class="kn">import</span> <span class="n">vpts</span>
 
-<span class="n">file_paths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;./data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*.h5&quot;</span><span class="p">))</span>  <span class="c1"># Get all h5 files within the data directory</span>
+<span class="c1"># Download files to data directory from e.g. https://aloftdata.eu/browse/?prefix=baltrad/hdf5/nldbl/2013/11/23/</span>
+<span class="n">file_paths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;./data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*.h5&quot;</span><span class="p">))</span>  <span class="c1"># Get all HDF5 files within the data directory</span>
 <span class="n">df_vpts</span> <span class="o">=</span> <span class="n">vpts</span><span class="p">(</span><span class="n">file_paths</span><span class="p">)</span>
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>Store a <code class="docutils literal notranslate"><span class="pre">vp</span></code> or <code class="docutils literal notranslate"><span class="pre">vpts</span></code> DataFrame to a <a class="reference external" href="https://aloftdata.eu/vpts-csv/">VPTS CSV</a> file:</p></li>
+<li><p>Store a VP or VPTS DataFrame to a <a class="reference external" href="https://aloftdata.eu/vpts-csv/">VPTS CSV</a> file:</p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vptstools.vpts</span> <span class="kn">import</span> <span class="n">vpts_to_csv</span>
 
@@ -130,14 +127,9 @@ to a csv-file:</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Both <a class="reference internal" href="api/vptstools.html#vptstools.vpts.vp" title="vptstools.vpts.vp"><code class="xref py py-func docutils literal notranslate"><span class="pre">vptstools.vpts.vp()</span></code></a> and <a class="reference internal" href="api/vptstools.html#vptstools.vpts.vpts" title="vptstools.vpts.vpts"><code class="xref py py-func docutils literal notranslate"><span class="pre">vptstools.vpts.vpts()</span></code></a> have 2 other optional parameters related to the
-<a class="reference external" href="https://aloftdata.eu/vpts-csv/">VPTS-CSV data exchange format</a>. The <code class="docutils literal notranslate"><span class="pre">vpts_csv_version</span></code> parameter defines the version of the
-<a class="reference external" href="https://aloftdata.eu/vpts-csv/">VPTS-CSV data exchange standard</a> (default v1) whereas the <code class="docutils literal notranslate"><span class="pre">source_file</span></code> provides a way to define
-a custom <a class="reference external" href="https://aloftdata.eu/vpts-csv/#source_file">source_file</a> field to reference the source from which the
-data were derived.</p>
+<p>Both <a class="reference internal" href="api/vptstools.html#vptstools.vpts.vp" title="vptstools.vpts.vp"><code class="xref py py-func docutils literal notranslate"><span class="pre">vptstools.vpts.vp()</span></code></a> and <a class="reference internal" href="api/vptstools.html#vptstools.vpts.vpts" title="vptstools.vpts.vpts"><code class="xref py py-func docutils literal notranslate"><span class="pre">vptstools.vpts.vpts()</span></code></a> have 2 other optional parameters related to the <a class="reference external" href="https://aloftdata.eu/vpts-csv/">VPTS CSV data exchange format</a>. The <code class="docutils literal notranslate"><span class="pre">vpts_csv_version</span></code> parameter defines the version of the VPTS CSV data exchange standard (default v1) whereas the <code class="docutils literal notranslate"><span class="pre">source_file</span></code> provides a way to define a custom <a class="reference external" href="https://aloftdata.eu/vpts-csv/#source_file">source_file</a> field to reference the source from which the data were derived.</p>
 </div>
-<p>To validate a vpts DataFrame against the frictionless data schema as defined by the VPTS-CSV data exchange
-format and return a report, use the <a class="reference internal" href="api/vptstools.html#vptstools.vpts.validate_vpts" title="vptstools.vpts.validate_vpts"><code class="xref py py-func docutils literal notranslate"><span class="pre">vptstools.vpts.validate_vpts()</span></code></a>:</p>
+<p>To validate a VPTS DataFrame against the frictionless data schema as defined by the VPTS CSV data exchange format and return a report, use the <a class="reference internal" href="api/vptstools.html#vptstools.vpts.validate_vpts" title="vptstools.vpts.validate_vpts"><code class="xref py py-func docutils literal notranslate"><span class="pre">vptstools.vpts.validate_vpts()</span></code></a>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vptstools.vpts</span> <span class="kn">import</span> <span class="n">validate_vpts</span>
 
 <span class="n">report</span> <span class="o">=</span> <span class="n">validate_vpts</span><span class="p">(</span><span class="n">df_vpts</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s2">&quot;v1&quot;</span><span class="p">)</span>
@@ -146,24 +138,19 @@ format and return a report, use the <a class="reference internal" href="api/vpts
 </div>
 <p>Other modules in the package are:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="api/vptstools.html#module-vptstools.odimh5" title="vptstools.odimh5"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vptstools.odimh5</span></code></a>: This module extents the implementation of the original
-<a class="reference external" href="https://pypi.org/project/odimh5/">odimh5 package</a> which is now deprecated.</p></li>
-<li><p><a class="reference internal" href="api/vptstools.html#module-vptstools.vpts_csv" title="vptstools.vpts_csv"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vptstools.vpts_csv</span></code></a>: This module contains - for each version of the VPTS-CSV exchange format - the
-corresponding implementation which can be used to generate a <code class="docutils literal notranslate"><span class="pre">vp</span></code> or <code class="docutils literal notranslate"><span class="pre">vpts</span></code> DataFrame. For more information on how to
-support a new version of the VPTS-CSV format, see <a class="reference internal" href="contributing.html#new-vptscsv-version"><span class="std std-ref">contributing docs</span></a>.</p></li>
-<li><p><a class="reference internal" href="api/vptstools.html#module-vptstools.s3" title="vptstools.s3"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vptstools.s3</span></code></a>: This module contains the functions to manage the
-aloft data repository](<a class="reference external" href="https://aloftdata.eu/browse/">https://aloftdata.eu/browse/</a>) S3 Bucket.</p></li>
+<li><p><a class="reference internal" href="api/vptstools.html#module-vptstools.odimh5" title="vptstools.odimh5"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vptstools.odimh5</span></code></a>: This module extents the implementation of the original <a class="reference external" href="https://pypi.org/project/odimh5/">odimh5 package</a> which is now deprecated.</p></li>
+<li><p><a class="reference internal" href="api/vptstools.html#module-vptstools.vpts_csv" title="vptstools.vpts_csv"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vptstools.vpts_csv</span></code></a>: This module contains - for each version of the VPTS CSV exchange format - the corresponding implementation which can be used to generate a VP or VPTS DataFrame. For more information on how to support a new version of the VPTS CSV format, see <a class="reference internal" href="contributing.html#new-vptscsv-version"><span class="std std-ref">contributing docs</span></a>.</p></li>
+<li><p><a class="reference internal" href="api/vptstools.html#module-vptstools.s3" title="vptstools.s3"><code class="xref py py-mod docutils literal notranslate"><span class="pre">vptstools.s3</span></code></a>: This module contains the functions to manage the <a class="reference external" href="https://aloftdata.eu/browse/">Aloft data repository</a> S3 bucket.</p></li>
 </ul>
 </section>
 <section id="cli-endpoints">
 <h2>CLI endpoints<a class="headerlink" href="#cli-endpoints" title="Link to this heading"></a></h2>
-<p>In addition to using functions in Python scripts, two vptstools routines are available to be called from the command line
-after installing the package:</p>
+<p>In addition to using functions in Python scripts, two vptstools routines are available to be called from the command line after installing the package:</p>
 <section id="transfer-baltrad">
 <h3>transfer_baltrad<a class="headerlink" href="#transfer-baltrad" title="Link to this heading"></a></h3>
-<p>Sync files from Baltrad FTP server to the aloft s3 bucket.</p>
-<p>This function connects via SFTP to the BALTRAD server, downloads the available <code class="docutils literal notranslate"><span class="pre">vp</span></code> files (<code class="docutils literal notranslate"><span class="pre">pvol</span></code> gets ignored),
-from the FTP server and upload the h5 file to the ‘aloft’ S3 bucket according to the defined folder path name
+<p>Sync files from Baltrad FTP server to the Aloft S3 bucket.</p>
+<p>This function connects via SFTP to the BALTRAD server, downloads the available VP files (PVOL gets ignored),
+from the FTP server and upload the HDF5 file to the Aloft S3 bucket according to the defined folder path name
 convention. Existing files are ignored.</p>
 <p>Designed to be executed via a simple scheduled job like cron or scheduled cloud function. Remark that
 files disappear after a few days on the BALTRAD server.</p>
@@ -185,15 +172,15 @@ files disappear after a few days on the BALTRAD server.</p>
 </section>
 <section id="vph5-to-vpts">
 <h3>vph5_to_vpts<a class="headerlink" href="#vph5-to-vpts" title="Link to this heading"></a></h3>
-<p>Convert and aggregate h5 vp files to daily and monthly vpts-csv files on S3 bucket</p>
+<p>Convert and aggregate HDF5 VP files to daily and monthly VPTS CSV files on S3 bucket</p>
 <p>Check the latest modified
-<a class="reference external" href="https://github.com/adokter/vol2bird/wiki/ODIM-bird-profile-format-specification">ODIM h5 bird vp profile</a>  on the
-aloft S3 bucket (as generated by <a class="reference external" href="https://github.com/adokter/vol2bird">vol2bird</a> and transferred using the
+<a class="reference external" href="https://github.com/adokter/vol2bird/wiki/ODIM-bird-profile-format-specification">ODIM HDF5 bird VP profile</a>  on the
+Aloft S3 bucket (as generated by <a class="reference external" href="https://github.com/adokter/vol2bird">vol2bird</a> and transferred using the
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">vpts.bin.transfer_baltrad</span></code> CLI routine). Using an
 <a class="reference external" href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-inventory.html">s3 inventory bucket</a>, check which
-h5 files were recently added and convert those files from ODIM bird profile to the
-<a class="reference external" href="https://github.com/enram/vpts-csv">VPTS-CSV format</a>. Finally, upload the generated daily/monthly vpts files to S3.</p>
-<p>Besides, while scanning the s3 inventory to define the files to convert,
+HDF5 files were recently added and convert those files from ODIM bird profile to the
+<a class="reference external" href="https://github.com/enram/vpts-csv">VPTS CSV format</a>. Finally, upload the generated daily/monthly VPTS files to S3.</p>
+<p>Besides, while scanning the S3 inventory to define the files to convert,
 the CLI routine creates the <code class="docutils literal notranslate"><span class="pre">coverage.csv</span></code> file and uploads it to the bucket.</p>
 <p>Configuration is loaded from the following environmental variables:</p>
 <ul class="simple">
@@ -210,15 +197,14 @@ the CLI routine creates the <code class="docutils literal notranslate"><span cla
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-vph5_to_vpts-modified-days-ago">
 <span class="sig-name descname"><span class="pre">--modified-days-ago</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;modified_days_ago&gt;</span></span><a class="headerlink" href="#cmdoption-vph5_to_vpts-modified-days-ago" title="Link to this definition"></a></dt>
-<dd><p>Range of h5 vp files to include, i.e. files modified between now and Nmodified-days-ago. If 0, all h5 files in the bucket will be included.</p>
+<dd><p>Range of HDF5 VP files to include, i.e. files modified between now and Nmodified-days-ago. If 0, all HDF5 files in the bucket will be included.</p>
 </dd></dl>
 
 </section>
 </section>
 <section id="development-instructions">
 <h2>Development instructions<a class="headerlink" href="#development-instructions" title="Link to this heading"></a></h2>
-<p>See <a class="reference internal" href="contributing.html"><span class="std std-doc">contributing</span></a> for a detailed overview and set of guidelines. If familiar with <code class="docutils literal notranslate"><span class="pre">tox</span></code>,
-the setup of a development environment boils down to:</p>
+<p>See <a class="reference internal" href="contributing.html"><span class="std std-doc">contributing</span></a> for a detailed overview and set of guidelines. If familiar with <code class="docutils literal notranslate"><span class="pre">tox</span></code>, the setup of a development environment boils down to:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>tox<span class="w"> </span>-e<span class="w"> </span>dev<span class="w">   </span><span class="c1"># Create development environment with venv and register an ipykernel. </span>
 <span class="nb">source</span><span class="w"> </span>venv/bin/activate<span class="w">  </span><span class="c1"># Activate this environment to get started</span>
 </pre></div>

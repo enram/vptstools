@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools package &mdash; vptstools 0.2.2.post1.dev3+ge78f50f documentation</title>
+  <title>vptstools package &mdash; vptstools 0.2.2.post1.dev12+g324a180 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,7 +13,7 @@
   
         <script src="../_static/jquery.js?v=5d32c60e"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=78048689"></script>
+        <script src="../_static/documentation_options.js?v=fda395d5"></script>
         <script src="../_static/doctools.js?v=888ff710"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -35,7 +35,7 @@
             vptstools
           </a>
               <div class="version">
-                0.2.2.post1.dev3+ge78f50f
+                0.2.2.post1.dev12+g324a180
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -170,7 +170,7 @@
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.10/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Read ODIM (HDF5) files with context manager</p>
 <p>Should be used with the “with” statement  (context manager) to
-properly close the h5 file.</p>
+properly close the HDF5 file.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="vptstools.odimh5.ODIMReader.hdf5">
 <span class="sig-name descname"><span class="pre">hdf5</span></span><a class="headerlink" href="#vptstools.odimh5.ODIMReader.hdf5" title="Link to this definition"></a></dt>
@@ -305,7 +305,7 @@ properly close the h5 file.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.daily_vpts_file_name">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">daily_vpts_file_name</span></span><a class="headerlink" href="#vptstools.s3.OdimFilePath.daily_vpts_file_name" title="Link to this definition"></a></dt>
-<dd><p>Name of the corresponding daily vpts file</p>
+<dd><p>Name of the corresponding daily VPTS file</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -400,19 +400,19 @@ extension will be removed</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.s3_file_path_daily_vpts">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">s3_file_path_daily_vpts</span></span><a class="headerlink" href="#vptstools.s3.OdimFilePath.s3_file_path_daily_vpts" title="Link to this definition"></a></dt>
-<dd><p>S3 key of the daily vpts file corresponding to the h5 file</p>
+<dd><p>S3 key of the daily VPTS file corresponding to the HDF5 file</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.s3_file_path_monthly_vpts">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">s3_file_path_monthly_vpts</span></span><a class="headerlink" href="#vptstools.s3.OdimFilePath.s3_file_path_monthly_vpts" title="Link to this definition"></a></dt>
-<dd><p>S3 key of the monthly concatenated vpts file corresponding to the h5 file</p>
+<dd><p>S3 key of the monthly concatenated VPTS file corresponding to the HDF5 file</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.s3_folder_path_h5">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">s3_folder_path_h5</span></span><a class="headerlink" href="#vptstools.s3.OdimFilePath.s3_folder_path_h5" title="Link to this definition"></a></dt>
-<dd><p>S3 key with the folder containing the h5 file</p>
+<dd><p>S3 key with the folder containing the HDF5 file</p>
 </dd></dl>
 
 <dl class="py method">
@@ -424,7 +424,7 @@ extension will be removed</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.s3_url_h5">
 <span class="sig-name descname"><span class="pre">s3_url_h5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'aloft'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/s3.html#OdimFilePath.s3_url_h5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.s3.OdimFilePath.s3_url_h5" title="Link to this definition"></a></dt>
-<dd><p>Full S3 URL for the stored h5 file</p>
+<dd><p>Full S3 URL for the stored HDF5 file</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -450,7 +450,7 @@ countable set (e.g. source, radar-code, year month and day for
 daily files per radar).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – File path of the ODIM h5 file. Only the file name is taken
+<dd class="field-odd"><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – File path of the ODIM HDF5 file. Only the file name is taken
 into account and a folder-path is ignored.</p>
 </dd>
 </dl>
@@ -593,7 +593,7 @@ is supported by Pandas.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="vptstools.vpts.validate_vpts">
 <span class="sig-prename descclassname"><span class="pre">vptstools.vpts.</span></span><span class="sig-name descname"><span class="pre">validate_vpts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'v1.0'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#validate_vpts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts.validate_vpts" title="Link to this definition"></a></dt>
-<dd><p>Validate vpts DataFrame against the frictionless data schema and return report</p>
+<dd><p>Validate VPTS DataFrame against the frictionless data schema and return report</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -613,11 +613,11 @@ is supported by Pandas.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="vptstools.vpts.vp">
 <span class="sig-prename descclassname"><span class="pre">vptstools.vpts.</span></span><span class="sig-name descname"><span class="pre">vp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vpts_csv_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'v1.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#vp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts.vp" title="Link to this definition"></a></dt>
-<dd><p>Convert ODIM h5 file to a DataFrame</p>
+<dd><p>Convert ODIM HDF5 file to a DataFrame</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_path</strong> (<em>Path</em>) – File Path of ODIM h5</p></li>
+<li><p><strong>file_path</strong> (<em>Path</em>) – File Path of ODIM HDF5</p></li>
 <li><p><strong>vpts_csv_version</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>default &quot;&quot;</em>) – Ruleset with the VPTS CSV ruleset to use, e.g. v1.0</p></li>
 <li><p><strong>source_file</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>callable</em>) – URL or path to the source file from which the data were derived or
 a callable that converts the file_path to the source_file. See
@@ -633,7 +633,7 @@ the source file field.</p></li>
 <span class="gp">... </span>   <span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;s3://aloft/baltrad/hdf5/2022/11/11/bejab_vp_20221111T233000Z_0x9.h5&quot;</span><span class="p">)</span>  <span class="c1">#noqa</span>
 </pre></div>
 </div>
-<p>Use file name itself as source_file representation in vp file using a custom
+<p>Use file name itself as source_file representation in VP file using a custom
 callable function</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Path</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
@@ -643,11 +643,11 @@ callable function</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="vptstools.vpts.vpts">
 <span class="sig-prename descclassname"><span class="pre">vptstools.vpts.</span></span><span class="sig-name descname"><span class="pre">vpts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vpts_csv_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'v1.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#vpts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts.vpts" title="Link to this definition"></a></dt>
-<dd><p>Convert set of h5 files to a DataFrame all as string</p>
+<dd><p>Convert set of HDF5 files to a DataFrame all as string</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_paths</strong> (<em>Iterable</em><em> of </em><em>file paths</em>) – Iterable of ODIM h5 file paths</p></li>
+<li><p><strong>file_paths</strong> (<em>Iterable</em><em> of </em><em>file paths</em>) – Iterable of ODIM HDF5 file paths</p></li>
 <li><p><strong>vpts_csv_version</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Ruleset with the VPTS CSV ruleset to use, e.g. v1.0</p></li>
 <li><p><strong>source_file</strong> (<em>callable</em><em>, </em><em>optional</em>) – A callable that converts the file_path to the source_file. When None,
 the file name itself (without parent folder reference) is used.</p></li>
@@ -662,7 +662,7 @@ a anonymous lambda function.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">vpts</span><span class="p">(</span><span class="n">file_paths</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Use file name itself as source_file representation in vp file using a
+<p>Use file name itself as source_file representation in VP file using a
 custom callable function</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">path_to_source</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
@@ -674,12 +674,12 @@ custom callable function</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="vptstools.vpts.vpts_to_csv">
 <span class="sig-prename descclassname"><span class="pre">vptstools.vpts.</span></span><span class="sig-name descname"><span class="pre">vpts_to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#vpts_to_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts.vpts_to_csv" title="Link to this definition"></a></dt>
-<dd><p>Write vp or vpts to file</p>
+<dd><p>Write VP or VPTS to file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.0.3)"><em>pandas.DataFrame</em></a>) – DataFrame with vp or vpts data</p></li>
-<li><p><strong>file_path</strong> (<em>Path</em><em> | </em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – File path to store the vpts file</p></li>
+<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.0.3)"><em>pandas.DataFrame</em></a>) – DataFrame with VP or VPTS data</p></li>
+<li><p><strong>file_path</strong> (<em>Path</em><em> | </em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – File path to store the VPTS file</p></li>
 </ul>
 </dd>
 </dl>
@@ -931,7 +931,7 @@ order.</p>
 <dl class="py function" id="module-vptstools">
 <dt class="sig sig-object py" id="vptstools.validate_vpts">
 <span class="sig-prename descclassname"><span class="pre">vptstools.</span></span><span class="sig-name descname"><span class="pre">validate_vpts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'v1.0'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#validate_vpts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.validate_vpts" title="Link to this definition"></a></dt>
-<dd><p>Validate vpts DataFrame against the frictionless data schema and return report</p>
+<dd><p>Validate VPTS DataFrame against the frictionless data schema and return report</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -951,11 +951,11 @@ order.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="vptstools.vp">
 <span class="sig-prename descclassname"><span class="pre">vptstools.</span></span><span class="sig-name descname"><span class="pre">vp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vpts_csv_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'v1.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#vp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vp" title="Link to this definition"></a></dt>
-<dd><p>Convert ODIM h5 file to a DataFrame</p>
+<dd><p>Convert ODIM HDF5 file to a DataFrame</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_path</strong> (<em>Path</em>) – File Path of ODIM h5</p></li>
+<li><p><strong>file_path</strong> (<em>Path</em>) – File Path of ODIM HDF5</p></li>
 <li><p><strong>vpts_csv_version</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>default &quot;&quot;</em>) – Ruleset with the VPTS CSV ruleset to use, e.g. v1.0</p></li>
 <li><p><strong>source_file</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em> | </em><em>callable</em>) – URL or path to the source file from which the data were derived or
 a callable that converts the file_path to the source_file. See
@@ -971,7 +971,7 @@ the source file field.</p></li>
 <span class="gp">... </span>   <span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;s3://aloft/baltrad/hdf5/2022/11/11/bejab_vp_20221111T233000Z_0x9.h5&quot;</span><span class="p">)</span>  <span class="c1">#noqa</span>
 </pre></div>
 </div>
-<p>Use file name itself as source_file representation in vp file using a custom
+<p>Use file name itself as source_file representation in VP file using a custom
 callable function</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">source_file</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Path</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
@@ -981,11 +981,11 @@ callable function</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="vptstools.vpts">
 <span class="sig-prename descclassname"><span class="pre">vptstools.</span></span><span class="sig-name descname"><span class="pre">vpts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vpts_csv_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'v1.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#vpts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts" title="Link to this definition"></a></dt>
-<dd><p>Convert set of h5 files to a DataFrame all as string</p>
+<dd><p>Convert set of HDF5 files to a DataFrame all as string</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>file_paths</strong> (<em>Iterable</em><em> of </em><em>file paths</em>) – Iterable of ODIM h5 file paths</p></li>
+<li><p><strong>file_paths</strong> (<em>Iterable</em><em> of </em><em>file paths</em>) – Iterable of ODIM HDF5 file paths</p></li>
 <li><p><strong>vpts_csv_version</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – Ruleset with the VPTS CSV ruleset to use, e.g. v1.0</p></li>
 <li><p><strong>source_file</strong> (<em>callable</em><em>, </em><em>optional</em>) – A callable that converts the file_path to the source_file. When None,
 the file name itself (without parent folder reference) is used.</p></li>
@@ -1000,7 +1000,7 @@ a anonymous lambda function.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">vpts</span><span class="p">(</span><span class="n">file_paths</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Use file name itself as source_file representation in vp file using a
+<p>Use file name itself as source_file representation in VP file using a
 custom callable function</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">path_to_source</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
@@ -1012,12 +1012,12 @@ custom callable function</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="vptstools.vpts_to_csv">
 <span class="sig-prename descclassname"><span class="pre">vptstools.</span></span><span class="sig-name descname"><span class="pre">vpts_to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#vpts_to_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts_to_csv" title="Link to this definition"></a></dt>
-<dd><p>Write vp or vpts to file</p>
+<dd><p>Write VP or VPTS to file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.0.3)"><em>pandas.DataFrame</em></a>) – DataFrame with vp or vpts data</p></li>
-<li><p><strong>file_path</strong> (<em>Path</em><em> | </em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – File path to store the vpts file</p></li>
+<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.0.3)"><em>pandas.DataFrame</em></a>) – DataFrame with VP or VPTS data</p></li>
+<li><p><strong>file_path</strong> (<em>Path</em><em> | </em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – File path to store the VPTS file</p></li>
 </ul>
 </dd>
 </dl>
