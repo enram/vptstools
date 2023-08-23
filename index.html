@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools &mdash; vptstools 0.2.2.post1.dev12+g324a180 documentation</title>
+  <title>vptstools &mdash; vptstools 0.2.2.post1.dev13+g297d933 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,7 +13,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=fda395d5"></script>
+        <script src="_static/documentation_options.js?v=8b39b4ab"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             vptstools
           </a>
               <div class="version">
-                0.2.2.post1.dev12+g324a180
+                0.2.2.post1.dev13+g297d933
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -113,7 +113,7 @@
 <span class="kn">from</span> <span class="nn">vptstools.vpts</span> <span class="kn">import</span> <span class="n">vpts</span>
 
 <span class="c1"># Download files to data directory from e.g. https://aloftdata.eu/browse/?prefix=baltrad/hdf5/nldbl/2013/11/23/</span>
-<span class="n">file_paths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;./data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*.h5&quot;</span><span class="p">))</span>  <span class="c1"># Get all HDF5 files within the data directory</span>
+<span class="n">file_paths</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;./data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*.h5&quot;</span><span class="p">))</span> <span class="c1"># Get all HDF5 files within the data directory</span>
 <span class="n">df_vpts</span> <span class="o">=</span> <span class="n">vpts</span><span class="p">(</span><span class="n">file_paths</span><span class="p">)</span>
 </pre></div>
 </div>
