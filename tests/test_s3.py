@@ -318,7 +318,7 @@ class TestOdimFilePath:
             odim_path.s3_path_setup(file_type)
             == f"{source}/{file_type}/{radar_code}/{year}"
         )
-        bucket = "aloftdata"
+        bucket = "dummy-aloftdata"
         assert (
             odim_path.s3_url_h5(bucket)
             == f"s3://{bucket}/{source}/{file_type}/{radar_code}/"
@@ -428,7 +428,7 @@ class TestHandleManifest:
         """Individual inventory items are correctly parsed from manifest file"""
         inventory_files = list(
             list_manifest_file_keys(
-                "inbo-aloft-prod-eu-west-1-inventory/aloftdata/aloftdata-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json"
+                "dummy-inventory/aloftdata/aloftdata-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json"
             )
         )
         assert len(inventory_files) == 1
@@ -452,7 +452,7 @@ class TestHandleManifest:
         # run inventory with alternative profile
         inventory_files = list(
             list_manifest_file_keys(
-                "inbo-aloft-prod-eu-west-1-inventory/aloftdata/aloftdata-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
+                "dummy-inventory/aloftdata/aloftdata-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
                 storage_options={"profile": "my-aws-profile"},
             )
         )
@@ -472,7 +472,7 @@ class TestHandleManifest:
             return_value=pd.Timestamp("2023-02-01 00:00:00", tz="UTC"),
         ):
             df_cov, days_to_create_vpts = handle_manifest(
-                "s3://inbo-aloft-prod-eu-west-1-inventory/aloftdata/aloftdata-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
+                "s3://dummy-inventory/aloftdata/aloftdata-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
                 modified_days_ago="60days",
             )  # large enough number to get all inventory 'modified' items
             # When date-modified implies full scan, df_cov and days_to_create_vpts are the same
@@ -495,7 +495,7 @@ class TestHandleManifest:
             return_value=pd.Timestamp("2023-02-01 00:00:00", tz="UTC"),
         ):
             df_cov, days_to_create_vpts = handle_manifest(
-                "s3://inbo-aloft-prod-eu-west-1-inventory/aloftdata/aloftdata-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
+                "s3://dummy-inventory/aloftdata/aloftdata-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
                 modified_days_ago="5days",
             )  # only subset of files is within the time window of  days
             # Coverage returns the full inventory overview
@@ -517,7 +517,7 @@ class TestHandleManifest:
             return_value=pd.Timestamp("2023-03-01 00:00:00", tz="UTC"),
         ):
             df_cov, days_to_create_vpts = handle_manifest(
-                "s3://inbo-aloft-prod-eu-west-1-inventory/aloftdata/aloftdata-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
+                "s3://dummy-inventory/aloftdata/aloftdata-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
                 modified_days_ago="1days",
             )  # only subset of files is within the time window of  days
             # Coverage returns the full inventory overview
@@ -535,25 +535,25 @@ class TestHandleManifest:
         df_inventory = pd.DataFrame(
             [
                 {
-                    "repo": "aloftdata",
+                    "repo": "dummy-aloftdata",
                     "file": "baltrad/coverage.csv",
                     "size": 1,
                     "modified": pd.Timestamp("2023-01-31 00:00:00+0000", tz="UTC"),
                 },
                 {
-                    "repo": "aloftdata",
+                    "repo": "dummy-aloftdata",
                     "file": "baltrad/inventory.csv.gz",
                     "size": 1,
                     "modified": pd.Timestamp("2023-01-31 00:00:00+0000", tz="UTC"),
                 },
                 {
-                    "repo": "aloftdata",
+                    "repo": "dummy-aloftdata",
                     "file": "baltrad/manifest.json",
                     "size": 1,
                     "modified": pd.Timestamp("2023-01-31 00:00:00+0000", tz="UTC"),
                 },
                 {
-                    "repo": "aloftdata",
+                    "repo": "dummy-aloftdata",
                     "file": "baltrad/14azd6.checksum",
                     "size": 1,
                     "modified": pd.Timestamp("2023-01-31 00:00:00+0000", tz="UTC"),

@@ -269,31 +269,31 @@ def s3_inventory(aws_credentials, path_inventory):
         s3 = boto3.client("s3")
         # Add S3 inventory setup
         s3.create_bucket(
-            Bucket="inbo-aloft-prod-eu-west-1-inventory",
+            Bucket="dummy-inventory",
             CreateBucketConfiguration={"LocationConstraint": "eu-west-1"},
         )
         with open(manifest, "rb") as manifest_file:
             s3.upload_fileobj(
                 manifest_file,
-                "inbo-aloft-prod-eu-west-1-inventory",
+                "dummy-inventory",
                 "aloftdata/aloftdata-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
             )
         with open(inventory, "rb") as inventory_file:
             s3.upload_fileobj(
                 inventory_file,
-                "inbo-aloft-prod-eu-west-1-inventory",
+                "dummy-inventory",
                 "aloftdata/aloftdata-hdf5-files-inventory/data/dummy_inventory.csv.gz",
             )
 
-        # Add example data to aloft mocked S3 bucket
+        # Add example data to aloftdata mocked S3 bucket
         s3.create_bucket(
-            Bucket="aloft",
+            Bucket="dummy-aloftdata",
             CreateBucketConfiguration={"LocationConstraint": "eu-west-1"},
         )
         for h5file in (path_inventory / "vp").glob("*.h5"):
             with open(h5file, "rb") as h5f:
                 s3.upload_fileobj(
-                    h5f, "aloft", f"baltrad/hdf5/nosta/2023/03/11/{h5file.name}"
+                    h5f, "dummy-aloftdata", f"baltrad/hdf5/nosta/2023/03/11/{h5file.name}"
                 )
         yield s3
 
