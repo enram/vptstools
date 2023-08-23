@@ -41,7 +41,7 @@ from pathlib import Path
 from vptstools.vpts import vpts
 
 # Download files to data directory from e.g. https://aloftdata.eu/browse/?prefix=baltrad/hdf5/nldbl/2013/11/23/
-file_paths = sorted(Path("./data").rglob("*.h5"))  # Get all HDF5 files within the data directory
+file_paths = sorted(Path("./data").rglob("*.h5")) # Get all HDF5 files within the data directory
 df_vpts = vpts(file_paths)
 ```
 
