@@ -54,7 +54,7 @@ vpts_to_csv(df_vpts, "vpts.csv")
 ```
 
 ```{note} 
-Both {py:func}`vptstools.vpts.vp` and {py:func}`vptstools.vpts.vpts` have 2 other optional parameters related to the [VPTS CSV data exchange format](https://aloftdata.eu/vpts-csv/). The `vpts_csv_version` parameter defines the version of the VPTS CSV data exchange standard (default v1) whereas the `source_file` provides a way to define a custom [source_file](https://aloftdata.eu/vpts-csv/#source_file) field to reference the source from which the data were derived. 
+Both {py:func}`vptstools.vpts.vp` and {py:func}`vptstools.vpts.vpts` have 2 other optional parameters related to the [VPTS CSV data exchange format](https://aloftdata.eu/vpts-csv/). The `vpts_csv_version` parameter defines the version of the VPTS CSV data exchange standard (default v1.0) whereas the `source_file` provides a way to define a custom [source_file](https://aloftdata.eu/vpts-csv/#source_file) field to reference the source from which the data were derived. 
 ```
 
 To validate a VPTS DataFrame against the frictionless data schema as defined by the VPTS CSV data exchange format and return a report, use the {py:func}`vptstools.vpts.validate_vpts`:
@@ -62,7 +62,7 @@ To validate a VPTS DataFrame against the frictionless data schema as defined by 
 ```python
 from vptstools.vpts import validate_vpts
 
-report = validate_vpts(df_vpts, version="v1")
+report = validate_vpts(df_vpts, schema_version="v1.0")
 report.stats["errors"]
 ```
 
