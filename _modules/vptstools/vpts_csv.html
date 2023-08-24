@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools.vpts_csv &mdash; vptstools 0.2.2.post1.dev15+g52af3b7 documentation</title>
+  <title>vptstools.vpts_csv &mdash; vptstools 0.2.2.post1.dev24+gcdf05fb documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -12,7 +12,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=b4cdf19a"></script>
+        <script src="../../_static/documentation_options.js?v=58f21e1a"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -32,7 +32,7 @@
             vptstools
           </a>
               <div class="version">
-                0.2.2.post1.dev15+g52af3b7
+                0.2.2.post1.dev24+gcdf05fb
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -205,10 +205,10 @@
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; check_source_file(&quot;s3://alof/baltrad/2023/01/01/&quot;</span>
+<span class="sd">    &gt;&gt;&gt; check_source_file(&quot;s3://aloftdata/baltrad/2023/01/01/&quot;</span>
 <span class="sd">    ...                   &quot;bejab_vp_20230101T000500Z_0x9.h5&quot;,</span>
 <span class="sd">    ...                   r&quot;.*h5&quot;)</span>
-<span class="sd">    &#39;s3://alof/baltrad/2023/01/01/bejab_vp_20230101T000500Z_0x9.h5&#39;</span>
+<span class="sd">    &#39;s3://aloftdata/baltrad/2023/01/01/bejab_vp_20230101T000500Z_0x9.h5&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">sf_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">sf_regex</span><span class="p">,</span> <span class="n">source_file</span><span class="p">):</span>

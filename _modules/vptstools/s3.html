@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools.s3 &mdash; vptstools 0.2.2.post1.dev15+g52af3b7 documentation</title>
+  <title>vptstools.s3 &mdash; vptstools 0.2.2.post1.dev24+gcdf05fb documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -12,7 +12,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=b4cdf19a"></script>
+        <script src="../../_static/documentation_options.js?v=58f21e1a"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -32,7 +32,7 @@
             vptstools
           </a>
               <div class="version">
-                0.2.2.post1.dev15+g52af3b7
+                0.2.2.post1.dev24+gcdf05fb
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -223,8 +223,8 @@
 
 <div class="viewcode-block" id="OdimFilePath.s3_url_h5">
 <a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.OdimFilePath.s3_url_h5">[docs]</a>
-    <span class="k">def</span> <span class="nf">s3_url_h5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bucket</span><span class="o">=</span><span class="s2">&quot;aloft&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Full S3 URL for the stored HDF5 file&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">s3_url_h5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bucket</span><span class="o">=</span><span class="s2">&quot;aloftdata&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Full S3 URL for the stored h5 file&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;s3://</span><span class="si">{</span><span class="n">bucket</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">s3_path_setup</span><span class="p">(</span><span class="s1">&#39;hdf5&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">/&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">month</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">day</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="si">}</span><span class="s2">&quot;</span>

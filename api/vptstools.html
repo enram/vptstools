@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools package &mdash; vptstools 0.2.2.post1.dev15+g52af3b7 documentation</title>
+  <title>vptstools package &mdash; vptstools 0.2.2.post1.dev24+gcdf05fb documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,7 +13,7 @@
   
         <script src="../_static/jquery.js?v=5d32c60e"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=b4cdf19a"></script>
+        <script src="../_static/documentation_options.js?v=58f21e1a"></script>
         <script src="../_static/doctools.js?v=888ff710"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -35,7 +35,7 @@
             vptstools
           </a>
               <div class="version">
-                0.2.2.post1.dev15+g52af3b7
+                0.2.2.post1.dev24+gcdf05fb
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -423,8 +423,8 @@ extension will be removed</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="vptstools.s3.OdimFilePath.s3_url_h5">
-<span class="sig-name descname"><span class="pre">s3_url_h5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'aloft'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/s3.html#OdimFilePath.s3_url_h5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.s3.OdimFilePath.s3_url_h5" title="Link to this definition"></a></dt>
-<dd><p>Full S3 URL for the stored HDF5 file</p>
+<span class="sig-name descname"><span class="pre">s3_url_h5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucket</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'aloftdata'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/s3.html#OdimFilePath.s3_url_h5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.s3.OdimFilePath.s3_url_h5" title="Link to this definition"></a></dt>
+<dd><p>Full S3 URL for the stored h5 file</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -630,7 +630,7 @@ the source file field.</p></li>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;bejab_vp_20221111T233000Z_0x9.h5&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span>
-<span class="gp">... </span>   <span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;s3://aloft/baltrad/hdf5/2022/11/11/bejab_vp_20221111T233000Z_0x9.h5&quot;</span><span class="p">)</span>  <span class="c1">#noqa</span>
+<span class="gp">... </span>   <span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;s3://aloftdata/baltrad/hdf5/2022/11/11/bejab_vp_20221111T233000Z_0x9.h5&quot;</span><span class="p">)</span>  <span class="c1">#noqa</span>
 </pre></div>
 </div>
 <p>Use file name itself as source_file representation in VP file using a custom
@@ -833,10 +833,10 @@ order.</p>
 </dl>
 <p>:raises ValueError : source_file not according to regex:</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">check_source_file</span><span class="p">(</span><span class="s2">&quot;s3://alof/baltrad/2023/01/01/&quot;</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">check_source_file</span><span class="p">(</span><span class="s2">&quot;s3://aloftdata/baltrad/2023/01/01/&quot;</span>
 <span class="gp">... </span>                  <span class="s2">&quot;bejab_vp_20230101T000500Z_0x9.h5&quot;</span><span class="p">,</span>
 <span class="gp">... </span>                  <span class="sa">r</span><span class="s2">&quot;.*h5&quot;</span><span class="p">)</span>
-<span class="go">&#39;s3://alof/baltrad/2023/01/01/bejab_vp_20230101T000500Z_0x9.h5&#39;</span>
+<span class="go">&#39;s3://aloftdata/baltrad/2023/01/01/bejab_vp_20230101T000500Z_0x9.h5&#39;</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -968,7 +968,7 @@ the source file field.</p></li>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;bejab_vp_20221111T233000Z_0x9.h5&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">vp</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span>
-<span class="gp">... </span>   <span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;s3://aloft/baltrad/hdf5/2022/11/11/bejab_vp_20221111T233000Z_0x9.h5&quot;</span><span class="p">)</span>  <span class="c1">#noqa</span>
+<span class="gp">... </span>   <span class="n">source_file</span><span class="o">=</span><span class="s2">&quot;s3://aloftdata/baltrad/hdf5/2022/11/11/bejab_vp_20221111T233000Z_0x9.h5&quot;</span><span class="p">)</span>  <span class="c1">#noqa</span>
 </pre></div>
 </div>
 <p>Use file name itself as source_file representation in VP file using a custom
