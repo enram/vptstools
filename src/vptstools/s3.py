@@ -127,8 +127,8 @@ class OdimFilePath:
         """Common setup of the S3 bucket logic"""
         return f"{self.source}/{file_output}/{self.radar_code}/{self.year}"
 
-    def s3_url_h5(self, bucket="aloft"):
-        """Full S3 URL for the stored HDF5 file"""
+    def s3_url_h5(self, bucket="aloftdata"):
+        """Full S3 URL for the stored h5 file"""
         return (
             f"s3://{bucket}/{self.s3_path_setup('hdf5')}/"
             f"{self.month}/{self.day}/{self.file_name}"

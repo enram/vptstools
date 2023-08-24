@@ -1,5 +1,6 @@
 import os
 import datetime
+import os
 from pathlib import Path
 from typing import Callable, Any
 from unittest.mock import MagicMock, patch
@@ -125,6 +126,12 @@ def patch_aiobotocore() -> None:
 
 # ----------------------------------------------------------------------------------------------------------------------
 
+def pytest_generate_tests(metafunc):
+    """Set bucket and inventory to dummy versions as environmental variables during testing"""
+    os.environ['DESTINATION_BUCKET'] = "dummy-aloftdata"
+    os.environ['INVENTORY_BUCKET'] = "dummy-inventory"
+
+# ----------------------------------------------------------------------------------------------------------------------
 
 @pytest.fixture
 def path_with_vp():
@@ -269,31 +276,31 @@ def s3_inventory(aws_credentials, path_inventory):
         s3 = boto3.client("s3")
         # Add S3 inventory setup
         s3.create_bucket(
-            Bucket="aloft-inventory",
+            Bucket="dummy-inventory",
             CreateBucketConfiguration={"LocationConstraint": "eu-west-1"},
         )
         with open(manifest, "rb") as manifest_file:
             s3.upload_fileobj(
                 manifest_file,
-                "aloft-inventory",
-                "aloft/aloft-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
+                "dummy-inventory",
+                "dummy-aloftdata/dummy-aloftdata-hdf5-files-inventory/2023-02-01T01-00Z/manifest.json",
             )
         with open(inventory, "rb") as inventory_file:
             s3.upload_fileobj(
                 inventory_file,
-                "aloft-inventory",
-                "aloft/aloft-hdf5-files-inventory/data/dummy_inventory.csv.gz",
+                "dummy-inventory",
+                "dummy-aloftdata/dummy-aloftdata-hdf5-files-inventory/data/dummy_inventory.csv.gz",
             )
 
-        # Add example data to aloft mocked S3 bucket
+        # Add example data to aloftdata mocked S3 bucket
         s3.create_bucket(
-            Bucket="aloft",
+            Bucket="dummy-aloftdata",
             CreateBucketConfiguration={"LocationConstraint": "eu-west-1"},
         )
         for h5file in (path_inventory / "vp").glob("*.h5"):
             with open(h5file, "rb") as h5f:
                 s3.upload_fileobj(
-                    h5f, "aloft", f"baltrad/hdf5/nosta/2023/03/11/{h5file.name}"
+                    h5f, "dummy-aloftdata", f"baltrad/hdf5/nosta/2023/03/11/{h5file.name}"
                 )
         yield s3
 

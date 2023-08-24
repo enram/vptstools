@@ -114,10 +114,10 @@ def check_source_file(source_file, regex):
 
     Examples
     --------
-    >>> check_source_file("s3://alof/baltrad/2023/01/01/"
+    >>> check_source_file("s3://aloftdata/baltrad/2023/01/01/"
     ...                   "bejab_vp_20230101T000500Z_0x9.h5",
     ...                   r".*h5")
-    's3://alof/baltrad/2023/01/01/bejab_vp_20230101T000500Z_0x9.h5'
+    's3://aloftdata/baltrad/2023/01/01/bejab_vp_20230101T000500Z_0x9.h5'
     """
     sf_regex = re.compile(regex)
     if re.match(sf_regex, source_file):
