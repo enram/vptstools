@@ -1,5 +1,13 @@
 # Changelog
 
+## Version 0.3.0
+
+- Add getting started examples to README (#55, #65)
+- Simplify regex to look for valid file names (#60)
+- Use HDF5, PVOL, VP, VPTS, VPTS CSV, ODIM consistently in documentation (#58)
+- Make use of production, uat or dummy S3 bucket where appropriate (#59)
+- Update contributors and copyright holder (to INBO)
+
 ## Version 0.2.2
 
 - Hotfix for Docker deployment continued
