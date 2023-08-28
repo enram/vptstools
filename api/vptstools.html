@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools package &mdash; vptstools 0.2.2.post1.dev24+gcdf05fb documentation</title>
+  <title>vptstools package &mdash; vptstools 0.2.2.post1.dev25+g3c4234d documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,7 +13,7 @@
   
         <script src="../_static/jquery.js?v=5d32c60e"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=58f21e1a"></script>
+        <script src="../_static/documentation_options.js?v=6b0b5be9"></script>
         <script src="../_static/doctools.js?v=888ff710"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -35,7 +35,7 @@
             vptstools
           </a>
               <div class="version">
-                0.2.2.post1.dev24+gcdf05fb
+                0.2.2.post1.dev25+g3c4234d
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -57,20 +57,20 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#vptstools-odimh5-module">vptstools.odimh5 module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-vptstools.odimh5">vptstools.odimh5 module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.odimh5.InvalidSourceODIM"><code class="docutils literal notranslate"><span class="pre">InvalidSourceODIM</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.odimh5.ODIMReader"><code class="docutils literal notranslate"><span class="pre">ODIMReader</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.odimh5.check_vp_odim"><code class="docutils literal notranslate"><span class="pre">check_vp_odim()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#vptstools-s3-module">vptstools.s3 module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-vptstools.s3">vptstools.s3 module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.s3.OdimFilePath"><code class="docutils literal notranslate"><span class="pre">OdimFilePath</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.s3.extract_daily_group_from_inventory"><code class="docutils literal notranslate"><span class="pre">extract_daily_group_from_inventory()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.s3.handle_manifest"><code class="docutils literal notranslate"><span class="pre">handle_manifest()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.s3.list_manifest_file_keys"><code class="docutils literal notranslate"><span class="pre">list_manifest_file_keys()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#vptstools-vpts-module">vptstools.vpts module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-vptstools.vpts">vptstools.vpts module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts.BirdProfile"><code class="docutils literal notranslate"><span class="pre">BirdProfile</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts.validate_vpts"><code class="docutils literal notranslate"><span class="pre">validate_vpts()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts.vp"><code class="docutils literal notranslate"><span class="pre">vp()</span></code></a></li>
@@ -78,7 +78,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts.vpts_to_csv"><code class="docutils literal notranslate"><span class="pre">vpts_to_csv()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#vptstools-vpts-csv-module">vptstools.vpts_csv module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-vptstools.vpts_csv">vptstools.vpts_csv module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts_csv.AbstractVptsCsv"><code class="docutils literal notranslate"><span class="pre">AbstractVptsCsv</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts_csv.VptsCsvV1"><code class="docutils literal notranslate"><span class="pre">VptsCsvV1</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts_csv.VptsCsvVersionError"><code class="docutils literal notranslate"><span class="pre">VptsCsvVersionError</span></code></a></li>
@@ -89,7 +89,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts_csv.number_to_bool_str"><code class="docutils literal notranslate"><span class="pre">number_to_bool_str()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#module-contents">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-vptstools">Module contents</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.validate_vpts"><code class="docutils literal notranslate"><span class="pre">validate_vpts()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.vp"><code class="docutils literal notranslate"><span class="pre">vp()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.vpts"><code class="docutils literal notranslate"><span class="pre">vpts()</span></code></a></li>
@@ -135,18 +135,18 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="vptstools.bin.html">vptstools.bin namespace</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="vptstools.bin.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vptstools.bin.html#vptstools-bin-click-exception-module">vptstools.bin.click_exception module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="vptstools.bin.html#module-vptstools.bin.click_exception">vptstools.bin.click_exception module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="vptstools.bin.html#vptstools.bin.click_exception.catch_all_exceptions"><code class="docutils literal notranslate"><span class="pre">catch_all_exceptions()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="vptstools.bin.html#vptstools.bin.click_exception.report_click_exception_to_sns"><code class="docutils literal notranslate"><span class="pre">report_click_exception_to_sns()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="vptstools.bin.html#vptstools.bin.click_exception.report_message_to_sns"><code class="docutils literal notranslate"><span class="pre">report_message_to_sns()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="vptstools.bin.html#vptstools-bin-transfer-baltrad-module">vptstools.bin.transfer_baltrad module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="vptstools.bin.html#module-vptstools.bin.transfer_baltrad">vptstools.bin.transfer_baltrad module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="vptstools.bin.html#vptstools.bin.transfer_baltrad.extract_metadata_from_filename"><code class="docutils literal notranslate"><span class="pre">extract_metadata_from_filename()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="vptstools.bin.html#vptstools.bin.transfer_baltrad.s3_key_exists"><code class="docutils literal notranslate"><span class="pre">s3_key_exists()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="vptstools.bin.html#vptstools-bin-vph5-to-vpts-module">vptstools.bin.vph5_to_vpts module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vptstools.bin.html#module-vptstools.bin.vph5_to_vpts">vptstools.bin.vph5_to_vpts module</a></li>
 </ul>
 </li>
 </ul>
@@ -155,9 +155,9 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="vptstools-odimh5-module">
-<h2>vptstools.odimh5 module<a class="headerlink" href="#vptstools-odimh5-module" title="Link to this heading"></a></h2>
-<dl class="py exception" id="module-vptstools.odimh5">
+<section id="module-vptstools.odimh5">
+<span id="vptstools-odimh5-module"></span><h2>vptstools.odimh5 module<a class="headerlink" href="#module-vptstools.odimh5" title="Link to this heading"></a></h2>
+<dl class="py exception">
 <dt class="sig sig-object py" id="vptstools.odimh5.InvalidSourceODIM">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">vptstools.odimh5.</span></span><span class="sig-name descname"><span class="pre">InvalidSourceODIM</span></span><a class="reference internal" href="../_modules/vptstools/odimh5.html#InvalidSourceODIM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.odimh5.InvalidSourceODIM" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.10/library/exceptions.html#Exception" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
@@ -273,9 +273,9 @@ properly close the HDF5 file.</p>
 </dd></dl>
 
 </section>
-<section id="vptstools-s3-module">
-<h2>vptstools.s3 module<a class="headerlink" href="#vptstools-s3-module" title="Link to this heading"></a></h2>
-<dl class="py class" id="module-vptstools.s3">
+<section id="module-vptstools.s3">
+<span id="vptstools-s3-module"></span><h2>vptstools.s3 module<a class="headerlink" href="#module-vptstools.s3" title="Link to this heading"></a></h2>
+<dl class="py class">
 <dt class="sig sig-object py" id="vptstools.s3.OdimFilePath">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">vptstools.s3.</span></span><span class="sig-name descname"><span class="pre">OdimFilePath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">radar_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">month</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">day</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">hour</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'00'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minute</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'00'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/s3.html#OdimFilePath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.s3.OdimFilePath" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.10/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
@@ -504,9 +504,9 @@ S3 manifest files, eg. custom AWS profile options
 </dd></dl>
 
 </section>
-<section id="vptstools-vpts-module">
-<h2>vptstools.vpts module<a class="headerlink" href="#vptstools-vpts-module" title="Link to this heading"></a></h2>
-<dl class="py class" id="module-vptstools.vpts">
+<section id="module-vptstools.vpts">
+<span id="vptstools-vpts-module"></span><h2>vptstools.vpts module<a class="headerlink" href="#module-vptstools.vpts" title="Link to this heading"></a></h2>
+<dl class="py class">
 <dt class="sig sig-object py" id="vptstools.vpts.BirdProfile">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">vptstools.vpts.</span></span><span class="sig-name descname"><span class="pre">BirdProfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifiers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">datetime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/datetime.html#datetime.datetime" title="(in Python v3.10)"><span class="pre">datetime</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">what</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">how</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">levels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/typing.html#typing.List" title="(in Python v3.10)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.10/library/functions.html#int" title="(in Python v3.10)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#BirdProfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts.BirdProfile" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.10/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
@@ -686,9 +686,9 @@ custom callable function</p>
 </dd></dl>
 
 </section>
-<section id="vptstools-vpts-csv-module">
-<h2>vptstools.vpts_csv module<a class="headerlink" href="#vptstools-vpts-csv-module" title="Link to this heading"></a></h2>
-<dl class="py class" id="module-vptstools.vpts_csv">
+<section id="module-vptstools.vpts_csv">
+<span id="vptstools-vpts-csv-module"></span><h2>vptstools.vpts_csv module<a class="headerlink" href="#module-vptstools.vpts_csv" title="Link to this heading"></a></h2>
+<dl class="py class">
 <dt class="sig sig-object py" id="vptstools.vpts_csv.AbstractVptsCsv">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">vptstools.vpts_csv.</span></span><span class="sig-name descname"><span class="pre">AbstractVptsCsv</span></span><a class="reference internal" href="../_modules/vptstools/vpts_csv.html#AbstractVptsCsv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.vpts_csv.AbstractVptsCsv" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.10/library/abc.html#abc.ABC" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
@@ -926,9 +926,9 @@ order.</p>
 </dd></dl>
 
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
-<dl class="py function" id="module-vptstools">
+<section id="module-vptstools">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-vptstools" title="Link to this heading"></a></h2>
+<dl class="py function">
 <dt class="sig sig-object py" id="vptstools.validate_vpts">
 <span class="sig-prename descclassname"><span class="pre">vptstools.</span></span><span class="sig-name descname"><span class="pre">validate_vpts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'v1.0'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/vpts.html#validate_vpts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.validate_vpts" title="Link to this definition"></a></dt>
 <dd><p>Validate VPTS DataFrame against the frictionless data schema and return report</p>
