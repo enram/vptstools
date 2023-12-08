@@ -66,7 +66,7 @@ def cli(modified_days_ago, path_s3_folder=None):
     HDF5 files were recently added and convert those files from ODIM bird profile to the
     `VPTS CSV format <https://github.com/enram/vpts-csv>`_. Finally, upload the generated daily/monthly VPTS files to S3.
 
-    When using the `path_s3_folder` option, the modified date is not used, but e recursive search within the given s3
+    When using the `path_s3_folder` option, the modified date is not used, but a recursive search within the given s3
     path is applied to define the daily/monthly files to recreate.
     E.g. `vph5_to_vpts --path-s3-folder uva/hdf5/nldhl/2019` or
     `vph5_to_vpts --path-s3-folder baltrad/hdf5/bejab/2022/10`.
