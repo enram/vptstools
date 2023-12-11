@@ -76,11 +76,15 @@ def cli(modified_days_ago, path_s3_folder=None):
 
     Configuration is loaded from the following environmental variables:
 
+    \b
     - ``DESTINATION_BUCKET``: AWS S3 bucket to read and write data to
-    - ``INVENTORY_BUCKET``: AWS S3 bucket configured as `s3 inventory bucket <https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-inventory.html>`_ for the S3_BUCKET.
+    - ``INVENTORY_BUCKET``: AWS S3 bucket configured as `s3 inventory bucket
+      <https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-inventory.html>`_
+      for the S3_BUCKET.
     - ``SNS_TOPIC``: AWS SNS topic to report when routine fails
     - ``AWS_REGION``: AWS region where the SNS alerting is defined
-    - ``AWS_PROFILE``: AWS profile (mainly useful for local development when working with multiple AWS profiles)
+    - ``AWS_PROFILE``: AWS profile (mainly useful for local development when
+      working with multiple AWS profiles)
     """
     if AWS_PROFILE:
         storage_options = {"profile": AWS_PROFILE}
