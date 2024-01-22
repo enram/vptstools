@@ -1,19 +1,21 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools package &mdash; vptstools 0.2.2.post1.dev25+g3c4234d documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>vptstools package &mdash; vptstools 0.3.0.post1.dev6+g6173b18 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script src="../_static/jquery.js?v=5d32c60e"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=6b0b5be9"></script>
+        <script src="../_static/documentation_options.js?v=7175cd25"></script>
         <script src="../_static/doctools.js?v=888ff710"></script>
         <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -35,7 +37,7 @@
             vptstools
           </a>
               <div class="version">
-                0.2.2.post1.dev25+g3c4234d
+                0.3.0.post1.dev6+g6173b18
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -66,6 +68,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-vptstools.s3">vptstools.s3 module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.s3.OdimFilePath"><code class="docutils literal notranslate"><span class="pre">OdimFilePath</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.s3.extract_daily_group_from_inventory"><code class="docutils literal notranslate"><span class="pre">extract_daily_group_from_inventory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vptstools.s3.extract_daily_group_from_path"><code class="docutils literal notranslate"><span class="pre">extract_daily_group_from_path()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.s3.handle_manifest"><code class="docutils literal notranslate"><span class="pre">handle_manifest()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#vptstools.s3.list_manifest_file_keys"><code class="docutils literal notranslate"><span class="pre">list_manifest_file_keys()</span></code></a></li>
 </ul>
@@ -457,6 +460,23 @@ into account and a folder-path is ignored.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="vptstools.s3.extract_daily_group_from_path">
+<span class="sig-prename descclassname"><span class="pre">vptstools.s3.</span></span><span class="sig-name descname"><span class="pre">extract_daily_group_from_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/s3.html#extract_daily_group_from_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.s3.extract_daily_group_from_path" title="Link to this definition"></a></dt>
+<dd><p>Extract file name components to define a group</p>
+<p>The coverage file counts the number of files available
+per group (e.g. daily files per radar). This function is passed
+to the Pandas <code class="docutils literal notranslate"><span class="pre">groupby</span></code> to translate the file path to a
+countable set (e.g. source, radar-code, year month and day for
+daily files per radar).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – File path of the ODIM HDF5 file. Only the file name is taken
+into account and a folder-path is ignored.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="vptstools.s3.handle_manifest">
 <span class="sig-prename descclassname"><span class="pre">vptstools.s3.</span></span><span class="sig-name descname"><span class="pre">handle_manifest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manifest_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modified_days_ago</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'2day'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vptstools/s3.html#handle_manifest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vptstools.s3.handle_manifest" title="Link to this definition"></a></dt>
 <dd><p>Extract modified days and coverage from a manifest file</p>
@@ -597,7 +617,7 @@ is supported by Pandas.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.0.3)"><em>pandas.DataFrame</em></a>) – DataFrame as created by the vp or vpts functions</p></li>
+<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.0)"><em>pandas.DataFrame</em></a>) – DataFrame as created by the vp or vpts functions</p></li>
 <li><p><strong>schema_version</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>v1.0</em><em>,</em><em>...</em>) – Version according to a release tag of <a class="reference external" href="https://github.com/enram/vpts-csv/tags">https://github.com/enram/vpts-csv/tags</a></p></li>
 </ul>
 </dd>
@@ -678,7 +698,7 @@ custom callable function</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.0.3)"><em>pandas.DataFrame</em></a>) – DataFrame with VP or VPTS data</p></li>
+<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.0)"><em>pandas.DataFrame</em></a>) – DataFrame with VP or VPTS data</p></li>
 <li><p><strong>file_path</strong> (<em>Path</em><em> | </em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – File path to store the VPTS file</p></li>
 </ul>
 </dd>
@@ -935,7 +955,7 @@ order.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.0.3)"><em>pandas.DataFrame</em></a>) – DataFrame as created by the vp or vpts functions</p></li>
+<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.0)"><em>pandas.DataFrame</em></a>) – DataFrame as created by the vp or vpts functions</p></li>
 <li><p><strong>schema_version</strong> (<a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a><em>, </em><em>v1.0</em><em>,</em><em>...</em>) – Version according to a release tag of <a class="reference external" href="https://github.com/enram/vpts-csv/tags">https://github.com/enram/vpts-csv/tags</a></p></li>
 </ul>
 </dd>
@@ -1016,7 +1036,7 @@ custom callable function</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.0.3)"><em>pandas.DataFrame</em></a>) – DataFrame with VP or VPTS data</p></li>
+<li><p><strong>df</strong> (<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.0)"><em>pandas.DataFrame</em></a>) – DataFrame with VP or VPTS data</p></li>
 <li><p><strong>file_path</strong> (<em>Path</em><em> | </em><a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – File path to store the VPTS file</p></li>
 </ul>
 </dd>

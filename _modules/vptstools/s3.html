@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools.s3 &mdash; vptstools 0.2.2.post1.dev25+g3c4234d documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>vptstools.s3 &mdash; vptstools 0.3.0.post1.dev6+g6173b18 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=6b0b5be9"></script>
+        <script src="../../_static/documentation_options.js?v=7175cd25"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -32,7 +34,7 @@
             vptstools
           </a>
               <div class="version">
-                0.2.2.post1.dev25+g3c4234d
+                0.3.0.post1.dev6+g6173b18
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -155,7 +157,7 @@
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">h5_file_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>
             <span class="o">*</span><span class="bp">cls</span><span class="o">.</span><span class="n">parse_file_name</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">h5_file_path</span><span class="p">)),</span>
-            <span class="n">h5_file_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">h5_file_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">],</span>
         <span class="p">)</span></div>
 
 
@@ -293,6 +295,34 @@
 <span class="sd">        into account and a folder-path is ignored.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">path_info</span> <span class="o">=</span> <span class="n">OdimFilePath</span><span class="o">.</span><span class="n">from_inventory</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">path_info</span><span class="o">.</span><span class="n">source</span><span class="p">,</span>
+        <span class="n">path_info</span><span class="o">.</span><span class="n">file_type</span><span class="p">,</span>
+        <span class="n">path_info</span><span class="o">.</span><span class="n">radar_code</span><span class="p">,</span>
+        <span class="n">path_info</span><span class="o">.</span><span class="n">year</span><span class="p">,</span>
+        <span class="n">path_info</span><span class="o">.</span><span class="n">month</span><span class="p">,</span>
+        <span class="n">path_info</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="extract_daily_group_from_path">
+<a class="viewcode-back" href="../../api/vptstools.html#vptstools.s3.extract_daily_group_from_path">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_daily_group_from_path</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract file name components to define a group</span>
+
+<span class="sd">    The coverage file counts the number of files available</span>
+<span class="sd">    per group (e.g. daily files per radar). This function is passed</span>
+<span class="sd">    to the Pandas ``groupby`` to translate the file path to a</span>
+<span class="sd">    countable set (e.g. source, radar-code, year month and day for</span>
+<span class="sd">    daily files per radar).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    file_path : str</span>
+<span class="sd">        File path of the ODIM HDF5 file. Only the file name is taken</span>
+<span class="sd">        into account and a folder-path is ignored.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path_info</span> <span class="o">=</span> <span class="n">OdimFilePath</span><span class="o">.</span><span class="n">from_s3fs_enlisting</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span>
         <span class="n">path_info</span><span class="o">.</span><span class="n">source</span><span class="p">,</span>
         <span class="n">path_info</span><span class="o">.</span><span class="n">file_type</span><span class="p">,</span>
