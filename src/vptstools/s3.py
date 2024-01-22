@@ -68,7 +68,7 @@ class OdimFilePath:
         return cls(
             h5_file_path.split("/")[1],
             *cls.parse_file_name(str(h5_file_path)),
-            h5_file_path.split("/")[1],
+            h5_file_path.split("/")[2],
         )
 
     @staticmethod
@@ -190,6 +190,31 @@ def extract_daily_group_from_inventory(file_path):
         into account and a folder-path is ignored.
     """
     path_info = OdimFilePath.from_inventory(file_path)
+    return (
+        path_info.source,
+        path_info.file_type,
+        path_info.radar_code,
+        path_info.year,
+        path_info.month,
+        path_info.day,
+    )
+
+def extract_daily_group_from_path(file_path):
+    """Extract file name components to define a group
+
+    The coverage file counts the number of files available
+    per group (e.g. daily files per radar). This function is passed
+    to the Pandas ``groupby`` to translate the file path to a
+    countable set (e.g. source, radar-code, year month and day for
+    daily files per radar).
+
+    Parameters
+    ----------
+    file_path : str
+        File path of the ODIM HDF5 file. Only the file name is taken
+        into account and a folder-path is ignored.
+    """
+    path_info = OdimFilePath.from_s3fs_enlisting(file_path)
     return (
         path_info.source,
         path_info.file_type,
