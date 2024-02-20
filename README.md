@@ -8,7 +8,7 @@ vptstools is a Python library to transfer and convert VPTS data. VPTS (vertical 
 
 ## Installation
 
-Python 3.9+ is required.
+Python 3.9+ is required. It is advised to use a [virtual environment](https://docs.python.org/3/library/venv.html) to install a set of dependencies for a project. Once created (`run python -m venv <PATH-TO-VENV>`) and activated (`<PATH-TO-VENV>\Scripts\activate` in windows or `source <PATH-TO-VENV>/bin/activate` in linux), install the package inside the vitual environment:
 
 ```
 pip install vptstools
