@@ -113,6 +113,9 @@ def cli(modified_days_ago, path_s3_folder=None):
                 }
             )
         )
+        if len(days_to_create_vpts) == 0:
+            raise Exception(f"No h5 files could be found in the current"
+                            f" path '{S3_BUCKET}/{path_s3_folder}'.")
 
     else:
         # Load the S3 manifest of today
