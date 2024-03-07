@@ -1,5 +1,6 @@
 import os
 import tempfile
+from itertools import chain
 from functools import partial
 import shutil
 from pathlib import Path
@@ -98,7 +99,8 @@ def cli(modified_days_ago, path_s3_folder=None):
                    f"Ignoring the modified date of the files.")
 
         inbo_s3 = s3fs.S3FileSystem(**storage_options)
-        odim5_files = inbo_s3.glob(f"{S3_BUCKET}/{path_s3_folder}/**/*.h5")
+        odim5_files = chain(inbo_s3.glob(f"{S3_BUCKET}/{path_s3_folder}/**/*.h5"),
+                            inbo_s3.glob(f"{S3_BUCKET}/{path_s3_folder}/*.h5"))
 
         days_to_create_vpts = (
             pd.DataFrame(odim5_files, columns=["file"])
