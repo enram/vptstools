@@ -197,7 +197,7 @@ def cli(modified_days_ago, path_s3_folder=None):
             shutil.rmtree(temp_folder_path)
         except Exception as exc:
             click.echo(f"[WARNING] - During conversion from HDF5 files of {source}/{radar_code} at "
-                       f"{year}-{month}-{day} to daily VPTS file, the following error occurred: {exc}.")
+                       f"{year}-{month}-{day} to daily VPTS file, the following error occurred: {type(exc).__name__} - {exc}.")
 
     click.echo("Finished creating daily VPTS files.")
 
@@ -245,7 +245,7 @@ def cli(modified_days_ago, path_s3_folder=None):
             )
         except Exception as exc:
             click.echo(f"[WARNING] - During conversion from HDF5 files of {source}/{radar_code} at "
-                       f"{year}-{month}-{day} to monthly VPTS file, the following error occurred: {exc}.")
+                       f"{year}-{month}-{day} to monthly VPTS file, the following error occurred: {type(exc).__name__} - {exc}.")
 
     click.echo("Finished creating monthly VPTS files.")
     click.echo("Finished VPTS update procedure.")
