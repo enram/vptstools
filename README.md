@@ -8,7 +8,30 @@ vptstools is a Python library to transfer and convert VPTS data. VPTS (vertical 
 
 ## Installation
 
-Python 3.9+ is required.
+Python 3.9+ is required. It is advised to use a [virtual environment](https://docs.python.org/3/library/venv.html) to install a set of dependencies for a project.
+
+First, create a virtual environment from the command prompt (terminal):
+
+```
+# for windows
+run python -m venv <PATH-TO-VENV>
+
+# for linux
+python -m venv <PATH-TO-VENV>
+```
+
+Next, activate the created environment:
+
+```
+# for windows
+<PATH-TO-VENV>\Scripts\activate
+
+# for linux
+source <PATH-TO-VENV>/bin/activate
+```
+
+
+Once created and activated, install the package inside the virtual environment:
 
 ```
 pip install vptstools
@@ -53,8 +76,8 @@ from vptstools.vpts import vpts_to_csv
 vpts_to_csv(df_vpts, "vpts.csv")
 ```
 
-```{note} 
-Both {py:func}`vptstools.vpts.vp` and {py:func}`vptstools.vpts.vpts` have 2 other optional parameters related to the [VPTS CSV data exchange format](https://aloftdata.eu/vpts-csv/). The `vpts_csv_version` parameter defines the version of the VPTS CSV data exchange standard (default v1.0) whereas the `source_file` provides a way to define a custom [source_file](https://aloftdata.eu/vpts-csv/#source_file) field to reference the source from which the data were derived. 
+```{note}
+Both {py:func}`vptstools.vpts.vp` and {py:func}`vptstools.vpts.vpts` have 2 other optional parameters related to the [VPTS CSV data exchange format](https://aloftdata.eu/vpts-csv/). The `vpts_csv_version` parameter defines the version of the VPTS CSV data exchange standard (default v1.0) whereas the `source_file` provides a way to define a custom [source_file](https://aloftdata.eu/vpts-csv/#source_file) field to reference the source from which the data were derived.
 ```
 
 To validate a VPTS DataFrame against the frictionless data schema as defined by the VPTS CSV data exchange format and return a report, use the {py:func}`vptstools.vpts.validate_vpts`:
@@ -69,7 +92,7 @@ report.stats["errors"]
 Other modules in the package are:
 
 - {py:mod}`vptstools.odimh5`: This module extents the implementation of the original [odimh5 package](https://pypi.org/project/odimh5/) which is now deprecated.
-- {py:mod}`vptstools.vpts_csv`: This module contains - for each version of the VPTS CSV exchange format - the corresponding implementation which can be used to generate a VP or VPTS DataFrame. For more information on how to support a new version of the VPTS CSV format, see [contributing docs](#new-vptscsv-version). 
+- {py:mod}`vptstools.vpts_csv`: This module contains - for each version of the VPTS CSV exchange format - the corresponding implementation which can be used to generate a VP or VPTS DataFrame. For more information on how to support a new version of the VPTS CSV format, see [contributing docs](#new-vptscsv-version).
 - {py:mod}`vptstools.s3`: This module contains the functions to manage the [Aloft data repository](https://aloftdata.eu/browse/) S3 bucket.
 
 ## CLI endpoints
@@ -85,7 +108,7 @@ In addition to using functions in Python scripts, two vptstools routines are ava
 See [contributing](docs/contributing.md) for a detailed overview and set of guidelines. If familiar with `tox`, the setup of a development environment boils down to:
 
 ```shell
-tox -e dev   # Create development environment with venv and register an ipykernel. 
+tox -e dev   # Create development environment with venv and register an ipykernel.
 source venv/bin/activate  # Activate this environment to get started
 ```
 
