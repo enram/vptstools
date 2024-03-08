@@ -1,6 +1,5 @@
 import os
 import tempfile
-from itertools import chain
 from functools import partial
 import shutil
 from pathlib import Path
@@ -99,8 +98,7 @@ def cli(modified_days_ago, path_s3_folder=None):
                    f"Ignoring the modified date of the files.")
 
         inbo_s3 = s3fs.S3FileSystem(**storage_options)
-        odim5_files = chain(inbo_s3.glob(f"{S3_BUCKET}/{path_s3_folder}/**/*.h5"),
-                            inbo_s3.glob(f"{S3_BUCKET}/{path_s3_folder}/*.h5"))
+        odim5_files = inbo_s3.glob(f"{S3_BUCKET}/{path_s3_folder}/**/*.h5")
 
         days_to_create_vpts = (
             pd.DataFrame(odim5_files, columns=["file"])
@@ -113,9 +111,6 @@ def cli(modified_days_ago, path_s3_folder=None):
                 }
             )
         )
-        if len(days_to_create_vpts) == 0:
-            raise Exception(f"No h5 files could be found in the current"
-                            f" path '{S3_BUCKET}/{path_s3_folder}'.")
 
     else:
         # Load the S3 manifest of today
@@ -197,7 +192,7 @@ def cli(modified_days_ago, path_s3_folder=None):
             shutil.rmtree(temp_folder_path)
         except Exception as exc:
             click.echo(f"[WARNING] - During conversion from HDF5 files of {source}/{radar_code} at "
-                       f"{year}-{month}-{day} to daily VPTS file, the following error occurred: {type(exc).__name__} - {exc}.")
+                       f"{year}-{month}-{day} to daily VPTS file, the following error occurred: {exc}.")
 
     click.echo("Finished creating daily VPTS files.")
 
@@ -245,7 +240,7 @@ def cli(modified_days_ago, path_s3_folder=None):
             )
         except Exception as exc:
             click.echo(f"[WARNING] - During conversion from HDF5 files of {source}/{radar_code} at "
-                       f"{year}-{month}-{day} to monthly VPTS file, the following error occurred: {type(exc).__name__} - {exc}.")
+                       f"{year}-{month}-{day} to monthly VPTS file, the following error occurred: {exc}.")
 
     click.echo("Finished creating monthly VPTS files.")
     click.echo("Finished VPTS update procedure.")
