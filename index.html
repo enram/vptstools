@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>vptstools &mdash; vptstools 0.3.0.post1.dev9+g811e76f documentation</title>
+  <title>vptstools &mdash; vptstools 0.4.0a1.post1.dev4+g577f499 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -15,7 +15,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=a5f4184b"></script>
+        <script src="_static/documentation_options.js?v=5a73db83"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -36,7 +36,7 @@
             vptstools
           </a>
               <div class="version">
-                0.3.0.post1.dev9+g811e76f
+                0.4.0a1.post1.dev4+g577f499
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -86,7 +86,24 @@
 <p>vptstools is a Python library to transfer and convert VPTS data. VPTS (vertical profile time series) express the density, speed and direction of biological signals such as birds, bats and insects within a weather radar volume, grouped into altitude layers (height) and measured over time (datetime).</p>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
-<p>Python 3.9+ is required.</p>
+<p>Python 3.9+ is required. It is advised to use a <a class="reference external" href="https://docs.python.org/3/library/venv.html">virtual environment</a> to install a set of dependencies for a project.</p>
+<p>First, create a virtual environment from the command prompt (terminal):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># for windows</span>
+<span class="n">run</span> <span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">venv</span> <span class="o">&lt;</span><span class="n">PATH</span><span class="o">-</span><span class="n">TO</span><span class="o">-</span><span class="n">VENV</span><span class="o">&gt;</span>
+
+<span class="c1"># for linux</span>
+<span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">venv</span> <span class="o">&lt;</span><span class="n">PATH</span><span class="o">-</span><span class="n">TO</span><span class="o">-</span><span class="n">VENV</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Next, activate the created environment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># for windows</span>
+<span class="o">&lt;</span><span class="n">PATH</span><span class="o">-</span><span class="n">TO</span><span class="o">-</span><span class="n">VENV</span><span class="o">&gt;</span>\<span class="n">Scripts</span>\<span class="n">activate</span>
+
+<span class="c1"># for linux</span>
+<span class="n">source</span> <span class="o">&lt;</span><span class="n">PATH</span><span class="o">-</span><span class="n">TO</span><span class="o">-</span><span class="n">VENV</span><span class="o">&gt;/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+</pre></div>
+</div>
+<p>Once created and activated, install the package inside the virtual environment:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">vptstools</span>
 </pre></div>
 </div>
@@ -224,7 +241,7 @@ the CLI routine creates the <code class="docutils literal notranslate"><span cla
 <section id="development-instructions">
 <h2>Development instructions<a class="headerlink" href="#development-instructions" title="Link to this heading"></a></h2>
 <p>See <a class="reference internal" href="contributing.html"><span class="std std-doc">contributing</span></a> for a detailed overview and set of guidelines. If familiar with <code class="docutils literal notranslate"><span class="pre">tox</span></code>, the setup of a development environment boils down to:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>tox<span class="w"> </span>-e<span class="w"> </span>dev<span class="w">   </span><span class="c1"># Create development environment with venv and register an ipykernel. </span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>tox<span class="w"> </span>-e<span class="w"> </span>dev<span class="w">   </span><span class="c1"># Create development environment with venv and register an ipykernel.</span>
 <span class="nb">source</span><span class="w"> </span>venv/bin/activate<span class="w">  </span><span class="c1"># Activate this environment to get started</span>
 </pre></div>
 </div>
