@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+type: software
+license: MIT
+title: 'vptstools: Transfer and convert vertical profile time series data'
+version: 0.4.0
+abstract: >-
+  vptstools is a Python library to transfer and convert VPTS data.
+  VPTS (vertical profile time series) express the density, speed and direction
+  of biological signals such as birds, bats and insects within a weather radar
+  volume, grouped into altitude layers (height) and measured over time
+  (datetime).
+authors:
+  - given-names: Stijn
+    family-names: Van Hoey
+    orcid: https://orcid.org/0000-0001-6413-3185
+  - given-names: Nicolas
+    family-names: Noé
+    orcid: https://orcid.org/0000-0002-9503-4750
+  - given-names: Pieter
+    family-names: Huybrechts
+    affiliation: Research Institute for Nature and Forest (INBO)
+    orcid: https://orcid.org/0000-0002-6658-6062
+  - given-names: Peter
+    family-names: Desmet
+    email: peter.desmet@inbo.be
+    affiliation: Research Institute for Nature and Forest (INBO)
+    orcid: https://orcid.org/0000-0002-8442-8025
+repository-code: https://github.com/enram/vptstools
+url: https://enram.github.io/vptstools/
+date-released: '2024-10-22'
+keywords:
+- data transformation
+- aeroecology
+- weather radar
