@@ -29,5 +29,6 @@ repository-code: https://github.com/enram/vptstools
 url: https://enram.github.io/vptstools/
 date-released: '2024-10-22'
 keywords:
-  - aeroecology
-  - weather radar
+- data transformation
+- aeroecology
+- weather radar
